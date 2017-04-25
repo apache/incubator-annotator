@@ -9,6 +9,9 @@
     "url": "https://git-wip-us.apache.org/repos/asf/incubator-annotator.git"
   },
   "devDependencies": {
+    "eslint": "^3.19.0",
+    "eslint-config-babel": "^6.0.0",
+    "eslint-config-google": "^0.7.1",
     "lerna": "^2.0.0-rc.3"
   }
 }
