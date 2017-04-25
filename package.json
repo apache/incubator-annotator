@@ -1,0 +1,14 @@
+{
+  "name": "@annotator/annotator",
+  "author": "Apache Software Foundation",
+  "description": "Apache Annotator provides annotation enabling code for browsers, servers, and humans.",
+  "license": "Apache-2.0",
+  "homepage": "https://annotator.apache.org",
+  "repository": {
+    "type": "git",
+    "url": "https://git-wip-us.apache.org/repos/asf/incubator-annotator.git"
+  },
+  "devDependencies": {
+    "lerna": "^2.0.0-rc.3"
+  }
+}
