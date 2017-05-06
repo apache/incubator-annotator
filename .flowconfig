@@ -1,0 +1,5 @@
+[ignore]
+.*/node_modules/.*
+
+[options]
+module.name_mapper='\(@annotator/[^/]*\)' -> '<PROJECT_ROOT>/packages/\1/src/index.js'

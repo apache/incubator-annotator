@@ -2,7 +2,11 @@
   "root": true,
   "extends": [
     "babel",
-    "google"
+    "google",
+    "plugin:flowtype/recommended"
+  ],
+  "plugins": [
+    "flowtype"
   ],
   "rules": {}
 }
