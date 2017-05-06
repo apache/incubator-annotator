@@ -45,8 +45,7 @@ packages.forEach((name) => {
 
   const jail = path.join(root, 'node_modules');
   const babelOptions = {
-    babelrc: false,
-    exclude: [jail],
+    exclude: [`${jail}/**`],
     runtimeHelpers: true,
   };
 
