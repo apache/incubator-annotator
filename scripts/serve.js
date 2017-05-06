@@ -1,0 +1,118 @@
+// @flow
+/**
+ * @license
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+import fs from 'fs';
+import path from 'path';
+import url from 'url';
+
+import chokidar from 'chokidar-socket-emitter';
+import express from 'express';
+import json from 'core-js/library/fn/json';
+import resolve from 'resolve';
+
+import rollup from 'rollup';
+import babel from 'rollup-plugin-babel';
+import commonjs from 'rollup-plugin-commonjs';
+import nodeResolve from 'rollup-plugin-node-resolve';
+
+const __filename = url.parse(__moduleName).pathname;
+const __dirname = path.dirname(__filename);
+
+const basedir = path.resolve(__dirname, '..');
+const packagesPath = path.resolve(basedir, 'packages');
+const packages = fs.readdirSync(packagesPath);
+
+const app = express();
+
+packages.forEach((name) => {
+  const root = path.join(packagesPath, name);
+  const entry = path.join(root, 'index.js');
+  const dest = path.join(basedir, name, 'index.js');
+  const external = (id) => /^@(annotator|hot)/.test(id);
+
+  const jail = path.join(root, 'node_modules');
+  const babelOptions = {
+    babelrc: false,
+    exclude: [jail],
+    runtimeHelpers: true,
+  };
+
+  const plugins = [
+    babel(babelOptions),
+    commonjs(),
+    nodeResolve({ jail }),
+  ];
+
+  const options = { entry, external, plugins };
+  const generateOptions = {
+    format: 'amd',
+    sourceMap: true,
+  };
+
+  const endpoint = path.relative(basedir, dest);
+  app.get(`/${endpoint}`, (req, res) => {
+    rollup.rollup(options)
+      .then((bundle) => {
+        const result = bundle.generate(generateOptions);
+        const { code, map } = result;
+        res.send(`${code}\n//# sourceMappingURL=${map.toUrl()}`);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+    ;
+  });
+});
+
+app.get('/system.js', (req, res) => {
+  const resolved = resolve.sync('systemjs', { basedir });
+  const content = fs.readFileSync(resolved);
+  res.send(content);
+});
+
+app.get('/system-config.js', (req, res) => {
+  const packageConfigs = packages.reduce((acc, name) => {
+    acc[name] = { main: 'index.js' };
+    return acc;
+  }, {});
+
+  const hmr = resolve.sync('systemjs-hmr', { basedir });
+  const hotReloader = resolve.sync('systemjs-hot-reloader', { basedir });
+
+  const map = {
+    'systemjs-hmr': path.relative(basedir, hmr),
+    'systemjs-hot-reloader': path.relative(basedir, hotReloader),
+    '@annotator': '',
+    '@hot': '@empty',
+  };
+
+  const systemConfig = json.stringify({ map, packages: packageConfigs });
+
+  res.setHeader('Content-Type', 'application/json');
+  res.send(`SystemJS.config(${systemConfig})`);
+});
+
+app.use(express.static(basedir));
+
+const server = app.listen(8080, (err) => {
+  if (err) return console.log(err);
+  chokidar({
+    app: server,
+    path: packagesPath,
+    relativeTo: packagesPath,
+  });
+  console.log('Development server running at http://localhost:8080');
+});
