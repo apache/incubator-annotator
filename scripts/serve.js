@@ -40,7 +40,7 @@ const app = express();
 packages.forEach((name) => {
   const root = path.join(packagesPath, name);
   const entry = path.join(root, 'index.js');
-  const dest = path.join(basedir, name, 'index.js');
+  const dest = path.join(root, `${name}.bundle.js`);
   const external = (id) => /^@(annotator|hot)/.test(id);
 
   const jail = path.join(root, 'node_modules');
@@ -59,6 +59,7 @@ packages.forEach((name) => {
   const generateOptions = {
     format: 'amd',
     sourceMap: true,
+    sourceMapFile: dest,
   };
 
   const endpoint = path.relative(basedir, dest);
@@ -84,7 +85,9 @@ app.get('/system.js', (req, res) => {
 
 app.get('/system-config.js', (req, res) => {
   const packageConfigs = packages.reduce((acc, name) => {
-    acc[name] = { main: 'index.js' };
+    const root = path.join(packagesPath, name);
+    const rootRelative = path.relative(basedir, root);
+    acc[rootRelative] = { main: `${name}.bundle.js` };
     return acc;
   }, {});
 
@@ -94,7 +97,7 @@ app.get('/system-config.js', (req, res) => {
   const map = {
     'systemjs-hmr': path.relative(basedir, hmr),
     'systemjs-hot-reloader': path.relative(basedir, hotReloader),
-    '@annotator': '',
+    '@annotator': 'packages',
     '@hot': '@empty',
   };
 
