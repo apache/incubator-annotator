@@ -32,6 +32,7 @@
     "systemjs-plugin-babel": "^0.0.21"
   },
   "scripts": {
+    "bootstrap": "lerna bootstrap --hoist",
     "serve": "node-esml ./scripts/serve"
   }
 }
