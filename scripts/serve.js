@@ -93,10 +93,12 @@ app.get('/system-config.js', (req, res) => {
 
   const hmr = resolve.sync('systemjs-hmr', { basedir });
   const hotReloader = resolve.sync('systemjs-hot-reloader', { basedir });
+  const webcomponents = resolve.sync('webcomponents.js', { basedir });
 
   const map = {
     'systemjs-hmr': path.relative(basedir, hmr),
     'systemjs-hot-reloader': path.relative(basedir, hotReloader),
+    'webcomponents.js': path.relative(basedir, webcomponents),
     '@annotator': 'packages',
     '@hot': '@empty',
   };

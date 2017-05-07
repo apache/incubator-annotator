@@ -29,7 +29,8 @@
     "source-map-support": "^0.4.15",
     "systemjs": "^0.20.12",
     "systemjs-hot-reloader": "^1.1.0",
-    "systemjs-plugin-babel": "^0.0.21"
+    "systemjs-plugin-babel": "^0.0.21",
+    "webcomponents.js": "^0.7.24"
   },
   "scripts": {
     "bootstrap": "lerna bootstrap --hoist",

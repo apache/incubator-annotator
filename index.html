@@ -11,12 +11,12 @@
     <script src="system.js"></script>
     <script src="system-config.js"></script>
     <script>
+      System.import('webcomponents.js');
       System.import('systemjs-hot-reloader').then((connect) => {
         connect({ host: window.location.origin });
       });
     </script>
+    <link href="https://annotator.apache.org" rel="import" onload="render()">
   </head>
-  <body>
-    Welcome to Apache Annotator (incubating).
-  </body>
+  <body></body>
 </html>

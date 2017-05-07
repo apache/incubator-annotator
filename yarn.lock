@@ -3401,6 +3401,10 @@ wcwidth@^1.0.0:
   dependencies:
     defaults "^1.0.3"
 
+webcomponents.js@^0.7.24:
+  version "0.7.24"
+  resolved "https://registry.yarnpkg.com/webcomponents.js/-/webcomponents.js-0.7.24.tgz#2116fbfa1468ec416a7befdaa333e1d118f69c04"
+
 which-module@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/which-module/-/which-module-1.0.0.tgz#bba63ca861948994ff307736089e3b96026c2a4f"
