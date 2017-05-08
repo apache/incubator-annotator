@@ -28,7 +28,8 @@ import babel from 'rollup-plugin-babel';
 import commonjs from 'rollup-plugin-commonjs';
 import nodeResolve from 'rollup-plugin-node-resolve';
 
-const __filename = url.parse(__moduleName).pathname;
+const __moduleUrl = new url.URL(__moduleName);
+const __filename = fs.realpathSync(__moduleUrl);
 const __dirname = path.dirname(__filename);
 
 const basedir = path.resolve(__dirname, '..');
