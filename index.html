@@ -15,8 +15,20 @@
       System.import('systemjs-hot-reloader').then((connect) => {
         connect({ host: window.location.origin });
       });
+
+      /**
+       * Wipe the document body, replacing it with the import.
+       */
+      function render() {
+        requestAnimationFrame(() => {
+          const link = document.querySelector('[rel=import]');
+          const { body, documentElement } = document;
+          const clone = link.import.body.cloneNode(true);
+          documentElement.replaceChild(clone, body);
+        });
+      }
     </script>
-    <link href="https://annotator.apache.org" rel="import">
+    <link href="https://annotator.apache.org" rel="import" onload="render()">
   </head>
   <body></body>
 </html>
