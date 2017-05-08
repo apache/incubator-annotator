@@ -3,3 +3,10 @@ Copyright 2016-2017 The Apache Software Foundation
 
 This product includes software developed at The Apache Software
 Foundation (http://www.apache.org/).
+
+This product also includes the following third-party components:
+
+ * fragment.pegjs (https://github.com/w3c/web-annotation)
+
+   Copyright © 2016 World Wide Web Consortium, (MIT, ERCIM, Keio, Beihang).
+   http://www.w3.org/Consortium/Legal/2015/doc-license

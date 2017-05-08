@@ -27,6 +27,7 @@ import rollup from 'rollup';
 import babel from 'rollup-plugin-babel';
 import commonjs from 'rollup-plugin-commonjs';
 import nodeResolve from 'rollup-plugin-node-resolve';
+import pegjs from 'rollup-plugin-pegjs';
 
 const __moduleUrl = new url.URL(__moduleName);
 const __filename = fs.realpathSync(__moduleUrl);
@@ -46,7 +47,11 @@ packages.forEach((name) => {
 
   const jail = path.join(root, 'node_modules');
   const babelOptions = {
-    exclude: [`${jail}/**`],
+    include: ['*.js'],
+    exclude: [
+      '*',
+      `${jail}/**`,
+    ],
     runtimeHelpers: true,
   };
 
@@ -54,6 +59,7 @@ packages.forEach((name) => {
     babel(babelOptions),
     commonjs(),
     nodeResolve({ jail }),
+    pegjs(),
   ];
 
   const options = { entry, external, plugins };
