@@ -1,6 +1,6 @@
 {
-  "name": "@annotator/fragment-parser",
-  "description": "Parse Web Annotation URI fragments.",
+  "name": "@annotator/fragment-identifier",
+  "description": "Convert to and from Web Annotation fragment identifiers.",
   "author": "Apache Software Foundation",
   "license": "Apache-2.0",
   "homepage": "https://annotator.apache.org",
