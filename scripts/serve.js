@@ -39,19 +39,16 @@ const packages = fs.readdirSync(packagesPath);
 
 const app = express();
 
-packages.forEach((name) => {
+packages.forEach(name => {
   const root = path.join(packagesPath, name);
   const entry = path.join(root, 'index.js');
   const dest = path.join(root, `${name}.bundle.js`);
-  const external = (id) => /^@(annotator|hot)/.test(id);
+  const external = id => /^@(annotator|hot)/.test(id);
 
   const jail = path.join(root, 'node_modules');
   const babelOptions = {
     include: ['*.js'],
-    exclude: [
-      '*',
-      `${jail}/**`,
-    ],
+    exclude: ['*', `${jail}/**`],
     runtimeHelpers: true,
   };
 
@@ -71,16 +68,16 @@ packages.forEach((name) => {
 
   const endpoint = path.relative(basedir, dest);
   app.get(`/${endpoint}`, (req, res) => {
-    rollup.rollup(options)
-      .then((bundle) => {
+    rollup
+      .rollup(options)
+      .then(bundle => {
         const result = bundle.generate(generateOptions);
         const { code, map } = result;
         res.send(`${code}\n//# sourceMappingURL=${map.toUrl()}`);
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
-      })
-    ;
+      });
   });
 });
 
@@ -118,7 +115,7 @@ app.get('/system-config.js', (req, res) => {
 
 app.use(express.static(basedir));
 
-const server = app.listen(8080, (err) => {
+const server = app.listen(8080, err => {
   if (err) return console.log(err);
   chokidar({
     app: server,

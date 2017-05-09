@@ -24,15 +24,17 @@ export const { SyntaxError, parse } = fragment;
  * @return {string}
  */
 export function stringify(resource) {
-  const data = Object.keys(resource).map((key) => {
-    let value = resource[key];
-    if (value instanceof Object) value = value.valueOf();
-    if (value instanceof Object) {
-      value = stringify(value);
-      return `${encodeURIComponent(key)}=${value}`;
-    }
-    return [key, value].map(encodeURIComponent).join('=');
-  }).join(',');
+  const data = Object.keys(resource)
+    .map(key => {
+      let value = resource[key];
+      if (value instanceof Object) value = value.valueOf();
+      if (value instanceof Object) {
+        value = stringify(value);
+        return `${encodeURIComponent(key)}=${value}`;
+      }
+      return [key, value].map(encodeURIComponent).join('=');
+    })
+    .join(',');
 
   if (/Selector$/.test(resource.type)) return `selector(${data})`;
   if (/State$/.test(resource.type)) return `state(${data})`;
