@@ -1,12 +1,31 @@
 {
   "root": true,
+  "env": {
+    "browser": true,
+    "es6": true
+  },
   "extends": [
-    "babel",
+    "eslint:recommended",
     "google",
-    "plugin:flowtype/recommended"
+    "plugin:flowtype/recommended",
+    "prettier",
+    "prettier/flowtype"
   ],
+  "parserOptions": {
+    "ecmaVersion": 2017,
+    "sourceType": "module"
+  },
   "plugins": [
-    "flowtype"
+    "flowtype",
+    "prettier"
   ],
-  "rules": {}
+  "rules": {
+    "prettier/prettier": [
+      "error",
+      {
+        "singleQuote": true,
+        "trailingComma": "es5"
+      }
+    ]
+  }
 }

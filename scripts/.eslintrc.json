@@ -1,7 +1,13 @@
 {
+  "env": {
+    "node": true
+  },
   "globals": {
     "__dirname": false,
     "__filname": false,
     "__moduleName": true
+  },
+  "rules": {
+    "no-console": 0
   }
 }

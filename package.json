@@ -17,10 +17,15 @@
     "eslint": "^3.19.0",
     "eslint-config-babel": "^6.0.0",
     "eslint-config-google": "^0.7.1",
+    "eslint-config-prettier": "^2.0.0",
     "eslint-plugin-flowtype": "^2.32.1",
+    "eslint-plugin-prettier": "^2.0.1",
     "express": "^4.15.2",
+    "husky": "^0.13.3",
     "lerna": "^2.0.0-rc.4",
+    "lint-staged": "^3.4.1",
     "node-es-module-loader": "^0.3.8",
+    "prettier": "^1.3.1",
     "resolve": "^1.3.3",
     "rollup": "^0.41.6",
     "rollup-plugin-babel": "^2.7.1",
@@ -35,6 +40,13 @@
   },
   "scripts": {
     "bootstrap": "lerna bootstrap --hoist",
+    "precommit": "lint-staged",
     "serve": "node-esml ./scripts/serve"
+  },
+  "lint-staged": {
+    "*.js": [
+      "eslint --fix",
+      "git add"
+    ]
   }
 }
