@@ -24,7 +24,6 @@ import json from 'core-js/library/fn/json';
 import resolve from 'resolve';
 
 import rollup from 'rollup';
-import babel from 'rollup-plugin-babel';
 import commonjs from 'rollup-plugin-commonjs';
 import nodeResolve from 'rollup-plugin-node-resolve';
 import pegjs from 'rollup-plugin-pegjs';
@@ -44,20 +43,7 @@ packages.forEach(name => {
   const entry = path.join(root, 'index.js');
   const dest = path.join(root, `${name}.bundle.js`);
   const external = id => /^@(annotator|hot)/.test(id);
-
-  const jail = path.join(root, 'node_modules');
-  const babelOptions = {
-    include: ['*.js'],
-    exclude: ['*', `${jail}/**`],
-    runtimeHelpers: true,
-  };
-
-  const plugins = [
-    babel(babelOptions),
-    commonjs(),
-    nodeResolve({ jail }),
-    pegjs(),
-  ];
+  const plugins = [commonjs(), nodeResolve(), pegjs()];
 
   const options = { entry, external, plugins };
   const generateOptions = {
