@@ -40,8 +40,8 @@ const app = express();
 
 packages.forEach(name => {
   const root = path.join(packagesPath, name);
+
   const entry = path.join(root, 'index.js');
-  const dest = path.join(root, `${name}.bundle.js`);
   const external = id => /^@(annotator|hot)/.test(id);
   const plugins = [commonjs(), nodeResolve(), pegjs()];
 
@@ -49,11 +49,10 @@ packages.forEach(name => {
   const generateOptions = {
     format: 'amd',
     sourceMap: true,
-    sourceMapFile: dest,
   };
 
-  const endpoint = `packages/${name}/${name}.bundle.js`;
-  app.get(`/${endpoint}`, (req, res) => {
+  const endpoint = `/packages/${name}/index.js`;
+  app.get(endpoint, (req, res) => {
     rollup
       .rollup(options)
       .then(bundle => {
@@ -75,7 +74,7 @@ app.get('/system.js', (req, res) => {
 
 app.get('/system-config.js', (req, res) => {
   const packageConfigs = packages.reduce((acc, name) => {
-    acc[`packages/${name}`] = { main: `${name}.bundle.js` };
+    acc[`packages/${name}`] = { main: 'index.js' };
     return acc;
   }, {});
 
@@ -104,7 +103,7 @@ const server = app.listen(8080, err => {
   chokidar({
     app: server,
     path: packagesPath,
-    relativeTo: packagesPath,
+    relativeTo: basedir,
   });
   console.log('Development server running at http://localhost:8080');
 });
