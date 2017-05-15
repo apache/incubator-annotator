@@ -66,7 +66,7 @@ packages.forEach(name => {
     sourceMapFile: dest,
   };
 
-  const endpoint = path.relative(basedir, dest);
+  const endpoint = `packages/${name}/${name}.bundle.js`;
   app.get(`/${endpoint}`, (req, res) => {
     rollup
       .rollup(options)
@@ -89,25 +89,23 @@ app.get('/system.js', (req, res) => {
 
 app.get('/system-config.js', (req, res) => {
   const packageConfigs = packages.reduce((acc, name) => {
-    const root = path.join(packagesPath, name);
-    const rootRelative = path.relative(basedir, root);
-    acc[rootRelative] = { main: `${name}.bundle.js` };
+    acc[`packages/${name}`] = { main: `${name}.bundle.js` };
     return acc;
   }, {});
 
-  const hmr = resolve.sync('systemjs-hmr', { basedir });
-  const hotReloader = resolve.sync('systemjs-hot-reloader', { basedir });
-  const webcomponents = resolve.sync('webcomponents.js', { basedir });
-
   const map = {
-    'systemjs-hmr': path.relative(basedir, hmr),
-    'systemjs-hot-reloader': path.relative(basedir, hotReloader),
-    'webcomponents.js': path.relative(basedir, webcomponents),
+    'systemjs-hmr': 'node_modules/systemjs-hmr',
+    'systemjs-hot-reloader': 'node_modules/systemjs-hot-reloader',
+    'webcomponents.js': 'node_modules/webcomponents.js',
     '@annotator': 'packages',
     '@hot': '@empty',
   };
 
-  const systemConfig = json.stringify({ map, packages: packageConfigs });
+  const systemConfig = json.stringify({
+    map,
+    packages: packageConfigs,
+    packageConfigPaths: ['node_modules/*/package.json'],
+  });
 
   res.setHeader('Content-Type', 'application/json');
   res.send(`SystemJS.config(${systemConfig})`);
