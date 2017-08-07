@@ -1,0 +1,110 @@
+{
+    "name": "apache/annotator",
+    "description": "Apache Annotator provides annotation enabling code for browsers, servers, and humans.",
+    "authors": [
+        {
+            "name": "Alex Kessinger",
+            "email": "alex@mixedmedialabs.com"
+        },
+        {
+            "name": "Aron Carroll",
+            "email": "hello@aroncarroll.com"
+        },
+        {
+            "name": "Benjamin Young",
+            "email": "byoung@bigbluehat.com"
+        },
+        {
+            "name": "Bianca Gandolfo",
+            "email": "gandolfo.bianca@gmail.com"
+        },
+        {
+            "name": "Brian Long",
+            "email": "brian.b.long@gmail.com"
+        },
+        {
+            "name": "Chris Nitchie",
+            "email": "chris@nitchie.com"
+        },
+        {
+            "name": "Daniel Cebrián Robles",
+            "email": "danielcebrianr@gmail.com"
+        },
+        {
+            "name": "Deds Castillo",
+            "email": "dedsoralive@gmail.com"
+        },
+        {
+            "name": "Deepak Thukral",
+            "email": "iapain@gmail.com"
+        },
+        {
+            "name": "Ed Summers",
+            "email": "ehs@pobox.com"
+        },
+        {
+            "name": "Eric Collins",
+            "email": "ecollins@flatworldknowledge.com"
+        },
+        {
+            "name": "Fernano Aramendi",
+            "email": "fernando@devartis.com"
+        },
+        {
+            "name": "Greg Bone",
+            "email": "gbone24@gmail.com"
+        },
+        {
+            "name": "Jared Hirsch",
+            "email": "ohai@6a68.net"
+        },
+        {
+            "name": "Jean-Bernard Marcon",
+            "email": "goofy@babelzilla.org"
+        },
+        {
+            "name": "Kevin Tran",
+            "email": "hekevintran@gmail.com"
+        },
+        {
+            "name": "Kristof Csillag",
+            "email": "csillag@hypothes.is"
+        },
+        {
+            "name": "Matthew Flaschen",
+            "email": "mflaschen@wikimedia.org"
+        },
+        {
+            "name": "Michael Donohoe",
+            "email": "donohoe@gmail.com"
+        },
+        {
+            "name": "Mikhail Sobolev",
+            "email": "mss@mawhrin.net"
+        },
+        {
+            "name": "Nick Stenning",
+            "email": "nick@whiteink.com"
+        },
+        {
+            "name": "Randall Leeds",
+            "email": "tilgovi@hypothes.is"
+        },
+        {
+            "name": "Rufus Pollock",
+            "email": "rufus.pollock@okfn.org"
+        }
+    ],
+    "keywords": [
+        "annotation",
+        "annotator"
+    ],
+    "type": "library",
+    "license": [
+        "Apache License 2.0",
+    ],
+    "minimum-stability": "stable",
+    "homepage": "http://annotator.apache.org/",
+    "require": {
+    }
+}
