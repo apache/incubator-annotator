@@ -8,45 +8,31 @@
     "type": "git",
     "url": "https://git-wip-us.apache.org/repos/asf/incubator-annotator.git"
   },
-  "devDependencies": {
-    "babel-eslint": "^7.2.3",
-    "babel-plugin-transform-runtime": "^6.23.0",
-    "babel-preset-flow": "^6.23.0",
-    "chokidar-socket-emitter": "^0.6.0",
-    "core-js": "^2.4.1",
-    "eslint": "^3.19.0",
-    "eslint-config-babel": "^6.0.0",
-    "eslint-config-google": "^0.7.1",
-    "eslint-config-prettier": "^2.0.0",
-    "eslint-plugin-flowtype": "^2.32.1",
-    "eslint-plugin-prettier": "^2.0.1",
-    "express": "^4.15.2",
-    "husky": "^0.13.3",
-    "lerna": "^2.0.0-rc.4",
-    "lint-staged": "^3.4.1",
-    "node-es-module-loader": "^0.3.8",
-    "prettier": "^1.3.1",
-    "resolve": "^1.3.3",
-    "rollup": "^0.41.6",
-    "rollup-plugin-babel": "^2.7.1",
-    "rollup-plugin-commonjs": "^8.0.2",
-    "rollup-plugin-node-resolve": "^3.0.0",
-    "rollup-plugin-pegjs": "^2.1.3",
-    "source-map-support": "^0.4.15",
-    "systemjs": "^0.20.12",
-    "systemjs-hot-reloader": "^1.1.0",
-    "systemjs-plugin-babel": "^0.0.21",
-    "webcomponents.js": "^0.7.24"
-  },
   "scripts": {
-    "bootstrap": "lerna bootstrap --hoist",
+    "lint": "eslint . --ext js,mjs --fix --quiet",
     "precommit": "lint-staged",
-    "serve": "node-esml ./scripts/serve"
+    "prepare": "lerna bootstrap",
+    "start": "node -r @std/esm bin/start.mjs"
+  },
+  "devDependencies": {
+    "@std/esm": "^0.5.0",
+    "eslint": "^4.4.0",
+    "eslint-config-google": "^0.9.0",
+    "eslint-config-prettier": "^2.0.0",
+    "eslint-import-resolver-webpack": "^0.8.0",
+    "eslint-plugin-import": "^2.7.0",
+    "eslint-plugin-prettier": "^2.0.0",
+    "husky": "^0.14.0",
+    "lerna": "^2.0.0",
+    "lint-staged": "^4.0.0",
+    "prettier": "^1.5.0",
+    "webpack": "^3.5.0",
+    "webpack-dev-server": "^2.7.0"
   },
   "lint-staged": {
-    "*.js": [
-      "eslint --fix",
-      "git add"
-    ]
+    "*.{js,mjs}": "eslint"
+  },
+  "@std/esm": {
+    "cjs": true
   }
 }

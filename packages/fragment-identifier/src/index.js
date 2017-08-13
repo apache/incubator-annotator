@@ -1,4 +1,3 @@
-// @flow
 /**
  * @license
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -14,9 +13,7 @@
  * the License.
  */
 
-import fragment from './fragment.pegjs';
-
-export const { SyntaxError, parse } = fragment;
+export { SyntaxError, parse } from './fragment';
 
 /**
  * Convert a Selector or State into a fragment identifier string.

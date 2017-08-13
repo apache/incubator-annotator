@@ -1,32 +1,12 @@
 <!doctype html>
 <html>
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta name="author" content="Apache Software Foundation">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Apache Annotator Incubating</title>
-    <script src="system.js"></script>
-    <script src="system-config.js"></script>
-    <script>
-      System.import('webcomponents.js');
-      System.import('systemjs-hot-reloader').then((connect) => {
-        connect({ host: window.location.origin });
-      });
-
-      /**
-       * Wipe the document body, replacing it with the import.
-       */
-      function render() {
-        requestAnimationFrame(() => {
-          const link = document.querySelector('[rel=import]');
-          const { body, documentElement } = document;
-          const clone = link.import.body.cloneNode(true);
-          documentElement.replaceChild(clone, body);
-        });
-      }
-    </script>
-    <link href="https://annotator.apache.org" rel="import" onload="render()">
+    <meta charset="UTF-8">
+    <title>Apache Annotator (incubating)</title>
   </head>
-  <body></body>
+  <body>
+    <h1>Welcome to Apache Annotator (incubating)</h1>
+    <h2>Getting Started</h2>
+    Visit the <a href="/demo/">demonstration page</a>.
+  </body>
 </html>

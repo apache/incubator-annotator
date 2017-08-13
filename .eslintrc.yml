@@ -1,0 +1,32 @@
+root: true
+
+env:
+  browser: true
+  es6: true
+
+extends:
+  - eslint:recommended
+  - plugin:import/recommended
+  - google
+  - prettier
+
+parserOptions:
+  ecmaVersion: 2017
+  sourceType: module
+
+plugins:
+  - import
+  - prettier
+
+rules:
+  import/order: error
+  import/unambiguous: error
+  prettier/prettier:
+    - error
+    - singleQuote: true
+      trailingComma: all
+
+settings:
+  import/resolver:
+    node:
+      extensions: ['.mjs', '.js']
