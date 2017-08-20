@@ -8,5 +8,13 @@
     "type": "git",
     "url": "https://git-wip-us.apache.org/repos/asf/incubator-annotator.git"
   },
-  "version": "0.0.0"
+  "version": "0.0.0",
+  "main": "lib/index.js",
+  "module": "src/index.js",
+  "scripts": {
+    "prepublish": "pegjs --format es src/fragment.pegjs"
+  },
+  "devDependencies": {
+    "pegjs": "pegjs/pegjs.git"
+  }
 }

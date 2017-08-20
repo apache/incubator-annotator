@@ -9,13 +9,20 @@
 
 ## Development
 
-Install [yarn](https://yarnpkg.com/en/docs/install).
+Requirements:
+
+- [node](https://nodejs.org) v8.4.0+
+- [npm](https://www.npmjs.com/) v5.0.0+
+
+Setup:
 
 ```sh
-$ yarn # installs top level dependencies
-$ yarn run bootstrap # manages dependencies referenced in `packages/`
-$ yarn run serve # serves the demo at http://localhost:8080/
+$ npm install
+$ npm start
 ```
+
+Continue reading the [development documentation](http://localhost:8080) in your
+browser.
 
 # License
 
