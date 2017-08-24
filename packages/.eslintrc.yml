@@ -1,3 +1,5 @@
+parser: babel-eslint
+
 parserOptions:
   ecmaVersion: 2017
   ecmaFeatures:
@@ -8,6 +10,3 @@ rules:
     - error
     - singleQuote: true
       trailingComma: all
-
-settings:
-  import/resolver: webpack

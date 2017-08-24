@@ -11,8 +11,10 @@ extends:
   - prettier
 
 parserOptions:
-  ecmaVersion: 2017
-  sourceType: module
+  ecmaVersion: 6
+  ecmaFeatures:
+    experimentalObjectRestSpread: false
+    globalReturn: false
 
 plugins:
   - import
@@ -21,12 +23,22 @@ plugins:
 rules:
   import/order: error
   import/unambiguous: error
+  no-restricted-syntax:
+    - error
+    - BindExpression
+    - Decorator
+    - DoExpression
+    - ExportDefaultSpecifier
+    - ExportNamespaceSpecifier
+    - TypeAnnotation
+    - JSXElement
   prettier/prettier:
     - error
     - singleQuote: true
-      trailingComma: all
+      trailingComma: es5
 
 settings:
-  import/resolver:
-    node:
-      extensions: ['.mjs', '.js']
+  import/extensions: ['.mjs', '.js']
+  import/parsers:
+    babel-eslint: ['.js']
+    espree: ['.mjs']

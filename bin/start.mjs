@@ -15,8 +15,8 @@
 
 import Webpack from 'webpack';
 import WebpackDevServer from 'webpack-dev-server';
-import createDomain from 'webpack-dev-server/lib/util/createDomain';
-import config from '../webpack.config';
+import createDomain from 'webpack-dev-server/lib/util/createDomain.js';
+import config from '../webpack.config.js';
 
 const { devServer } = config;
 WebpackDevServer.addDevServerEntrypoints(config, devServer);

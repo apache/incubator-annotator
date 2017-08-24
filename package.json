@@ -14,8 +14,17 @@
     "prepare": "lerna bootstrap",
     "start": "node -r @std/esm bin/start.mjs"
   },
+  "dependencies": {},
   "devDependencies": {
-    "@std/esm": "^0.5.0",
+    "@std/esm": "^0.5.1",
+    "babel-core": "^6.26.0",
+    "babel-eslint": "^7.2.3",
+    "babel-loader": "^7.1.2",
+    "babel-plugin-syntax-dynamic-import": "^6.18.0",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-env": "^1.6.0",
+    "babel-preset-stage-3": "^6.24.1",
     "eslint": "^4.4.0",
     "eslint-config-google": "^0.9.0",
     "eslint-config-prettier": "^2.0.0",
