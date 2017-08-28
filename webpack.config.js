@@ -31,6 +31,39 @@ module.exports = {
     hot: true,
   },
   devtool: 'inline-source-map',
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            plugins: [
+              // Support webpack code splitting.
+              'syntax-dynamic-import',
+              // Class properties are stage 3; the preset is out of date.
+              'transform-class-properties',
+              // Add polyfills without pollution and externalize helpers.
+              'transform-runtime',
+            ],
+            presets: [
+              [
+                'env',
+                {
+                  modules: false,
+                  targets: {
+                    browsers: ['last 2 versions'],
+                  },
+                },
+              ],
+              'stage-3',
+            ],
+          },
+        },
+      },
+    ],
+  },
   resolve: {
     alias: {
       '@annotator': path.resolve(__dirname, 'packages/'),

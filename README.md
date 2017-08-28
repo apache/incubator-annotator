@@ -11,8 +11,8 @@
 
 Requirements:
 
-- [node](https://nodejs.org) v8.4.0+
-- [npm](https://www.npmjs.com/) v5.0.0+
+- [node](https://nodejs.org) >= 6.x
+- [npm](https://www.npmjs.com/) >= 5.x
 
 Setup:
 
