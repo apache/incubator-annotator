@@ -16,5 +16,8 @@
   },
   "devDependencies": {
     "pegjs": "pegjs/pegjs.git"
+  },
+  "publicConfig": {
+    "access": "public"
   }
 }
