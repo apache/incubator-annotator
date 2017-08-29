@@ -1,16 +1,16 @@
 {
   "name": "@annotator/annotator",
-  "author": "Apache Software Foundation",
   "description": "Apache Annotator provides annotation enabling code for browsers, servers, and humans.",
-  "license": "Apache-2.0",
   "homepage": "https://annotator.apache.org",
+  "license": "Apache-2.0",
+  "author": "Apache Software Foundation",
   "repository": {
     "type": "git",
     "url": "https://git-wip-us.apache.org/repos/asf/incubator-annotator.git"
   },
   "scripts": {
-    "lint": "eslint . --ext js,mjs --fix --quiet",
     "precommit": "lint-staged",
+    "lint": "eslint . --ext js,mjs --fix --quiet",
     "prepare": "lerna bootstrap",
     "start": "node -r @std/esm bin/start.mjs"
   },
