@@ -16,7 +16,7 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@std/esm": "^0.5.1",
+    "@std/esm": "^0.6.0",
     "babel-core": "^6.26.0",
     "babel-eslint": "^7.2.3",
     "babel-loader": "^7.1.2",
