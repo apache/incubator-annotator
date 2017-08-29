@@ -1,6 +1,6 @@
-parser: babel-eslint
+env:
+  browser: true
 
 parserOptions:
-  ecmaVersion: 2017
   ecmaFeatures:
     experimentalObjectRestSpread: true

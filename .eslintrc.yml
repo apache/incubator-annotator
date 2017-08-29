@@ -1,9 +1,5 @@
 root: true
 
-env:
-  browser: true
-  es6: true
-
 extends:
   - eslint:recommended
   - plugin:import/recommended
@@ -11,7 +7,7 @@ extends:
   - prettier
 
 parserOptions:
-  ecmaVersion: 6
+  ecmaVersion: 2017
   ecmaFeatures:
     experimentalObjectRestSpread: false
     globalReturn: false
@@ -32,6 +28,10 @@ rules:
     - ExportNamespaceSpecifier
     - TypeAnnotation
     - JSXElement
+  node/no-unsupported-features:
+    - error
+    - ignores:
+        - modules
   prettier/prettier:
     - error
     - singleQuote: true
