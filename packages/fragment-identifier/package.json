@@ -9,7 +9,7 @@
   "module": "src/index.js",
   "repository": {
     "type": "git",
-    "url": "https://git-wip-us.apache.org/repos/asf/incubator-annotator.git"
+    "url": "https://gitbox.apache.org/repos/asf/incubator-annotator.git"
   },
   "scripts": {
     "prepublish": "pegjs --format es src/fragment.pegjs"
