@@ -53,6 +53,6 @@ document.addEventListener('DOMContentLoaded', () => {
 if (module.hot) {
   module.hot.accept(
     ['@annotator/fragment-identifier', './mark.js', './search.js'],
-    refresh,
+    refresh
   );
 }
