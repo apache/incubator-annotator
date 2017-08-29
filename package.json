@@ -40,8 +40,5 @@
   },
   "lint-staged": {
     "*.{js,mjs}": "eslint"
-  },
-  "@std/esm": {
-    "cjs": true
   }
 }
