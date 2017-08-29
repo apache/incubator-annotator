@@ -53,7 +53,7 @@ module.exports = {
                 {
                   modules: false,
                   targets: {
-                    browsers: ['last 2 versions'],
+                    browsers: ['defaults'],
                   },
                 },
               ],
