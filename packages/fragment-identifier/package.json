@@ -12,7 +12,7 @@
     "url": "https://gitbox.apache.org/repos/asf/incubator-annotator.git"
   },
   "scripts": {
-    "prepublish": "pegjs --format es src/fragment.pegjs"
+    "prepare": "pegjs --format es src/fragment.pegjs"
   },
   "devDependencies": {
     "pegjs": "pegjs/pegjs.git"
