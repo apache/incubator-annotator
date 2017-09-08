@@ -15,7 +15,7 @@
     "prepare": "pegjs --format es src/fragment.pegjs"
   },
   "devDependencies": {
-    "pegjs": "pegjs/pegjs.git"
+    "pegjs-dev": "0.10.0-142"
   },
   "publicConfig": {
     "access": "public"
