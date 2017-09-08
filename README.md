@@ -12,13 +12,13 @@
 Requirements:
 
 - [node](https://nodejs.org) >= 6.x
-- [npm](https://www.npmjs.com/) >= 5.x
+- [yarn](https://www.yarnpkg.com/) >= 1.x
 
 Setup:
 
 ```sh
-$ npm install
-$ npm start
+$ yarn install
+$ yarn start
 ```
 
 Continue reading the [development documentation](http://localhost:8080) in your

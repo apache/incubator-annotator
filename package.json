@@ -1,5 +1,6 @@
 {
   "name": "@annotator/annotator",
+  "private": true,
   "description": "Apache Annotator provides annotation enabling code for browsers, servers, and humans.",
   "homepage": "https://annotator.apache.org",
   "license": "Apache-2.0",
@@ -11,7 +12,7 @@
   "scripts": {
     "precommit": "lint-staged",
     "lint": "eslint . --ext js,mjs --fix --quiet",
-    "prepare": "lerna bootstrap",
+    "prepare": "lerna run prepare",
     "start": "node -r @std/esm bin/start.mjs"
   },
   "dependencies": {},
@@ -33,16 +34,20 @@
     "eslint-plugin-node": "^5.1.1",
     "eslint-plugin-prettier": "^2.0.0",
     "husky": "^0.14.0",
-    "lerna": "^2.0.0",
+    "lerna": "^2.1.0",
     "lint-staged": "^4.0.0",
     "prettier": "^1.5.0",
     "webpack": "^3.5.0",
     "webpack-dev-server": "^2.7.0"
   },
   "engines": {
-    "node": ">=6.0.0"
+    "node": ">=6.0.0",
+    "yarn": "^1.0.0"
   },
   "lint-staged": {
     "*.{js,mjs}": "eslint"
-  }
+  },
+  "workspaces": [
+    "packages/*"
+  ]
 }
