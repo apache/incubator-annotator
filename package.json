@@ -13,7 +13,7 @@
     "precommit": "lint-staged",
     "lint": "eslint . --ext js,mjs --fix --quiet",
     "prepare": "lerna run prepare",
-    "start": "node -r @std/esm bin/start.mjs"
+    "start": "webpack-dev-server"
   },
   "dependencies": {},
   "devDependencies": {
