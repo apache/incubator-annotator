@@ -1,9 +1,0 @@
-env:
-  browser: true
-
-parserOptions:
-  ecmaFeatures:
-    experimentalObjectRestSpread: true
-
-settings:
-  import/resolver: webpack

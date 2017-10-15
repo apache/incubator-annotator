@@ -1,19 +1,28 @@
 root: true
 
+env:
+  shared-node-browser: true
+
 extends:
   - eslint:recommended
   - plugin:import/recommended
   - google
   - prettier
 
+globals:
+  global: true
+
+parser: babel-eslint
+
 parserOptions:
   ecmaVersion: 2017
   ecmaFeatures:
-    experimentalObjectRestSpread: false
+    experimentalObjectRestSpread: true
     globalReturn: false
 
 plugins:
   - import
+  - node
   - prettier
 
 rules:
@@ -28,10 +37,6 @@ rules:
     - ExportNamespaceSpecifier
     - TypeAnnotation
     - JSXElement
-  node/no-unsupported-features:
-    - error
-    - ignores:
-        - modules
   prettier/prettier:
     - error
     - singleQuote: true
@@ -39,6 +44,23 @@ rules:
 
 settings:
   import/extensions: ['.mjs', '.js']
-  import/parsers:
-    babel-eslint: ['.js']
-    espree: ['.mjs']
+
+overrides:
+  - files: ['**/*.mjs']
+    parser: espree
+    parserOptions:
+      ecmaFeatures:
+        experimentalObjectRestSpread: false
+    plugins:
+      - node
+    rules:
+      no-console: off
+      node/no-unsupported-features:
+        - error
+        - ignores:
+            - modules
+  - files: ['demo/**/*.js']
+    env:
+      browser: true
+    settings:
+      import/resolver: webpack
