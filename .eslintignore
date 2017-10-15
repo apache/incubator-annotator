@@ -1,2 +1,2 @@
 /packages/*/node_modules/*
-/packages/fragment-identifier/src/fragment.js
+/packages/fragment-identifier/fragment.js
