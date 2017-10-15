@@ -17,7 +17,7 @@
   "devDependencies": {
     "pegjs-dev": "0.10.0-142"
   },
-  "publicConfig": {
+  "publishConfig": {
     "access": "public"
   }
 }
