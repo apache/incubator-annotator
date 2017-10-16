@@ -1,6 +1,7 @@
 root: true
 
 env:
+  es6: true
   shared-node-browser: true
 
 extends:
