@@ -36,28 +36,4 @@ export function createSelectorCreator(memoize, ...memoizeOptions) {
 
 export const createSelector = createSelectorCreator(defaultMemoize);
 
-// DOM SELECTORS BELOW
-
-function domEqualityCheck(a, b) {
-  if (a !== b) return false;
-  // TODO:
-  // - weakref the node
-  // - attach mutation listener
-  // - invalidate on mutations
-  return true;
-}
-
-const createDomSelector = createSelectorCreator(
-  defaultMemoize,
-  domEqualityCheck
-);
-
-export function createCssSelector(selectors) {
-  const cssSelector = selectors.map(({ value }) => value).join(',');
-
-  async function* exec(context) {
-    yield* context.querySelectorAll(cssSelector);
-  }
-
-  return createDomSelector(exec);
-}
+export { defaultMemoize } from 'reselect';
