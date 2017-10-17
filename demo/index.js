@@ -50,6 +50,11 @@ document.addEventListener('DOMContentLoaded', () => {
   refresh();
 });
 
+const editable = document.getElementById('corpus');
+editable.addEventListener('input', function() {
+  refresh();
+});
+
 if (module.hot) {
   module.hot.accept(
     ['@annotator/fragment-identifier', './mark.js', './search.js'],
