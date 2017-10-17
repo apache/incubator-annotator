@@ -31,13 +31,13 @@ const input = () => {
   }
 };
 
-const refresh = () => {
+const refresh = async () => {
   corpus.innerHTML = corpus.innerText;
   const identifier = window.location.hash.slice(1);
   if (!identifier) return;
   try {
     const { selector } = fragment.parse(identifier);
-    const range = search(corpus, selector);
+    const range = await search(corpus, selector);
     if (range) mark(range);
   } catch (e) {
     if (e instanceof fragment.SyntaxError) return;

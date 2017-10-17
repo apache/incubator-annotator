@@ -13,28 +13,28 @@
  * the License.
  */
 
+import { createAnySelector } from '@annotator/any';
+
 /**
  * Locate a selector.
  * @param {Node} root node
  * @param {Selector} selector
  * @return {Range}
  */
-export default function search(root, selector) {
-  const { type, exact } = selector;
-
-  if (!(type == 'TextQuoteSelector' && exact)) return;
+export default search;
+async function search(root, selector) {
+  const selectorFunc = createAnySelector([selector]);
 
   for (const node of nodeIterator(root)) {
     if (!node.nodeValue) continue;
 
-    const index = node.nodeValue.indexOf(exact);
-    if (index == -1) continue;
-
-    const range = document.createRange();
-    range.setStart(node, index);
-    range.setEnd(node, index + exact.length);
-
-    return range;
+    const matches = selectorFunc(node.nodeValue);
+    for await (let match of matches) {
+      const range = document.createRange();
+      range.setStart(node, match.index);
+      range.setEnd(node, match.index + match[0].length);
+      return range;
+    }
   }
 }
 
