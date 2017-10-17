@@ -19,6 +19,8 @@ import {
   defaultMemoize,
 } from 'reselect';
 
+const identity = a => a;
+
 export function createSelectorCreator(memoize, ...memoizeOptions) {
   const createSelector = _createSelectorCreator(memoize, ...memoizeOptions);
   return (...funcs) => {
@@ -28,11 +30,13 @@ export function createSelectorCreator(memoize, ...memoizeOptions) {
       return new AsyncTee(iterable);
     };
     funcs.push(wrapperFunc);
-    return createSelector(...funcs);
+    return createSelector(identity, ...funcs);
   };
 }
 
 export const createSelector = createSelectorCreator(defaultMemoize);
+
+// DOM SELECTORS BELOW
 
 function domEqualityCheck(a, b) {
   if (a !== b) return false;
@@ -43,12 +47,12 @@ function domEqualityCheck(a, b) {
   return true;
 }
 
-const createDomSelector = createSelectorCreator(
+const createDomSelectorCreator = createSelectorCreator(
   defaultMemoize,
   domEqualityCheck
 );
 
-const contextSelector = context => context;
+const createDomSelector = createDomSelectorCreator(defaultMemoize);
 
 export function createCssSelector(selectors) {
   const cssSelector = selectors.map(({ value }) => value).join(',');
@@ -57,5 +61,5 @@ export function createCssSelector(selectors) {
     yield* context.querySelectorAll(cssSelector);
   }
 
-  return createDomSelector(contextSelector, exec);
+  return createDomSelector(exec);
 }

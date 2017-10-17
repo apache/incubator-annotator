@@ -15,8 +15,6 @@
 
 import { createSelector } from '@annotator/selector';
 
-const contextSelector = context => context;
-
 export function createTextQuoteSelector(selectors) {
   let patterns = selectors.map(({ exact }) => exact);
 
@@ -37,5 +35,5 @@ export function createTextQuoteSelector(selectors) {
     }
   }
 
-  return createSelector(contextSelector, exec);
+  return createSelector(exec);
 }
