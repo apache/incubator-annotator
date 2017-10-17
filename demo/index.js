@@ -16,7 +16,7 @@
 /* global corpus, query, module */
 
 import * as fragment from '@annotator/fragment-identifier';
-// import { createTextQuoteSelector } from '@annotator/text';
+// import { createAnySelector } from '@annotator/any';
 import mark from './mark.js';
 import search from './search.js';
 
@@ -66,9 +66,9 @@ if (module.hot) {
 /*
  * EXAMPLE
  * async function run() {
- *   let textSelector = createTextQuoteSelector([
- *     { exact: 'yes' },
- *     { exact: 'no' },
+ *   let textSelector = createAnySelector([
+ *     { type: 'TextQuoteSelector', exact: 'yes' },
+ *     { type: 'TextQuoteSelector', exact: 'no' },
  *   ]);
  *
  *   let context = 'what if yes yes what no yes no yes no hurray';
