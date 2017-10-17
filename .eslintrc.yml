@@ -7,7 +7,6 @@ env:
 extends:
   - eslint:recommended
   - plugin:import/recommended
-  - google
   - prettier
 
 globals:
