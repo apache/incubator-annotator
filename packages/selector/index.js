@@ -47,12 +47,10 @@ function domEqualityCheck(a, b) {
   return true;
 }
 
-const createDomSelectorCreator = createSelectorCreator(
+const createDomSelector = createSelectorCreator(
   defaultMemoize,
   domEqualityCheck
 );
-
-const createDomSelector = createDomSelectorCreator(defaultMemoize);
 
 export function createCssSelector(selectors) {
   const cssSelector = selectors.map(({ value }) => value).join(',');
