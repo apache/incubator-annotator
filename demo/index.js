@@ -16,6 +16,7 @@
 /* global corpus, query, module */
 
 import * as fragment from '@annotator/fragment-identifier';
+// import { createTextQuoteSelector } from '@annotator/text';
 import mark from './mark.js';
 import search from './search.js';
 
@@ -61,3 +62,21 @@ if (module.hot) {
     refresh
   );
 }
+
+/*
+ * EXAMPLE
+ * async function run() {
+ *   let textSelector = createTextQuoteSelector([
+ *     { exact: 'yes' },
+ *     { exact: 'no' },
+ *   ]);
+ *
+ *   let context = 'what if yes yes what no yes no yes no hurray';
+ *
+ *   for await (let result of textSelector(context)) {
+ *     console.log(result, result.context, result.index);
+ *   }
+ * }
+ *
+ * run();
+ */
