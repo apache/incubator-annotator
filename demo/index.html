@@ -3,6 +3,19 @@
   <head>
     <meta charset="UTF-8">
     <title>Apache Annotator (incubating) demo</title>
+    <style>
+      #debugField {
+        color: #666;
+        background: #f8f8f8;
+        padding: 2em;
+        height: 12em;
+        overflow-y: scroll;
+        resize: vertical;
+      }
+      #debugField.error {
+        color: red;
+      }
+    </style>
   </head>
   <body>
     <label for="query">Search:</label>
@@ -10,6 +23,7 @@
     <p id="corpus" contenteditable="true">
       Hello, annotated world! This is an editable paragraph.
     </p>
+    <pre id="debugField"></pre>
     <script src="/manifest.js"></script>
     <script src="/common.js"></script>
     <script src="/demo.js"></script>

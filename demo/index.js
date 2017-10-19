@@ -37,15 +37,31 @@ const input = () => {
 const refresh = async () => {
   corpus.innerHTML = corpus.innerText;
   const identifier = window.location.hash.slice(1);
-  if (!identifier) return;
+  if (!identifier) {
+    debugInfo();
+    return;
+  }
   try {
     const { selector } = fragment.parse(identifier);
+    debugInfo(selector);
     const range = await search(corpus, selector);
     if (range) mark(range);
   } catch (e) {
+    debugError(e);
     if (e instanceof fragment.SyntaxError) return;
     else throw e;
   }
+};
+
+const debugInfo = object => {
+  const debugField = document.getElementById('debugField');
+  debugField.classList.remove('error');
+  debugField.innerText = JSON.stringify(object, null, 2);
+};
+const debugError = object => {
+  const debugField = document.getElementById('debugField');
+  debugField.classList.add('error');
+  debugField.innerText = JSON.stringify(object, null, 2);
 };
 
 document.addEventListener('DOMContentLoaded', () => {
