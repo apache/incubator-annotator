@@ -21,13 +21,16 @@ import mark from './mark.js';
 import search from './search.js';
 
 const input = () => {
-  const type = 'TextQuoteSelector';
   const exact = query.value;
+  const selector = {
+    type: 'TextQuoteSelector',
+    exact,
+  };
   if (exact) {
-    window.location.hash = fragment.stringify({ type, exact });
+    window.location.hash = fragment.stringify(selector);
   } else {
     window.history.replaceState(null, '', window.location.pathname);
-    refresh();
+    refresh(); // call refresh manually to fake a hashchange event.
   }
 };
 
