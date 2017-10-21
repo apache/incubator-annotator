@@ -16,8 +16,8 @@
 import { createSelector } from '@annotator/selector';
 
 export function createTextQuoteSelector() {
-  async function* exec({ selectors, context }) {
-    let patterns = selectors.map(({ exact }) => exact);
+  async function* exec({ descriptors, context }) {
+    let patterns = descriptors.map(({ exact }) => exact);
     for (let pattern of patterns) {
       let lastIndex = 0;
       let next = () => context.indexOf(pattern, lastIndex);
@@ -26,7 +26,7 @@ export function createTextQuoteSelector() {
         let result = [pattern];
         result.index = match;
         result.input = context;
-        result.selector = pattern;
+        result.descriptor = pattern;
         yield result;
         lastIndex = match + 1;
         match = next();

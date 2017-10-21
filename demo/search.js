@@ -18,18 +18,18 @@ import { createAnySelector } from '@annotator/any';
 /**
  * Locate a selector.
  * @param {Node} root node
- * @param {Selector} selector
+ * @param {Selector} descriptor
  * @return {Range}
  */
 export default search;
-async function search(root, selector) {
+async function search(root, descriptor) {
   const selectorFunc = createAnySelector();
 
   for (const node of nodeIterator(root)) {
     if (!node.nodeValue) continue;
 
     const matches = selectorFunc({
-      selectors: [selector],
+      descriptors: [descriptor],
       context: node.nodeValue,
     });
     for await (let match of matches) {
