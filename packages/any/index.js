@@ -17,14 +17,14 @@ import { createSelector } from '@annotator/selector';
 import { createTextQuoteSelector } from '@annotator/text';
 
 export function createAnySelectorCreator(selectorTypeToFunction) {
-  function createAnySelector(selectors) {
-    async function* exec(context) {
+  function createAnySelector() {
+    async function* exec(selectors, context) {
       for (let selector of selectors) {
         let selectorFunc = selectorTypeToFunction[selector.type];
         if (selectorFunc === undefined) {
           throw new Error(`Unsupported selector type: ${selector.type}`);
         }
-        yield* selectorFunc([selector])(context);
+        yield* selectorFunc()([selector], context);
       }
     }
 

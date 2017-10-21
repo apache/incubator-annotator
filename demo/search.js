@@ -23,12 +23,12 @@ import { createAnySelector } from '@annotator/any';
  */
 export default search;
 async function search(root, selector) {
-  const selectorFunc = createAnySelector([selector]);
+  const selectorFunc = createAnySelector();
 
   for (const node of nodeIterator(root)) {
     if (!node.nodeValue) continue;
 
-    const matches = selectorFunc(node.nodeValue);
+    const matches = selectorFunc([selector], node.nodeValue);
     for await (let match of matches) {
       const range = document.createRange();
       range.setStart(node, match.index);
