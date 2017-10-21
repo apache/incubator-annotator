@@ -23,14 +23,12 @@ const identity = a => a;
 
 export function createSelectorCreator(memoize, ...memoizeOptions) {
   const createSelector = _createSelectorCreator(memoize, ...memoizeOptions);
-  return (...funcs) => {
-    const resultFunc = funcs.pop();
+  return resultFunc => {
     const wrapperFunc = (...args) => {
       const iterable = resultFunc(...args);
       return new AsyncTee(iterable);
     };
-    funcs.push(wrapperFunc);
-    return createSelector(identity, ...funcs);
+    return createSelector(identity, wrapperFunc);
   };
 }
 
