@@ -28,7 +28,10 @@ async function search(root, selector) {
   for (const node of nodeIterator(root)) {
     if (!node.nodeValue) continue;
 
-    const matches = selectorFunc([selector], node.nodeValue);
+    const matches = selectorFunc({
+      selectors: [selector],
+      context: node.nodeValue,
+    });
     for await (let match of matches) {
       const range = document.createRange();
       range.setStart(node, match.index);

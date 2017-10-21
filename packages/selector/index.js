@@ -28,7 +28,7 @@ export function createSelectorCreator(memoize, ...memoizeOptions) {
       const iterable = resultFunc(...args);
       return new AsyncTee(iterable);
     };
-    return createSelector(identity, (a, b) => b, wrapperFunc);
+    return createSelector(identity, wrapperFunc);
   };
 }
 
