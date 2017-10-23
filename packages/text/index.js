@@ -90,13 +90,7 @@ export async function describeTextQuoteByRange({ range, context }) {
       minPrefixes.push(prefixOverlap + 1);
     }
   }
-  let minSuffix = Math.max(0, ...minSuffixes);
-  let minPrefix = Math.max(0, ...minPrefixes);
-  if (minSuffix < minPrefix) {
-    minPrefix = 0;
-  } else {
-    minSuffix = 0;
-  }
+  const [minSuffix, minPrefix] = minimalSolution(minSuffixes, minPrefixes);
   if (minSuffix > 0) {
     descriptor.suffix = contextText.substring(
       rangeEndIndex,
@@ -116,6 +110,9 @@ function overlap(text1, text2) {
   let count = 0;
   while (text1[count] === text2[count]) {
     count++;
+    if (count >= text1.length) {
+      return Infinity;
+    }
   }
   return count;
 }
@@ -123,8 +120,33 @@ function overlapRight(text1, text2) {
   let count = 0;
   while (text1[text1.length - 1 - count] === text2[text2.length - 1 - count]) {
     count++;
+    if (count >= text1.length) {
+      return Infinity;
+    }
   }
   return count;
+}
+
+function minimalSolution(reqs1, reqs2) {
+  if (reqs1.length !== reqs2.length) {
+    throw new Error('unequal lengths');
+  }
+  // Add 0 as an option to try.
+  reqs1.push(0);
+  reqs2.push(0);
+  let bestResult = [Infinity, Infinity];
+  for (let i = 0; i < reqs1.length; i++) {
+    const req1 = reqs1[i];
+    // The values to satisfy for req2, given the proposed req1.
+    const reqsToSatisfy = reqs1.map((v, i) => (v > req1 ? reqs2[i] : 0));
+    // Take the lowest value that satisfies them all.
+    const req2 = Math.max(...reqsToSatisfy);
+    // If this combination is the best so far, remember it.
+    if (req1 + req2 < bestResult[0] + bestResult[1]) {
+      bestResult = [req1, req2];
+    }
+  }
+  return bestResult;
 }
 
 export function describeTextQuote({ context, startIndex, endIndex }) {
