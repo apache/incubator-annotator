@@ -22,11 +22,11 @@ import search from './search.js';
 
 const input = () => {
   const exact = query.value;
-  const selector = {
-    type: 'TextQuoteSelector',
-    exact,
-  };
   if (exact) {
+    const selector = {
+      type: 'TextQuoteSelector',
+      exact,
+    };
     window.location.hash = fragment.stringify(selector);
   } else {
     window.history.replaceState(null, '', window.location.pathname);
