@@ -19,13 +19,15 @@ import { createSelector } from '@annotator/selector';
 export function createTextQuoteSelector() {
   async function* exec({ descriptors, context }) {
     for (let descriptor of descriptors) {
-      const pattern = descriptor.exact;
+      const prefix = descriptor.prefix || '';
+      const suffix = descriptor.suffix || '';
+      const pattern = prefix + descriptor.exact + suffix;
       let lastIndex = 0;
       let next = () => context.indexOf(pattern, lastIndex);
       let match = next();
       while (match !== -1) {
-        let result = [pattern];
-        result.index = match;
+        let result = [descriptor.exact];
+        result.index = match + prefix.length;
         result.input = context;
         result.descriptor = descriptor;
         yield result;
