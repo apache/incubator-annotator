@@ -16,6 +16,7 @@
 import { createSelector } from 'reselect';
 import { createTextQuoteSelector } from '@annotator/text';
 import { createRangeSelector } from '@annotator/range';
+import { makeRefinable } from '@annotator/refinedBy';
 
 export function createAnySelectorCreator(selectorCreatorsByType) {
   function selectSelectorImplementation(type) {
@@ -23,7 +24,9 @@ export function createAnySelectorCreator(selectorCreatorsByType) {
     if (selectorCreator === undefined) {
       throw new Error(`Unsupported selector type: ${type}`);
     }
-    return selectorCreator({ createAnySelector });
+    let selector = selectorCreator({ createAnySelector });
+    selector = makeRefinable(selector, { createAnySelector });
+    return selector;
   }
 
   function createAnySelector() {
