@@ -36,3 +36,19 @@ export function createTextQuoteSelector() {
 
   return createSelector(exec);
 }
+
+export function describeTextQuoteByRange(range) {
+  const exact = range.cloneContents().textContent;
+  return {
+    type: 'TextQuoteSelector',
+    exact,
+  };
+}
+
+export function describeTextQuote({ context, startIndex, endIndex }) {
+  const exact = context.substring(startIndex, endIndex);
+  return {
+    type: 'TextQuoteSelector',
+    exact,
+  };
+}

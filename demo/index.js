@@ -16,6 +16,7 @@
 /* global corpus, query, module */
 
 import * as fragment from '@annotator/fragment-identifier';
+import { describeTextQuoteByRange as describeRange } from '@annotator/text';
 // import { createAnySelector } from '@annotator/any';
 import mark from './mark.js';
 import search from './search.js';
@@ -84,6 +85,31 @@ const editable = document.getElementById('corpus');
 editable.addEventListener('input', function() {
   refresh();
 });
+
+const selectable = document.getElementById('selectableText');
+document.addEventListener('selectionchange', onSelectionChange);
+
+function onSelectionChange() {
+  const selection = document.getSelection();
+  if (selection === null || selection.isCollapsed) {
+    return;
+  }
+  const range = selection.getRangeAt(0);
+  if (!isWithinNode(range, selectable)) {
+    return;
+  }
+  const descriptor = describeRange(range);
+  window.location.hash = fragment.stringify(descriptor);
+}
+
+function isWithinNode(range, node) {
+  const nodeRange = document.createRange();
+  nodeRange.selectNode(node);
+  return (
+    range.compareBoundaryPoints(Range.START_TO_START, nodeRange) >= 0 &&
+    range.compareBoundaryPoints(Range.END_TO_END, nodeRange) <= 0
+  );
+}
 
 if (module.hot) {
   module.hot.accept(
