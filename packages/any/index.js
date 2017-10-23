@@ -19,7 +19,7 @@ import { createRangeSelector } from '@annotator/range';
 import { makeRefinable } from '@annotator/refinedBy';
 
 export function createAnySelectorCreator(selectorCreatorsByType) {
-  function selectSelectorImplementation(type) {
+  function selectSelector(type) {
     const selectorCreator = selectorCreatorsByType[type];
     if (selectorCreator === undefined) {
       throw new Error(`Unsupported selector type: ${type}`);
@@ -30,14 +30,14 @@ export function createAnySelectorCreator(selectorCreatorsByType) {
   }
 
   function createAnySelector() {
-    const memoizedSelectSelectorImplementation = createSelector(
+    const memoizedSelectSelector = createSelector(
       descriptor => descriptor.type,
-      type => selectSelectorImplementation(type)
+      type => selectSelector(type)
     );
 
     async function* anySelector({ descriptors, context }) {
       const descriptor = descriptors[0]; // TODO handle multiple descriptors
-      const selectorFunc = memoizedSelectSelectorImplementation(descriptor);
+      const selectorFunc = memoizedSelectSelector(descriptor);
       yield* selectorFunc({ descriptors: [descriptor], context });
     }
 
