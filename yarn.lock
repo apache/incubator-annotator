@@ -1702,6 +1702,10 @@ doctrine@^2.0.0:
     esutils "^2.0.2"
     isarray "^1.0.0"
 
+dom-highlight-range@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/dom-highlight-range/-/dom-highlight-range-1.0.1.tgz#0634cb60fcf4565c2b222e32b66c626358148747"
+
 domain-browser@^1.1.1:
   version "1.1.7"
   resolved "https://registry.yarnpkg.com/domain-browser/-/domain-browser-1.1.7.tgz#867aa4b093faa05f1de08c06f4d7b21fdf8698bc"
