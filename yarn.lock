@@ -1570,7 +1570,7 @@ dateformat@^1.0.11, dateformat@^1.0.12:
     get-stdin "^4.0.1"
     meow "^3.3.0"
 
-debug@2.6.9, debug@^2.2.0, debug@^2.6.6, debug@^2.6.8:
+debug@2, debug@2.6.9, debug@^2.2.0, debug@^2.6.6, debug@^2.6.8:
   version "2.6.9"
   resolved "https://registry.yarnpkg.com/debug/-/debug-2.6.9.tgz#5d128515df134ff327e90a4c93f4e077a536341f"
   dependencies:
@@ -2667,6 +2667,10 @@ indent-string@^2.1.0:
 indent-string@^3.0.0:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/indent-string/-/indent-string-3.2.0.tgz#4a5fd6d27cc332f37e5419a504dbb837105c9289"
+
+index-of@0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/index-of/-/index-of-0.1.0.tgz#61bc04b9ccda15c8bcc522af04d5df283be50dec"
 
 indexof@0.0.1:
   version "0.0.1"
@@ -4057,6 +4061,14 @@ randombytes@^2.0.0, randombytes@^2.0.1:
   dependencies:
     safe-buffer "^5.1.0"
 
+range-normalize@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/range-normalize/-/range-normalize-1.1.1.tgz#113bd2b928f4d2cff8b2bcca51c541ae35d07fd5"
+  dependencies:
+    debug "2"
+    index-of "0.1.0"
+    void-elements "1"
+
 range-parser@^1.0.3, range-parser@~1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/range-parser/-/range-parser-1.2.0.tgz#f49be6b487894ddc40dcc94a322f611092e00d5e"
@@ -4977,6 +4989,10 @@ vm-browserify@0.0.4:
   resolved "https://registry.yarnpkg.com/vm-browserify/-/vm-browserify-0.0.4.tgz#5d7ea45bbef9e4a6ff65f95438e0a87c357d5a73"
   dependencies:
     indexof "0.0.1"
+
+void-elements@1:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/void-elements/-/void-elements-1.0.0.tgz#6e5db1e35d591f5ac690ce1a340f793a817b2c2a"
 
 watchpack@^1.4.0:
   version "1.4.0"

@@ -13,6 +13,7 @@
  * the License.
  */
 
+import normalizeRange from 'range-normalize';
 import { createSelector } from '@annotator/selector';
 
 export function createTextQuoteSelector() {
@@ -37,12 +38,93 @@ export function createTextQuoteSelector() {
   return createSelector(exec);
 }
 
-export function describeTextQuoteByRange(range) {
+export async function describeTextQuoteByRange({ range, context }) {
+  // Shrink range to fit in context, if needed.
+  if (range.compareBoundaryPoints(Range.END_TO_END, context) > 0) {
+    range.setEnd(context.endContainer, context.endOffset);
+  }
+  if (range.compareBoundaryPoints(Range.START_TO_START, context) < 0) {
+    range.setStart(context.startContainer, context.startOffset);
+  }
+
+  const contextText = context.cloneContents().textContent;
   const exact = range.cloneContents().textContent;
-  return {
+
+  const descriptor = {
     type: 'TextQuoteSelector',
     exact,
   };
+
+  // FIXME We should get range index relative to context. Look at
+  // dom-anchor-text-position? For now, we implement the easy case where the
+  // ranges are within the same container.
+  context = normalizeRange(context);
+  range = normalizeRange(range);
+  if (
+    context.startContainer !== range.startContainer ||
+    context.startOffset !== 0
+  ) {
+    throw new Error(`Context not equal to range's container; not implemented.`);
+  }
+  const rangeIndex = range.startOffset;
+  const rangeEndIndex = range.endOffset;
+
+  const selector = createTextQuoteSelector();
+  const matches = selector({ descriptors: [descriptor], context: contextText });
+  const minSuffixes = [];
+  const minPrefixes = [];
+  for await (let match of matches) {
+    // For every match that is not our range, we look how many characters we
+    // have to add as prefix or suffix to disambiguate.
+    if (match.index !== rangeIndex) {
+      const matchEndIndex = match.index + match[0].length;
+      const suffixOverlap = overlap(
+        contextText.substring(matchEndIndex, ),
+        contextText.substring(rangeEndIndex, )
+      );
+      minSuffixes.push(suffixOverlap + 1);
+      const prefixOverlap = overlapRight(
+        contextText.substring(0, match.index),
+        contextText.substring(0, rangeIndex)
+      );
+      minPrefixes.push(prefixOverlap + 1);
+    }
+  }
+  let minSuffix = Math.max(0, ...minSuffixes);
+  let minPrefix = Math.max(0, ...minPrefixes);
+  if (minSuffix < minPrefix) {
+    minPrefix = 0;
+  } else {
+    minSuffix = 0;
+  }
+  if (minSuffix > 0) {
+    descriptor.suffix = contextText.substring(
+      rangeEndIndex,
+      rangeEndIndex + minSuffix
+    );
+  }
+  if (minPrefix > 0) {
+    descriptor.prefix = contextText.substring(
+      rangeIndex - minPrefix,
+      rangeIndex
+    );
+  }
+  return descriptor;
+}
+
+function overlap(text1, text2) {
+  let count = 0;
+  while (text1[count] === text2[count]) {
+    count++;
+  }
+  return count;
+}
+function overlapRight(text1, text2) {
+  let count = 0;
+  while (text1[text1.length - 1 - count] === text2[text2.length - 1 - count]) {
+    count++;
+  }
+  return count;
 }
 
 export function describeTextQuote({ context, startIndex, endIndex }) {

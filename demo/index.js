@@ -89,7 +89,7 @@ editable.addEventListener('input', function() {
 const selectable = document.getElementById('selectableText');
 document.addEventListener('selectionchange', onSelectionChange);
 
-function onSelectionChange() {
+async function onSelectionChange() {
   const selection = document.getSelection();
   if (selection === null || selection.isCollapsed) {
     return;
@@ -98,7 +98,9 @@ function onSelectionChange() {
   if (!isWithinNode(range, selectable)) {
     return;
   }
-  const descriptor = describeRange(range);
+  const selectableRange = document.createRange();
+  selectableRange.selectNodeContents(selectable);
+  const descriptor = await describeRange({ range, context: selectableRange });
   window.location.hash = fragment.stringify(descriptor);
 }
 
