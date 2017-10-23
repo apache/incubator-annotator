@@ -11,28 +11,27 @@ async function* cartesian(...iterables) {
   // Initialise an empty log for each iterable.
   const logs = iterables.map(() => []);
 
-  const nextPs = iterators.map((iterator, iterableNr) =>
+  const nextValuePromises = iterators.map((iterator, iterableNr) =>
     iterator
       .next()
       .then(async ({ value, done }) => ({ value: await value, done }))
       .then(
-        // Label the value with iterableNr to know which one produced this value in
-        // Promise.race below.
+        // Label the result with iterableNr, to know which iterable produced
+        // this value after Promise.race below.
         ({ value, done }) => ({ value, done, iterableNr })
       )
   );
 
-  while (1) {
-    // Check which iterators are still active; quit if they are all exhausted.
-    const nextValuePs = nextPs.filter(x => x !== null);
-    if (nextValuePs.length === 0) break;
-
+  // Keep listening as long as any of the iterables is not yet exhausted.
+  while (nextValuePromises.some(p => p !== null)) {
     // Wait until any of the active iterators has produced a new value.
-    const { value, done, iterableNr } = await Promise.race(nextValuePs);
+    const { value, done, iterableNr } = await Promise.race(
+      nextValuePromises.filter(p => p !== null)
+    );
 
     // If this iterable was exhausted, stop listening to it and move on.
     if (done) {
-      nextPs[iterableNr] = null;
+      nextValuePromises[iterableNr] = null;
       continue;
     }
 
@@ -45,8 +44,8 @@ async function* cartesian(...iterables) {
     // Append the received value to the right log.
     logs[iterableNr] = [...logs[iterableNr], value];
 
-    // Start listening for the next value.
-    nextPs[iterableNr] = iterators[iterableNr]
+    // Start listening for the next value of this iterable.
+    nextValuePromises[iterableNr] = iterators[iterableNr]
       .next()
       .then(async ({ value, done }) => ({ value: await value, done }))
       .then(({ value, done }) => ({ value, done, iterableNr }));
@@ -89,4 +88,3 @@ async function test() {
   }
   // TODO assert that result equals expected.
 }
-test();
