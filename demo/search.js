@@ -22,9 +22,10 @@ import { createAnySelector } from '@annotator/any';
  * @return {Range}
  */
 export default search;
-async function search(root, descriptor) {
-  const selectorFunc = createAnySelector();
 
+const selectorFunc = createAnySelector();
+
+async function search(root, descriptor) {
   for (const node of nodeIterator(root)) {
     if (!node.nodeValue) continue;
 

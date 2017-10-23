@@ -13,23 +13,32 @@
  * the License.
  */
 
-import { createSelector } from '@annotator/selector';
+import { createSelector } from 'reselect';
 import { createTextQuoteSelector } from '@annotator/text';
 
 export function createAnySelectorCreator(selectorCreatorsByType) {
+  function selectSelectorImplementation(type) {
+    const selectorCreator = selectorCreatorsByType[type];
+    if (selectorCreator === undefined) {
+      throw new Error(`Unsupported selector type: ${type}`);
+    }
+    return selectorCreator();
+  }
+
   function createAnySelector() {
-    async function* exec({ descriptors, context }) {
-      for (let descriptor of descriptors) {
-        const selectorCreator = selectorCreatorsByType[descriptor.type];
-        if (selectorCreator === undefined) {
-          throw new Error(`Unsupported selector type: ${descriptor.type}`);
-        }
-        const selectorFunc = selectorCreator();
-        yield* selectorFunc({ descriptors: [descriptor], context });
-      }
+    const memoizedSelectSelectorImplementation = createSelector(
+      descriptor => descriptor.type,
+      type => selectSelectorImplementation(type)
+    );
+
+    async function* anySelector({ descriptors, context }) {
+      const descriptor = descriptors[0]; // TODO handle multiple descriptors
+      const selectorFunc = memoizedSelectSelectorImplementation(descriptor);
+      yield* selectorFunc({ descriptors: [descriptor], context });
     }
 
-    return createSelector(exec);
+    // Not wrapped with Tee; we expect the selector implementations to do that.
+    return anySelector;
   }
 
   return createAnySelector;
