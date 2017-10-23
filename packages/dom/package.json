@@ -1,5 +1,5 @@
 {
-  "name": "@annotator/fragment-identifier",
+  "name": "@annotator/dom",
   "version": "0.0.0",
   "description": "Utilities for annotation of the Document Object Model.",
   "homepage": "https://annotator.apache.org",
