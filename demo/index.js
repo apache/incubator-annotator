@@ -44,8 +44,18 @@ const refresh = async () => {
   try {
     const { selector } = fragment.parse(identifier);
     debugInfo(selector);
-    const range = await search(corpus, selector);
-    if (range) mark(range);
+    const results = search(corpus, selector);
+    const ranges = [];
+    for await (let range of results) {
+      ranges.push(range);
+    }
+    for (let range of ranges) {
+      try {
+        mark(range);
+      } catch (err) {
+        console.log(`Failed to highlight text: ${range.cloneContents().textContent}`)
+      }
+    }
   } catch (e) {
     debugError(e);
     if (e instanceof fragment.SyntaxError) return;

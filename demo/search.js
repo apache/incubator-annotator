@@ -25,7 +25,7 @@ export default search;
 
 const selectorFunc = createAnySelector();
 
-async function search(root, descriptor) {
+async function* search(root, descriptor) {
   for (const node of nodeIterator(root)) {
     if (!node.nodeValue) continue;
 
@@ -37,7 +37,7 @@ async function search(root, descriptor) {
       const range = document.createRange();
       range.setStart(node, match.index);
       range.setEnd(node, match.index + match[0].length);
-      return range;
+      yield range;
     }
   }
 }
