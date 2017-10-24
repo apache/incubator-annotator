@@ -13,27 +13,13 @@
  * the License.
  */
 
-/* global corpus, query, module */
+/* global corpus, module */
 
 import * as fragment from '@annotator/fragment-identifier';
 import { describeTextQuoteByRange as describeRange } from '@annotator/text';
 // import { createAnySelector } from '@annotator/any';
 import mark from './mark.js';
 import search from './search.js';
-
-const input = () => {
-  const exact = query.value;
-  if (exact) {
-    const selector = {
-      type: 'TextQuoteSelector',
-      exact,
-    };
-    window.location.hash = fragment.stringify(selector);
-  } else {
-    window.history.replaceState(null, '', window.location.pathname);
-    refresh(); // call refresh manually to fake a hashchange event.
-  }
-};
 
 const refresh = async () => {
   corpus.innerHTML = corpus.innerText;
@@ -76,7 +62,6 @@ const debugError = object => {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-  query.addEventListener('input', input);
   window.addEventListener('hashchange', refresh);
   refresh();
 });
