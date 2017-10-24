@@ -4,35 +4,79 @@
     <meta charset="UTF-8">
     <title>Apache Annotator (incubating) demo</title>
     <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        max-width: 50em;
+        margin: 0 auto;
+        padding: 1em;
+      }
       .highlighted {
-        background-color: #ff68;
-        border: 0.1px solid #f60a;
+        background-color: rgba(255, 255, 120, 0.5);;
+        border: 0.1px solid rgba(255, 100, 0, 0.8);;
       }
       #debugField {
+        width: 20rem;
+        float: right;
         color: #666;
         background: #f8f8f8;
         padding: 2em;
-        height: 12em;
+        height: 20em;
         overflow-y: scroll;
         resize: vertical;
       }
       #debugField.error {
         color: red;
       }
+      #selectableText, #corpus {
+        display: inline-block;
+        max-width: 15em;
+        padding: 1em;
+        line-height: 1.4em;
+        font-size: 18px;
+        font-family: sans;
+        border: 1px solid lightgrey;
+      }
     </style>
   </head>
   <body>
     <label for="query">Search:</label>
     <input id="query" autocomplete="off" autofocus>
+    <p>
+      Hi! Let's play with some annotator tools! This page demonstrates <a href="https://www.w3.org/TR/2017/REC-annotation-model-20170223/">selectors</a>.
+    </p>
+    <p>
+      Try select some text in the first paragraph below:
+    </p>
     <p id="selectableText">
       Hello, annotated world! To annotate, or not to annotate, that is the question.
-      Notice how xxxxYzzzz looks like xxxxY and Yzzzz and xYzzzz.
     </p>
     <p id="corpus" contenteditable="true">
       Hello, annotated world! To annotate, or not to annotate, that is the question.
-      Notice how xxxxYzzzz looks like xxxxY and Yzzzz and xYzzzz.
     </p>
     <pre id="debugField"></pre>
+    <p>
+      Upon a change of selection, a
+      <a href="https://www.w3.org/TR/2017/REC-annotation-model-20170223/#text-quote-selector">TextQuoteSelector</a>
+      will be created, that describes what was selected.
+      The selector is serialised and shown the window location,
+      <a href="https://www.w3.org/TR/2017/NOTE-selectors-states-20170223/#frags">as the fragment identifier</a>.
+      Here on the right is the selector in its usual JSON format.
+      In the second paragraph, the selector is 'anchored', i.e. text it refers to is found and highlighted.
+    </p>
+    <p>
+      Notice how, when the text of your selection appears multiple times, just
+      enough characters around it are stored in the selector to find the right
+      occurrence again.
+    </p>
+    <p>
+      Also reasonably functional:
+      <ul>
+        <li><a href="#selector(type=RangeSelector,startSelector=selector(type=TextQuoteSelector,exact=ann),endSelector=selector(type=TextQuoteSelector,exact=!))">RangeSelector</a> (<a href="https://www.w3.org/TR/2017/REC-annotation-model-20170223/#range-selector">spec</a>)</li>
+        <li><a href="#selector(type=TextQuoteSelector,exact=annotated world,refinedBy=selector(type=TextQuoteSelector,exact=tat))">Refining a selector using another selector (<a href="https://www.w3.org/TR/2017/REC-annotation-model-20170223/#refinement-of-selection">spec</a>)</a>
+      </ul>
+    </p>
     <script src="/manifest.js"></script>
     <script src="/common.js"></script>
     <script src="/demo.js"></script>
