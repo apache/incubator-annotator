@@ -1,0 +1,20 @@
+{
+  "name": "@annotator/selector",
+  "version": "0.0.0",
+  "description": "Web Annotation selector engine.",
+  "homepage": "https://annotator.apache.org",
+  "license": "Apache-2.0",
+  "author": "Apache Software Foundation",
+  "main": "index",
+  "repository": {
+    "type": "git",
+    "url": "https://gitbox.apache.org/repos/asf/incubator-annotator.git"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@annotator/tee": "^0.0.0",
+    "reselect": "^3.0.1"
+  }
+}

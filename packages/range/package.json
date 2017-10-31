@@ -1,0 +1,20 @@
+{
+  "name": "@annotator/range",
+  "version": "0.0.0",
+  "description": "Utilities for annotation.",
+  "homepage": "https://annotator.apache.org",
+  "license": "Apache-2.0",
+  "author": "Apache Software Foundation",
+  "main": "index",
+  "repository": {
+    "type": "git",
+    "url": "https://gitbox.apache.org/repos/asf/incubator-annotator.git"
+  },
+  "devDependencies": {},
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "cartesian": "^1.0.1"
+  }
+}

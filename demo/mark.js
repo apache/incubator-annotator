@@ -17,7 +17,8 @@
  * Surround the contents of the given range with a mark tag.
  * @param {Range} range
  */
+
+import highlightRange from 'dom-highlight-range';
 export default function mark(range) {
-  const mark = document.createElement('mark');
-  range.surroundContents(mark);
+  highlightRange(range, 'highlighted');
 }
