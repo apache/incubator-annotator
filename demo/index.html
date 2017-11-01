@@ -42,7 +42,9 @@
   </head>
   <body>
     <p>
-      Hi! Let's play with some annotator tools! This page demonstrates <a href="https://www.w3.org/TR/2017/REC-annotation-model-20170223/">selectors</a>.
+      Hi! Let's play with some annotator tools! This page demonstrates <a
+        href="https://www.w3.org/TR/2017/REC-annotation-model-20170223/"
+        target="_blank">selectors</a>.
     </p>
     <p>
       Try select some text in the first paragraph below:
@@ -56,10 +58,13 @@
     <pre id="debug"></pre>
     <p>
       Upon a change of selection, a
-      <a href="https://www.w3.org/TR/2017/REC-annotation-model-20170223/#text-quote-selector">TextQuoteSelector</a>
+      <a
+        href="https://www.w3.org/TR/2017/REC-annotation-model-20170223/#text-quote-selector"
+        target="_blank">TextQuoteSelector</a>
       will be created, that describes what was selected.
       The selector is serialised and shown the window location,
-      <a href="https://www.w3.org/TR/2017/NOTE-selectors-states-20170223/#frags">as the fragment identifier</a>.
+      <a href="https://www.w3.org/TR/2017/NOTE-selectors-states-20170223/#frags"
+        target="_blank">as the fragment identifier</a>.
       Here on the right is the selector in its usual JSON format.
       In the second paragraph, the selector is 'anchored', i.e. text it refers to is found and highlighted.
     </p>
@@ -71,8 +76,15 @@
     <p>
       Also reasonably functional:
       <ul>
-        <li><a href="#selector(type=RangeSelector,startSelector=selector(type=TextQuoteSelector,exact=ann),endSelector=selector(type=TextQuoteSelector,exact=!))">RangeSelector</a> (<a href="https://www.w3.org/TR/2017/REC-annotation-model-20170223/#range-selector">spec</a>)</li>
-        <li><a href="#selector(type=TextQuoteSelector,exact=annotated%20world,refinedBy=selector(type=TextQuoteSelector,exact=tat))">Refining a selector using another selector (<a href="https://www.w3.org/TR/2017/REC-annotation-model-20170223/#refinement-of-selection">spec</a>)</a></li>
+        <li>
+          <a href="#selector(type=RangeSelector,startSelector=selector(type=TextQuoteSelector,exact=ann),endSelector=selector(type=TextQuoteSelector,exact=!))">RangeSelector</a>
+          (<a href="https://www.w3.org/TR/2017/REC-annotation-model-20170223/#range-selector" target="_blank">spec</a>)
+        </li>
+        <li>
+          <a href="#selector(type=TextQuoteSelector,exact=annotated%20world,refinedBy=selector(type=TextQuoteSelector,exact=tat))">Refining
+            a selector using another selector</a>
+            (<a href="https://www.w3.org/TR/2017/REC-annotation-model-20170223/#refinement-of-selection" target="blank">spec</a>)
+        </li>
         <li><a href="#selector(type=TextQuoteSelector,exact=not)">Multiple matches</a> (but overlapping matches currently mess up the highlighter)</li>
         <li><a href="#selector(type=TextQuoteSelector,exact=To%20annotate%2C%20or%20not%20to%20annotate%2C,refinedBy=selector(type=RangeSelector,startSelector=selector(type=TextQuoteSelector,exact=To%20annotate,refinedBy=selector(type=TextQuoteSelector,exact=annotate)),endSelector=selector(type=TextQuoteSelector,exact=not%20to%20annotate,refinedBy=selector(type=TextQuoteSelector,exact=%20to)),refinedBy=selector(type=TextQuoteSelector,exact=o)))">Any deeper nesting of the above</a></li>
       </ul>
