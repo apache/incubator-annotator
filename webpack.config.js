@@ -36,48 +36,7 @@ module.exports = {
       {
         test: /\.js$/,
         exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader',
-          options: {
-            plugins: [
-              [
-                '@babel/transform-runtime',
-                {
-                  // Externalize babel helpers for bundle size improvements.
-                  helpers: true,
-                  // Do not polyfill; leave that to applications.
-                  polyfill: false,
-                  // Do not rely on a global regenerator runtime.
-                  regenerator: true,
-                  // Do not import polyfills for helpers.
-                  useBuiltIns: true,
-                  // Do not transform helper modules.
-                  useESModules: true,
-                },
-              ],
-            ],
-            presets: [
-              [
-                '@babel/env',
-                {
-                  // Do not transform modules; webpack can do that.
-                  modules: false,
-                  // Enabled proposals that have shipped in browsers.
-                  shippedProposals: true,
-                  // Set target environments.
-                  targets: {
-                    // Browsers: > 1%, last 2 versions, Firefox ESR
-                    browsers: ['defaults'],
-                    // Node: LTS
-                    node: '6.0',
-                  },
-                  // Use a minimal @babel/polyfill.
-                  useBuiltIns: 'entry',
-                },
-              ],
-            ],
-          },
-        },
+        use: 'babel-loader',
       },
     ],
   },
