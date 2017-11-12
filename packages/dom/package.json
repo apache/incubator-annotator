@@ -15,5 +15,8 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "dependencies": {
+    "range-normalize": "^1.1.1"
   }
 }

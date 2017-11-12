@@ -12,6 +12,8 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
+
+export * from './text';
 import { createSelectorCreator, defaultMemoize } from '@annotator/selector';
 
 function domEqualityCheck(a, b) {

@@ -10,9 +10,7 @@
     "type": "git",
     "url": "https://gitbox.apache.org/repos/asf/incubator-annotator.git"
   },
-  "dependencies": {
-    "range-normalize": "^1.1.1"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@annotator/selector": "0.0.0"
   },
