@@ -357,6 +357,13 @@
     "@babel/helper-regex" "7.0.0-beta.32"
     regexpu-core "^4.1.3"
 
+"@babel/polyfill@^7.0.0-beta.32":
+  version "7.0.0-beta.32"
+  resolved "https://registry.yarnpkg.com/@babel/polyfill/-/polyfill-7.0.0-beta.32.tgz#b13a0b08a9ae3fb70ceaa22bf5213b7f0b81dada"
+  dependencies:
+    core-js "^2.4.0"
+    regenerator-runtime "^0.11.0"
+
 "@babel/preset-env@^7.0.0-beta.2":
   version "7.0.0-beta.32"
   resolved "https://registry.yarnpkg.com/@babel/preset-env/-/preset-env-7.0.0-beta.32.tgz#db1ebf62f6bc9fc08e49c4eea58463e1eb6c3bca"

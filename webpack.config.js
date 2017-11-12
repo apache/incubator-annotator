@@ -40,8 +40,21 @@ module.exports = {
           loader: 'babel-loader',
           options: {
             plugins: [
-              // Add polyfills without pollution and externalize helpers.
-              '@babel/transform-runtime',
+              [
+                '@babel/transform-runtime',
+                {
+                  // Externalize babel helpers for bundle size improvements.
+                  helpers: true,
+                  // Do not polyfill; leave that to applications.
+                  polyfill: false,
+                  // Do not rely on a global regenerator runtime.
+                  regenerator: true,
+                  // Do not import polyfills for helpers.
+                  useBuiltIns: true,
+                  // Do not transform helper modules.
+                  useESModules: true,
+                },
+              ],
             ],
             presets: [
               [
@@ -53,6 +66,8 @@ module.exports = {
                     browsers: ['defaults'],
                     node: '6.0',
                   },
+                  // Use a minimal @babel/polyfill.
+                  useBuiltIns: 'entry',
                 },
               ],
             ],
