@@ -10,11 +10,11 @@
     "type": "git",
     "url": "https://gitbox.apache.org/repos/asf/incubator-annotator.git"
   },
-  "publishConfig": {
-    "access": "public"
-  },
   "dependencies": {
     "@annotator/tee": "^0.0.0",
     "reselect": "^3.0.1"
+  },
+ "publishConfig": {
+    "access": "public"
   }
 }
