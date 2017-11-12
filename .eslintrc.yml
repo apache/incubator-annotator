@@ -31,6 +31,7 @@ rules:
   no-restricted-syntax:
     - error
     - BindExpression
+    - ClassProperty
     - Decorator
     - DoExpression
     - ExportDefaultSpecifier

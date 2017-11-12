@@ -40,24 +40,20 @@ module.exports = {
           loader: 'babel-loader',
           options: {
             plugins: [
-              // Support webpack code splitting.
-              'syntax-dynamic-import',
-              // Class properties are stage 3; the preset is out of date.
-              'transform-class-properties',
               // Add polyfills without pollution and externalize helpers.
-              'transform-runtime',
+              '@babel/transform-runtime',
             ],
             presets: [
               [
-                'env',
+                '@babel/env',
                 {
                   modules: false,
+                  shippedProposals: true,
                   targets: {
                     browsers: ['defaults'],
                   },
                 },
               ],
-              'stage-3',
             ],
           },
         },
