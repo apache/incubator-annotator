@@ -51,6 +51,7 @@ module.exports = {
                   shippedProposals: true,
                   targets: {
                     browsers: ['defaults'],
+                    node: '6.0',
                   },
                 },
               ],
