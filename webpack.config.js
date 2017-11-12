@@ -60,10 +60,15 @@ module.exports = {
               [
                 '@babel/env',
                 {
+                  // Do not transform modules; webpack can do that.
                   modules: false,
+                  // Enabled proposals that have shipped in browsers.
                   shippedProposals: true,
+                  // Set target environments.
                   targets: {
+                    // Browsers: > 1%, last 2 versions, Firefox ESR
                     browsers: ['defaults'],
+                    // Node: LTS
                     node: '6.0',
                   },
                   // Use a minimal @babel/polyfill.
