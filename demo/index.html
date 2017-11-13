@@ -16,7 +16,7 @@
         background-color: rgba(255, 255, 120, 0.5);;
         border: 0.1px solid rgba(255, 100, 0, 0.8);;
       }
-      #debugField {
+      #debug {
         width: 20rem;
         float: right;
         color: #666;
@@ -26,10 +26,10 @@
         overflow-y: scroll;
         resize: vertical;
       }
-      #debugField.error {
+      #debug.error {
         color: red;
       }
-      #selectableText, #corpus {
+      #selectable, #corpus {
         display: inline-block;
         max-width: 15em;
         padding: 1em;
@@ -47,13 +47,13 @@
     <p>
       Try select some text in the first paragraph below:
     </p>
-    <p id="selectableText">
+    <p id="selectable">
       Hello, annotated world! To annotate, or not to annotate, that is the question.
     </p>
     <p id="corpus" contenteditable="true">
       Hello, annotated world! To annotate, or not to annotate, that is the question.
     </p>
-    <pre id="debugField"></pre>
+    <pre id="debug"></pre>
     <p>
       Upon a change of selection, a
       <a href="https://www.w3.org/TR/2017/REC-annotation-model-20170223/#text-quote-selector">TextQuoteSelector</a>

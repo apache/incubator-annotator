@@ -55,6 +55,7 @@ async function* cartesian(...iterables) {
   }
 }
 
+// eslint-disable-next-line no-unused-vars
 async function test() {
   async function* gen1() {
     yield 1;
@@ -73,6 +74,7 @@ async function test() {
 
   const cart = cartesian(gen1(), gen2(), gen3());
 
+  // eslint-disable-next-line no-unused-vars
   const expected = [
     [1, 4, 5],
     [2, 4, 5],

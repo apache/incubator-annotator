@@ -13,7 +13,7 @@
  * the License.
  */
 
-/* global corpus, module */
+/* global corpus, debug, module, selectable */
 
 import '@babel/polyfill';
 import * as fragment from '@annotator/fragment-identifier';
@@ -24,42 +24,28 @@ import search from './search.js';
 
 const refresh = async () => {
   corpus.innerHTML = corpus.innerText;
+  debug.classList.remove('error');
+
   const identifier = window.location.hash.slice(1);
-  if (!identifier) {
-    debugInfo();
-    return;
-  }
+  if (!identifier) return;
+
   try {
     const { selector } = fragment.parse(identifier);
-    debugInfo(selector);
+    debug.innerText = JSON.stringify(selector, null, 2);
     const results = search(corpus, selector);
     const ranges = [];
     for await (let range of results) {
       ranges.push(range);
     }
     for (let range of ranges) {
-      try {
-        mark(range);
-      } catch (err) {
-        console.log(`Failed to highlight text: ${range.cloneContents().textContent}`)
-      }
+      mark(range);
     }
   } catch (e) {
-    debugError(e);
+    debug.classList.add('error');
+    debug.innerText = JSON.stringify(e, null, 2);
     if (e instanceof fragment.SyntaxError) return;
     else throw e;
   }
-};
-
-const debugInfo = object => {
-  const debugField = document.getElementById('debugField');
-  debugField.classList.remove('error');
-  debugField.innerText = JSON.stringify(object, null, 2);
-};
-const debugError = object => {
-  const debugField = document.getElementById('debugField');
-  debugField.classList.add('error');
-  debugField.innerText = JSON.stringify(object, null, 2);
 };
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -67,12 +53,10 @@ document.addEventListener('DOMContentLoaded', () => {
   refresh();
 });
 
-const editable = document.getElementById('corpus');
-editable.addEventListener('input', function() {
+corpus.addEventListener('input', function() {
   refresh();
 });
 
-const selectable = document.getElementById('selectableText');
 document.addEventListener('selectionchange', onSelectionChange);
 
 async function onSelectionChange() {
@@ -105,21 +89,3 @@ if (module.hot) {
     refresh
   );
 }
-
-/*
- * EXAMPLE
- * async function run() {
- *   let textSelector = createAnySelector([
- *     { type: 'TextQuoteSelector', exact: 'yes' },
- *     { type: 'TextQuoteSelector', exact: 'no' },
- *   ]);
- *
- *   let context = 'what if yes yes what no yes no yes no hurray';
- *
- *   for await (let result of textSelector(context)) {
- *     console.log(result, result.context, result.index);
- *   }
- * }
- *
- * run();
- */

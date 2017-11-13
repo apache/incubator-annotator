@@ -33,11 +33,9 @@ async function* search(root, descriptor) {
       descriptors: [descriptor],
       context: node.nodeValue,
     });
-    console.log('Searching');
     for await (let match of matches) {
       const startIndex = match.index;
       const endIndex = startIndex + match[0].length;
-      console.log(`Match: ${startIndex}–${endIndex}, "${match[0]}"`);
       const range = document.createRange();
       range.setStart(node, startIndex);
       range.setEnd(node, endIndex);
