@@ -62,3 +62,8 @@ overrides:
       browser: true
     settings:
       import/resolver: webpack
+  - files: ['packages/*/test/**/*.js']
+    env:
+      mocha: true
+    globals:
+      assert: true

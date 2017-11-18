@@ -1,0 +1,5 @@
+-r @std/esm
+-r @babel/register
+-r chai/register-assert
+--recursive
+packages/*/test

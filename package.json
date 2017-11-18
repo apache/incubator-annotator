@@ -13,7 +13,8 @@
     "precommit": "lint-staged",
     "lint": "eslint . --ext js,mjs --fix --quiet",
     "prepare": "lerna run prepare",
-    "start": "webpack-dev-server"
+    "start": "webpack-dev-server",
+    "test": "mocha"
   },
   "dependencies": {
     "@babel/polyfill": "^7.0.0-beta.32",
@@ -23,9 +24,11 @@
     "@babel/core": "^7.0.0-beta.32",
     "@babel/plugin-transform-runtime": "^7.0.0-beta.32",
     "@babel/preset-env": "^7.0.0-beta.32",
+    "@babel/register": "^7.0.0-beta.32",
     "@std/esm": "^0.16.0",
     "babel-eslint": "^8.0.2",
     "babel-loader": "^8.0.0-beta.0",
+    "chai": "^4.1.2",
     "dom-highlight-range": "^1.0.1",
     "eslint": "^4.11.0",
     "eslint-config-prettier": "^2.7.0",
@@ -36,6 +39,7 @@
     "husky": "^0.14.0",
     "lerna": "^2.5.1",
     "lint-staged": "^5.0.0",
+    "mocha": "^4.0.1",
     "prettier": "^1.8.2",
     "webpack": "^3.8.1",
     "webpack-dev-server": "^2.9.4"
