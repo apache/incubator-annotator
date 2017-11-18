@@ -4,14 +4,14 @@ let runtimeOptions = {
   polyfill: false,
   // Do not import polyfills for helpers.
   useBuiltIns: true,
-  // Export helpers as ES modules.
-  useESModules: true,
+  // Export helpers as modules when developing.
+  useESModules: process.env.BABEL_ENV === 'development',
 };
 
 // Options for the @babel/env preset.
 let envOptions = {
-  // Do not transform modules.
-  modules: false,
+  // Transform modules if compiling for production.
+  modules: process.env.BABEL_ENV === 'production' ? 'commonjs' : false,
   // Enabled proposals that have shipped in browsers.
   shippedProposals: true,
   // Set target environments.
