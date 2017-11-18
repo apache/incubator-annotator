@@ -14,7 +14,7 @@
     "@annotator/tee": "^0.0.0",
     "reselect": "^3.0.1"
   },
- "publishConfig": {
+  "publishConfig": {
     "access": "public"
   }
 }
