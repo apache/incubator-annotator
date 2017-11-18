@@ -10,7 +10,7 @@
     esutils "^2.0.2"
     js-tokens "^3.0.0"
 
-"@babel/core@^7.0.0-beta.2":
+"@babel/core@^7.0.0-beta.32":
   version "7.0.0-beta.32"
   resolved "https://registry.yarnpkg.com/@babel/core/-/core-7.0.0-beta.32.tgz#cc927d7d78a10d0444adaf08fbbda2ed644822f6"
   dependencies:
@@ -320,7 +320,7 @@
   dependencies:
     regenerator-transform "^0.11.0"
 
-"@babel/plugin-transform-runtime@^7.0.0-beta.2":
+"@babel/plugin-transform-runtime@^7.0.0-beta.32":
   version "7.0.0-beta.32"
   resolved "https://registry.yarnpkg.com/@babel/plugin-transform-runtime/-/plugin-transform-runtime-7.0.0-beta.32.tgz#32b666278034e0c92ed2cbd3889cd6e7452de39c"
   dependencies:
@@ -364,7 +364,7 @@
     core-js "^2.4.0"
     regenerator-runtime "^0.11.0"
 
-"@babel/preset-env@^7.0.0-beta.2":
+"@babel/preset-env@^7.0.0-beta.32":
   version "7.0.0-beta.32"
   resolved "https://registry.yarnpkg.com/@babel/preset-env/-/preset-env-7.0.0-beta.32.tgz#db1ebf62f6bc9fc08e49c4eea58463e1eb6c3bca"
   dependencies:
@@ -443,9 +443,9 @@
     lodash "^4.2.0"
     to-fast-properties "^2.0.0"
 
-"@std/esm@^0.14.0":
-  version "0.14.0"
-  resolved "https://registry.yarnpkg.com/@std/esm/-/esm-0.14.0.tgz#125081a4daf99a98ca63afe3f0610a8739e15067"
+"@std/esm@^0.16.0":
+  version "0.16.0"
+  resolved "https://registry.yarnpkg.com/@std/esm/-/esm-0.16.0.tgz#2a7a33ecb7f1701cebd4c87df6d0d945ed51f730"
 
 JSONStream@^1.0.4:
   version "1.3.1"

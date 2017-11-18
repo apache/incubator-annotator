@@ -20,10 +20,10 @@
     "@babel/runtime": "^7.0.0-beta.32"
   },
   "devDependencies": {
-    "@babel/core": "^7.0.0-beta.2",
-    "@babel/plugin-transform-runtime": "^7.0.0-beta.2",
-    "@babel/preset-env": "^7.0.0-beta.2",
-    "@std/esm": "^0.14.0",
+    "@babel/core": "^7.0.0-beta.32",
+    "@babel/plugin-transform-runtime": "^7.0.0-beta.32",
+    "@babel/preset-env": "^7.0.0-beta.32",
+    "@std/esm": "^0.16.0",
     "babel-eslint": "^8.0.2",
     "babel-loader": "^8.0.0-beta.0",
     "dom-highlight-range": "^1.0.1",
