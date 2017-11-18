@@ -49,5 +49,6 @@
   },
   "workspaces": [
     "packages/*"
-  ]
+  ],
+  "@std/esm": "cjs"
 }
