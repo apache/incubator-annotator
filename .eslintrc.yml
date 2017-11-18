@@ -15,10 +15,7 @@ globals:
 parser: babel-eslint
 
 parserOptions:
-  ecmaVersion: 2017
-  ecmaFeatures:
-    experimentalObjectRestSpread: true
-    globalReturn: false
+  ecmaVersion: 2018
 
 plugins:
   - import
