@@ -23,6 +23,11 @@ module.exports = {
   context: path.resolve(__dirname),
   entry: {
     demo: './demo/index.js',
+    test: [
+      'chai/register-assert',
+      'mocha-loader!multi-entry-loader?include=./packages/*/test!',
+    ],
+    common: ['webpack/hot/only-dev-server', 'webpack-dev-server/client'],
   },
   devServer: {
     contentBase: path.resolve(__dirname),
