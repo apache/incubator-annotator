@@ -18,7 +18,18 @@ Setup:
 
 ```sh
 $ yarn install
+```
+
+Run:
+
+```sh
 $ yarn start
+```
+
+Test:
+
+```sh
+$ yarn test
 ```
 
 Continue reading the [development documentation](http://localhost:8080) in your
