@@ -52,18 +52,7 @@
     "node": ">=6.0.0",
     "yarn": "^1.2.0"
   },
-  "lint-staged": {
-    "*.{js,mjs}": "eslint"
-  },
-  "nyc": {
-    "exclude": [
-      "packages/*/test"
-    ],
-    "instrument": false,
-    "sourceMap": false
-  },
   "workspaces": [
     "packages/*"
-  ],
-  "@std/esm": "cjs"
+  ]
 }

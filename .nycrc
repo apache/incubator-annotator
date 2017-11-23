@@ -1,0 +1,7 @@
+{
+  "exclude": [
+    "packages/*/test"
+  ],
+  "instrument": false,
+  "sourceMap": false
+}
