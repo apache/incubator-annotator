@@ -4,8 +4,8 @@ let runtimeOptions = {
   polyfill: false,
   // Do not import polyfills for helpers.
   useBuiltIns: true,
-  // Export helpers as modules when developing.
-  useESModules: process.env.BABEL_ENV === 'development',
+  // Export helpers as ES modules.
+  useESModules: true,
 };
 
 // Hacks for istanbul coverage, taken from babel itself.
