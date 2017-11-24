@@ -53,10 +53,6 @@ document.addEventListener('DOMContentLoaded', () => {
   refresh();
 });
 
-corpus.addEventListener('input', function() {
-  refresh();
-});
-
 document.addEventListener('selectionchange', onSelectionChange);
 
 async function onSelectionChange() {
