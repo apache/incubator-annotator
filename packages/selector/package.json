@@ -14,6 +14,9 @@
     "@annotator/tee": "^0.0.0",
     "reselect": "^3.0.1"
   },
+  "peerDependencies": {
+    "@babel/runtime": "^7.0.0-beta.32"
+  },
   "publishConfig": {
     "access": "public"
   }

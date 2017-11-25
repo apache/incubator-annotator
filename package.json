@@ -16,15 +16,13 @@
     "start": "webpack-dev-server",
     "test": "nyc mocha"
   },
-  "dependencies": {
-    "@babel/polyfill": "^7.0.0-beta.32",
-    "@babel/runtime": "^7.0.0-beta.32"
-  },
   "devDependencies": {
     "@babel/core": "^7.0.0-beta.32",
     "@babel/plugin-transform-runtime": "^7.0.0-beta.32",
+    "@babel/polyfill": "^7.0.0-beta.32",
     "@babel/preset-env": "^7.0.0-beta.32",
     "@babel/register": "^7.0.0-beta.32",
+    "@babel/runtime": "^7.0.0-beta.32",
     "@std/esm": "^0.17.1",
     "babel-eslint": "^8.0.2",
     "babel-loader": "^8.0.0-beta.0",
