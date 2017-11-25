@@ -20,7 +20,7 @@ let runtimeOptions = {
   // Do not import polyfills for helpers.
   useBuiltIns: true,
   // Export helpers as ES modules.
-  useESModules: true,
+  useESModules: process.env.BABEL_ENV !== 'cjs',
 };
 
 // Hacks for istanbul coverage, taken from babel itself.
@@ -56,7 +56,7 @@ function istanbulHacks() {
 // Options for the @babel/env preset.
 let envOptions = {
   // Transform modules if compiling for production.
-  modules: process.env.BABEL_ENV === 'production' ? 'commonjs' : false,
+  modules: process.env.BABEL_ENV === 'cjs' ? 'commonjs' : false,
   // Enabled proposals that have shipped in browsers.
   shippedProposals: true,
   // Set target environments.
@@ -73,7 +73,7 @@ let envOptions = {
 const config = {
   plugins: [
     ['@babel/transform-runtime', runtimeOptions],
-    ...(process.env.BABEL_ENV !== 'production' ? ['istanbul'] : []),
+    ...(process.env.NODE_ENV === 'production' ? [] : ['istanbul']),
   ],
   presets: [
     ['@babel/env', envOptions],
