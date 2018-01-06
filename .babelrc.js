@@ -23,6 +23,24 @@ let runtimeOptions = {
   useESModules: process.env.BABEL_ENV !== 'cjs',
 };
 
+// Restore old babylon behavior for istanbul.
+// https://github.com/babel/babel/pull/6836
+// https://github.com/istanbuljs/istanbuljs/issues/119
+function hacks() {
+  return {
+    visitor: {
+      Program(programPath) {
+        programPath.traverse({
+          ArrowFunctionExpression(path) {
+            const node = path.node;
+            node.expression = node.body.type !== 'BlockStatement';
+          },
+        });
+      },
+    },
+  };
+};
+
 // Options for the @babel/env preset.
 let envOptions = {
   // Transform modules if compiling for production.
@@ -43,6 +61,7 @@ let envOptions = {
 const config = {
   plugins: [
     ['@babel/transform-runtime', runtimeOptions],
+    ...(process.env.NODE_ENV === 'test' ? [hacks, 'istanbul'] : []),
   ],
   presets: [
     ['@babel/env', envOptions],
