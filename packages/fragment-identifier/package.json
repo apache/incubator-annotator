@@ -5,13 +5,13 @@
   "homepage": "https://annotator.apache.org",
   "license": "Apache-2.0",
   "author": "Apache Software Foundation",
-  "main": "index",
+  "main": "lib",
   "repository": {
     "type": "git",
     "url": "https://gitbox.apache.org/repos/asf/incubator-annotator.git"
   },
   "scripts": {
-    "prepare": "pegjs --format es fragment.pegjs"
+    "prepare": "pegjs --format es --output src/fragment.mjs src/fragment.pegjs"
   },
   "devDependencies": {
     "pegjs": "^0.11.0-dev.200"

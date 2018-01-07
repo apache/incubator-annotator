@@ -39,7 +39,7 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.js$/,
+        test: /\.m?js$/,
         exclude: /node_modules/,
         use: 'babel-loader',
       },
@@ -49,6 +49,7 @@ module.exports = {
     alias: {
       '@annotator': path.resolve(__dirname, 'packages/'),
     },
+    extensions: ['.mjs', '.js', '.json'],
   },
   plugins: [
     new webpack.HotModuleReplacementPlugin(),

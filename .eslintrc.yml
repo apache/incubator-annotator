@@ -19,7 +19,6 @@ parserOptions:
 
 plugins:
   - import
-  - node
   - prettier
 
 rules:
@@ -42,9 +41,12 @@ rules:
 
 settings:
   import/extensions: ['.mjs', '.js']
+  import/resolver: node
 
 overrides:
-  - files: ['**/*.mjs']
+  - files:
+      - 'scripts/*.mjs'
+      - 'scripts/*.js'
     parser: espree
     parserOptions:
       ecmaFeatures:
@@ -57,12 +59,14 @@ overrides:
         - error
         - ignores:
             - modules
-  - files: ['demo/**/*.js']
+  - files:
+      - 'demo/**/*.mjs'
+      - 'demo/**/*.js'
     env:
       browser: true
-    settings:
-      import/resolver: webpack
-  - files: ['packages/*/test/**/*.js']
+  - files:
+      - 'packages/*/test/**/*.mjs'
+      - 'packages/*/test/**/*.js'
     env:
       mocha: true
     globals:

@@ -13,4 +13,4 @@
  * the License.
  */
 
-export * from './quote.js';
+export * from './quote';
