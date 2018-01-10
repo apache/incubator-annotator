@@ -61,7 +61,7 @@ let envOptions = {
 const config = {
   plugins: [
     ['@babel/transform-runtime', runtimeOptions],
-    ...(process.env.NODE_ENV === 'test' ? [hacks, 'istanbul'] : []),
+    ...(process.env.BABEL_ENV === 'test' ? [hacks, 'istanbul'] : []),
   ],
   presets: [
     ['@babel/env', envOptions],
