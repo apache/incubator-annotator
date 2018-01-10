@@ -13,15 +13,11 @@
  * the License.
  */
 
-// Options for the @babel/transform-runtime plugin.
-let runtimeOptions = {
-  // Do not polyfill; leave that to applications.
-  polyfill: false,
-  // Do not import polyfills for helpers.
-  useBuiltIns: true,
-  // Export helpers as ES modules.
-  useESModules: process.env.BABEL_ENV !== 'cjs',
-};
+const ENV = process.env.BABEL_ENV || 'development';
+const DEV = ENV === 'development';
+const TEST = ENV === 'test';
+const CJS = ENV === 'cjs';
+const ESM = ENV === 'esm';
 
 // Restore old babylon behavior for istanbul.
 // https://github.com/babel/babel/pull/6836
@@ -42,10 +38,10 @@ function hacks() {
 };
 
 // Options for the @babel/env preset.
-let envOptions = {
-  // Transform modules if compiling for production.
-  modules: process.env.BABEL_ENV === 'cjs' ? 'commonjs' : false,
-  // Enabled proposals that have shipped in browsers.
+const envOptions = {
+  // Do not enable automatic module transformation.
+  modules: false,
+  // Enable proposals that have shipped in browsers.
   shippedProposals: true,
   // Set target environments.
   targets: {
@@ -58,10 +54,21 @@ let envOptions = {
   useBuiltIns: 'entry',
 };
 
+// Options for the @babel/transform-runtime plugin.
+const runtimeOptions = {
+  // Do not polyfill; leave that to applications.
+  polyfill: false,
+  // Do not import polyfills for helpers.
+  useBuiltIns: true,
+  // Export helpers as ES modules.
+  useESModules: !CJS,
+};
+
 const config = {
   plugins: [
     ['@babel/transform-runtime', runtimeOptions],
-    ...(process.env.BABEL_ENV === 'test' ? [hacks, 'istanbul'] : []),
+    ...(CJS ? ['@babel/transform-modules-commonjs']: []),
+    ...(TEST ? [hacks, 'istanbul'] : []),
   ],
   presets: [
     ['@babel/env', envOptions],
