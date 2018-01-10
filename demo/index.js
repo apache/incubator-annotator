@@ -48,13 +48,6 @@ const refresh = async () => {
   }
 };
 
-document.addEventListener('DOMContentLoaded', () => {
-  window.addEventListener('hashchange', refresh);
-  refresh();
-});
-
-document.addEventListener('selectionchange', onSelectionChange);
-
 async function onSelectionChange() {
   const selection = document.getSelection();
   if (selection === null || selection.isCollapsed) {
@@ -79,9 +72,15 @@ function isWithinNode(range, node) {
   );
 }
 
+window.addEventListener('hashchange', refresh);
+document.addEventListener('DOMContentLoaded', refresh);
+document.addEventListener('selectionchange', onSelectionChange);
+
 if (module.hot) {
-  module.hot.accept(
-    ['@annotator/fragment-identifier', './mark.js', './search.js'],
-    refresh
-  );
+  module.hot.accept();
+  module.hot.dispose(() => {
+    window.removeEventListener('hashchange', refresh);
+    document.removeEventListener('DOMContentLoaded', refresh);
+    document.removeEventListener('selectionchange', onSelectionChange);
+  });
 }
