@@ -46,11 +46,6 @@ module.exports = {
       },
     ],
   },
-  resolve: {
-    alias: {
-      '@annotator': path.resolve(__dirname, 'packages/'),
-    },
-  },
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NamedModulesPlugin(),

@@ -54,6 +54,14 @@ const envOptions = {
   useBuiltIns: 'entry',
 };
 
+// Options for the module-resolver plugin.
+// Used for resolving source files during development and testing.
+let resolverOptions = {
+  alias: {
+    '^(@annotator/.+?)(/|$)': '\\1/src',
+  },
+};
+
 // Options for the @babel/transform-runtime plugin.
 const runtimeOptions = {
   // Do not polyfill; leave that to applications.
@@ -68,6 +76,7 @@ const config = {
   plugins: [
     ['@babel/transform-runtime', runtimeOptions],
     ...(CJS ? ['@babel/transform-modules-commonjs']: []),
+    ...(DEV || TEST ? [['module-resolver', resolverOptions]]: []),
     ...(TEST ? [hacks, 'istanbul'] : []),
   ],
   presets: [

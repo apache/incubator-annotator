@@ -41,7 +41,7 @@ rules:
 
 settings:
   import/extensions: ['.mjs', '.js']
-  import/resolver: node
+  import/resolver: babel-module
 
 overrides:
   - files:
