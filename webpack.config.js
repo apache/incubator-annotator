@@ -27,7 +27,6 @@ module.exports = {
       'chai/register-assert',
       'mocha-loader!multi-entry-loader?include=./packages/*/test!',
     ],
-    common: ['webpack/hot/only-dev-server', 'webpack-dev-server/client'],
   },
   devServer: {
     contentBase: path.resolve(__dirname),
@@ -36,12 +35,14 @@ module.exports = {
     hot: true,
   },
   devtool: 'inline-source-map',
+  mode: 'development',
   module: {
     rules: [
       {
         test: /\.m?js$/,
         exclude: /node_modules/,
         use: 'babel-loader',
+        type: 'javascript/auto',
       },
     ],
   },
@@ -49,7 +50,6 @@ module.exports = {
     alias: {
       '@annotator': path.resolve(__dirname, 'packages/'),
     },
-    extensions: ['.mjs', '.js', '.json'],
   },
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
@@ -64,7 +64,6 @@ module.exports = {
       name: 'manifest',
       minChunks: Infinity,
     }),
-    new webpack.optimize.ModuleConcatenationPlugin(),
   ],
   output: {
     filename: '[name].js',

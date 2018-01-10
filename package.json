@@ -51,8 +51,8 @@
     "nyc": "^11.4.1",
     "prettier": "^1.9.2",
     "rimraf": "^2.6.2",
-    "webpack": "^3.10.0",
-    "webpack-dev-server": "^2.10.0"
+    "webpack": "^4.0.0-alpha.4",
+    "webpack-dev-server": "^3.0.0-alpha6"
   },
   "engines": {
     "node": ">=6.0.0",
