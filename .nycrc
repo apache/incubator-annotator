@@ -7,10 +7,5 @@
     ".mjs"
   ],
   "instrument": false,
-  "require": [
-    "@std/esm",
-    "@babel/register",
-    "@babel/polyfill"
-  ],
   "sourceMap": false
 }
