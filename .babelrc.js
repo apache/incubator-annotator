@@ -17,25 +17,14 @@ const ENV = process.env.BABEL_ENV || 'development';
 const DEV = ENV === 'development';
 const TEST = ENV === 'test';
 const CJS = ENV === 'cjs';
-const ESM = ENV === 'esm';
 
-// Restore old babylon behavior for istanbul.
-// https://github.com/babel/babel/pull/6836
-// https://github.com/istanbuljs/istanbuljs/issues/119
-function hacks() {
-  return {
-    visitor: {
-      Program(programPath) {
-        programPath.traverse({
-          ArrowFunctionExpression(path) {
-            const node = path.node;
-            node.expression = node.body.type !== 'BlockStatement';
-          },
-        });
-      },
-    },
-  };
-};
+// Options for the @babel/transform-modules-commonjs plugin.
+const cjsOptions = {
+  // Disable require default interop.
+  noInterop: true,
+  // Disable export default interop.
+  strict: true,
+}
 
 // Options for the @babel/env preset.
 const envOptions = {
@@ -68,16 +57,16 @@ const runtimeOptions = {
   polyfill: false,
   // Do not import polyfills for helpers.
   useBuiltIns: true,
-  // Export helpers as ES modules.
+  // Use the module format of the target environment.
   useESModules: !CJS,
 };
 
 const config = {
   plugins: [
     ['@babel/transform-runtime', runtimeOptions],
-    ...(CJS ? ['@babel/transform-modules-commonjs']: []),
+    ...(CJS ? [['@babel/transform-modules-commonjs', cjsOptions]]: []),
     ...(DEV || TEST ? [['module-resolver', resolverOptions]]: []),
-    ...(TEST ? [hacks, 'istanbul'] : []),
+    ...(TEST ? ['istanbul'] : []),
   ],
   presets: [
     ['@babel/env', envOptions],

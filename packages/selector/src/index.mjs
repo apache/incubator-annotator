@@ -14,10 +14,9 @@
  */
 
 import { AsyncTee } from '@annotator/tee';
-import {
-  createSelectorCreator as _createSelectorCreator,
-  defaultMemoize,
-} from 'reselect';
+import reselect from 'reselect';
+
+const _createSelectorCreator = reselect.createSelectorCreator;
 
 const identity = a => a;
 
@@ -32,6 +31,5 @@ export function createSelectorCreator(memoize, ...memoizeOptions) {
   };
 }
 
+export const { defaultMemoize } = reselect;
 export const createSelector = createSelectorCreator(defaultMemoize);
-
-export { defaultMemoize } from 'reselect';

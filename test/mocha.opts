@@ -1,4 +1,3 @@
--r @std/esm
 -r @babel/register
 -r @babel/polyfill
 -r chai/register-assert

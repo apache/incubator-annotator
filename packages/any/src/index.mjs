@@ -13,10 +13,12 @@
  * the License.
  */
 
-import { createSelector } from 'reselect';
+import reselect from 'reselect';
 import { createTextQuoteSelector } from '@annotator/text';
 import { createRangeSelector } from '@annotator/range';
 import { makeRefinable } from '@annotator/refinedBy';
+
+const { createSelector } = reselect;
 
 export function createAnySelectorCreator(selectorCreatorsByType) {
   function selectSelector(type) {

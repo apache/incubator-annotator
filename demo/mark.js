@@ -19,6 +19,6 @@
  */
 
 import highlightRange from 'dom-highlight-range';
-export default function mark(range) {
+export function mark(range) {
   highlightRange(range, 'highlighted');
 }

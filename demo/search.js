@@ -15,17 +15,15 @@
 
 import { createAnySelector } from '@annotator/any';
 
+const selectorFunc = createAnySelector();
+
 /**
  * Locate a selector.
  * @param {Node} root node
  * @param {Selector} descriptor
  * @return {Range}
  */
-export default search;
-
-const selectorFunc = createAnySelector();
-
-async function* search(root, descriptor) {
+export async function* search(root, descriptor) {
   for (const node of nodeIterator(root)) {
     if (!node.nodeValue) continue;
 

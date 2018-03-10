@@ -22,6 +22,7 @@ plugins:
   - prettier
 
 rules:
+  import/no-default-export: error
   import/order: error
   import/unambiguous: error
   no-restricted-syntax:
@@ -45,7 +46,6 @@ settings:
 
 overrides:
   - files:
-      - 'scripts/*.mjs'
       - 'scripts/*.js'
     parser: espree
     parserOptions:
@@ -57,8 +57,6 @@ overrides:
       no-console: off
       node/no-unsupported-features:
         - error
-        - ignores:
-            - modules
   - files:
       - 'demo/**/*.mjs'
       - 'demo/**/*.js'
@@ -66,7 +64,6 @@ overrides:
       browser: true
   - files:
       - 'packages/*/test/**/*.mjs'
-      - 'packages/*/test/**/*.js'
     env:
       mocha: true
     globals:

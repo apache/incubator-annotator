@@ -1,7 +1,6 @@
 import cartesianArrays from 'cartesian';
 
-export default cartesian;
-async function* cartesian(...iterables) {
+export async function* product(...iterables) {
   // We listen to all iterators in parallel, while logging all the values they
   // produce. Whenever an iterator produces a value, we produce and yield all
   // combinations of that value with the logged values from other iterators.
@@ -72,7 +71,7 @@ async function test() {
     yield 6;
   }
 
-  const cart = cartesian(gen1(), gen2(), gen3());
+  const cart = product(gen1(), gen2(), gen3());
 
   // eslint-disable-next-line no-unused-vars
   const expected = [

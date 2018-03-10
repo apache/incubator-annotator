@@ -1,4 +1,6 @@
-import { createSelector } from 'reselect';
+import reselect from 'reselect';
+
+const { createSelector } = reselect;
 
 export function makeRefinable(selector, { createAnySelector }) {
   const memoizedCreateAnySelector = createSelector(() => createAnySelector());

@@ -1,5 +1,5 @@
 import { createSelector as createAnnotatorSelector } from '@annotator/selector';
-import cartesian from './cartesian';
+import { product } from './cartesian';
 
 export function createRangeSelector({ createAnySelector }) {
   const startSelector = createAnySelector();
@@ -15,8 +15,8 @@ export function createRangeSelector({ createAnySelector }) {
       descriptors: [descriptor.endSelector],
       context,
     });
-    const combinations = cartesian(startMatches, endMatches);
-    for await (let [start, end] of combinations) {
+    const pairs = product(startMatches, endMatches);
+    for await (let [start, end] of pairs) {
       if (start.index > end.index) {
         continue;
       }

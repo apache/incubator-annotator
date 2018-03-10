@@ -18,8 +18,8 @@
     "precommit": "lint-staged",
     "lint": "eslint . --ext js,mjs --fix --quiet",
     "prepare": "lerna run prepare",
-    "start": "webpack-dev-server",
-    "test": "cross-env BABEL_ENV=test nyc mocha"
+    "start": "webpack-serve",
+    "test": "cross-env BABEL_ENV=test nyc mocha -r esm"
   },
   "devDependencies": {
     "@babel/cli": "^7.0.0-beta.40",
@@ -53,13 +53,15 @@
     "prettier": "^1.11.1",
     "rimraf": "^2.6.2",
     "webpack": "^4.1.1",
-    "webpack-dev-server": "^3.1.1"
+    "webpack-serve": "^0.2.0"
   },
   "engines": {
     "node": ">=6.0.0",
-    "yarn": "^1.2.0"
+    "yarn": "^1.5.0"
   },
-  "workspaces": [
-    "packages/*"
-  ]
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ]
+  }
 }

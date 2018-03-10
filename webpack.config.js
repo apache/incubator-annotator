@@ -17,7 +17,6 @@
 /* eslint-disable import/unambiguous */
 
 const path = require('path');
-const webpack = require('webpack');
 
 module.exports = {
   context: path.resolve(__dirname),
@@ -28,12 +27,6 @@ module.exports = {
       'mocha-loader!multi-entry-loader?include=./packages/*/test!',
     ],
   },
-  devServer: {
-    contentBase: path.resolve(__dirname),
-    host: 'localhost',
-    port: 8080,
-    hot: true,
-  },
   devtool: 'inline-source-map',
   mode: 'development',
   module: {
@@ -42,24 +35,9 @@ module.exports = {
         test: /\.m?js$/,
         exclude: /node_modules/,
         use: 'babel-loader',
-        type: 'javascript/auto',
       },
     ],
   },
-  plugins: [
-    new webpack.HotModuleReplacementPlugin(),
-    new webpack.NamedModulesPlugin(),
-    new webpack.optimize.CommonsChunkPlugin({
-      name: 'common',
-      minChunks: module => {
-        return module.context && /node_modules/.test(module.context);
-      },
-    }),
-    new webpack.optimize.CommonsChunkPlugin({
-      name: 'manifest',
-      minChunks: Infinity,
-    }),
-  ],
   output: {
     filename: '[name].js',
     publicPath: '/',
