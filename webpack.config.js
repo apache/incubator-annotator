@@ -24,7 +24,7 @@ module.exports = {
     demo: './demo/index.js',
     test: [
       'chai/register-assert',
-      'mocha-loader!multi-entry-loader?include=./packages/*/test!',
+      'mocha-loader!multi-entry-loader?include=./packages/*/test/**/*.mjs!',
     ],
   },
   devtool: 'inline-source-map',
