@@ -884,6 +884,10 @@ babel-plugin-module-resolver@^3.1.0:
     reselect "^3.0.1"
     resolve "^1.4.0"
 
+babel-plugin-preserve-comment-header@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/babel-plugin-preserve-comment-header/-/babel-plugin-preserve-comment-header-1.0.1.tgz#7181cba65c507914d45eaefc372eb659b3f16996"
+
 babel-runtime@^6.22.0, babel-runtime@^6.26.0:
   version "6.26.0"
   resolved "https://registry.yarnpkg.com/babel-runtime/-/babel-runtime-6.26.0.tgz#965c7058668e82b55d7bfe04ff2337bc8b5647fe"
