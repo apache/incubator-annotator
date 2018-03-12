@@ -1,4 +1,4 @@
-import * as selector from '../src';
+import * as selector from '../lib';
 
 describe('selector', () => {
   it('can be imported', () => {
