@@ -1,8 +1,3 @@
-/**
- *  Copyright © 2016 World Wide Web Consortium, (MIT, ERCIM, Keio, Beihang).
- *  http://www.w3.org/Consortium/Legal/2015/doc-license
- */
-
 {
     function collect() {
       var ret = {};
