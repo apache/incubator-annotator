@@ -48,15 +48,11 @@ overrides:
   - files:
       - 'scripts/*.js'
     parser: espree
-    parserOptions:
-      ecmaFeatures:
-        experimentalObjectRestSpread: false
     plugins:
       - node
     rules:
       no-console: off
-      node/no-unsupported-features:
-        - error
+      node/no-unsupported-features: error
   - files:
       - 'demo/**/*.mjs'
       - 'demo/**/*.js'
