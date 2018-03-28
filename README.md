@@ -32,8 +32,8 @@ Test:
 $ yarn test
 ```
 
-Continue reading the [development documentation](http://localhost:8080) in your
-browser.
+Once the test server has started, you can read local development documentation
+by visiting `http://localhost:8080/` in your browser.
 
 # License
 
