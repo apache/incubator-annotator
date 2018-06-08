@@ -47,13 +47,10 @@ settings:
 overrides:
   - files:
       - 'babel.config.js'
-    parserOptions:
-      sourceType: script
-    env:
-      node: true
-  - files:
       - 'scripts/*.js'
     parser: espree
+    parserOptions:
+      sourceType: script
     plugins:
       - node
     rules:
