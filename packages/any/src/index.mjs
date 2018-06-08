@@ -13,12 +13,9 @@
  * the License.
  */
 
-import * as reselect from 'reselect';
 import { createTextQuoteSelector } from '@annotator/text';
 import { createRangeSelector } from '@annotator/range';
 import { makeRefinable } from '@annotator/refinedBy';
-
-const { createSelector } = reselect;
 
 export function createAnySelectorCreator(selectorCreatorsByType) {
   function selectSelector(type) {
@@ -32,18 +29,11 @@ export function createAnySelectorCreator(selectorCreatorsByType) {
   }
 
   function createAnySelector() {
-    const memoizedSelectSelector = createSelector(
-      descriptor => descriptor.type,
-      type => selectSelector(type)
-    );
-
     async function* anySelector({ descriptors, context }) {
       const descriptor = descriptors[0]; // TODO handle multiple descriptors
-      const selectorFunc = memoizedSelectSelector(descriptor);
+      const selectorFunc = selectSelector(descriptor.type);
       yield* selectorFunc({ descriptors: [descriptor], context });
     }
-
-    // Not wrapped with Tee; we expect the selector implementations to do that.
     return anySelector;
   }
 

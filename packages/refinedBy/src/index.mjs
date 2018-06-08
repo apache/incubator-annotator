@@ -1,16 +1,10 @@
-import * as reselect from 'reselect';
-
-const { createSelector } = reselect;
-
 export function makeRefinable(selector, { createAnySelector }) {
-  const memoizedCreateAnySelector = createSelector(() => createAnySelector());
-
   async function* refinableSelector({ descriptors, context }) {
     const matches = selector({ descriptors, context });
     for await (let match of matches) {
       const refiningDescriptor = match.descriptor.refinedBy;
       if (refiningDescriptor) {
-        const anySelector = memoizedCreateAnySelector();
+        const anySelector = createAnySelector();
         const refiningMatches = anySelector({
           descriptors: [refiningDescriptor],
           context: matchAsContext(match),
