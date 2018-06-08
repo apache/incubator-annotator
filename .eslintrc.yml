@@ -48,6 +48,8 @@ overrides:
   - files:
       - 'babel.config.js'
       - 'scripts/*.js'
+    env:
+      node: true
     parser: espree
     parserOptions:
       sourceType: script
