@@ -1,4 +1,4 @@
-import reselect from 'reselect';
+import * as reselect from 'reselect';
 
 const { createSelector } = reselect;
 

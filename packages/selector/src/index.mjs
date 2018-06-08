@@ -14,7 +14,7 @@
  */
 
 import { AsyncTee } from '@annotator/tee';
-import reselect from 'reselect';
+import * as reselect from 'reselect';
 
 const _createSelectorCreator = reselect.createSelectorCreator;
 

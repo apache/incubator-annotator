@@ -35,6 +35,8 @@ module.exports = {
         test: /\.m?js$/,
         exclude: /node_modules/,
         use: 'babel-loader',
+        // TODO: remove this
+        type: 'javascript/auto',
       },
     ],
   },

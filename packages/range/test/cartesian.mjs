@@ -1,4 +1,4 @@
-import { product } from '../lib/cartesian.mjs';
+import { product } from '../src/cartesian.mjs';
 
 async function* gen1() {
   yield 1;

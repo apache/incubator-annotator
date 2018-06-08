@@ -13,7 +13,7 @@
  * the License.
  */
 
-import reselect from 'reselect';
+import * as reselect from 'reselect';
 import { createTextQuoteSelector } from '@annotator/text';
 import { createRangeSelector } from '@annotator/range';
 import { makeRefinable } from '@annotator/refinedBy';
