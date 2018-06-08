@@ -13,7 +13,7 @@
     "build": "yarn build:cjs && yarn build:esm",
     "build:cjs": "cross-env BABEL_ENV=cjs yarn build:run",
     "build:esm": "cross-env BABEL_ENV=esm yarn build:run --keep-file-extension",
-    "build:run": "lerna exec --parallel -- babel -d lib src",
+    "build:run": "lerna exec --parallel -- babel -d lib src --config-file ../../babel.config.js",
     "clean": "lerna exec -- rimraf lib",
     "precommit": "lint-staged",
     "lint": "eslint . --ext js,mjs --fix --quiet",
