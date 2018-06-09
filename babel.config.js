@@ -20,12 +20,11 @@ module.exports = api => {
   const CJS = ENV === 'cjs';
 
   // Options for the @babel/transform-modules-commonjs plugin.
-  // TODO: re-evaluate this
   const cjsOptions = {
     // Disable require default interop.
-    // noInterop: true,
+    noInterop: true,
     // Disable export default interop.
-    // strict: true,
+    strict: true,
   };
 
   // Options for the @babel/env preset.
