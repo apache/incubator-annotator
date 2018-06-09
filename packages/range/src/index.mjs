@@ -1,4 +1,3 @@
-import { createSelector as createAnnotatorSelector } from '@annotator/selector';
 import { product } from './cartesian';
 
 export function createRangeSelector({ createAnySelector }) {
@@ -29,7 +28,7 @@ export function createRangeSelector({ createAnySelector }) {
     }
   }
 
-  return createAnnotatorSelector(rangeSelector);
+  return rangeSelector;
 }
 
 function rangeBetween({ start, end, context }) {

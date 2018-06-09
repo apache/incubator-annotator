@@ -13,8 +13,6 @@
  * the License.
  */
 
-import { createSelector } from '@annotator/selector';
-
 export function createTextQuoteSelector() {
   async function* exec({ descriptors, context }) {
     for (let descriptor of descriptors) {
@@ -36,7 +34,7 @@ export function createTextQuoteSelector() {
     }
   }
 
-  return createSelector(exec);
+  return exec;
 }
 
 export function describeTextQuote({ context, startIndex, endIndex }) {

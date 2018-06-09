@@ -14,21 +14,6 @@
  */
 
 export * from './text';
-import { createSelectorCreator, defaultMemoize } from '@annotator/selector';
-
-function domEqualityCheck(a, b) {
-  if (a !== b) return false;
-  // TODO:
-  // - weakref the node
-  // - attach mutation listener
-  // - invalidate on mutations
-  return true;
-}
-
-const createDomSelector = createSelectorCreator(
-  defaultMemoize,
-  domEqualityCheck
-);
 
 export function createCssSelector(selectors) {
   const cssSelector = selectors.map(({ value }) => value).join(',');
@@ -37,5 +22,5 @@ export function createCssSelector(selectors) {
     yield* context.querySelectorAll(cssSelector);
   }
 
-  return createDomSelector(exec);
+  return exec;
 }
