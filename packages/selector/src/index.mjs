@@ -13,10 +13,6 @@
  * the License.
  */
 
-import { createTextQuoteSelector } from '@annotator/text';
-import { createRangeSelector } from '@annotator/range';
-import { makeRefinable } from '@annotator/refinedBy';
-
 export function createAnySelectorCreator(selectorCreatorsByType) {
   function selectSelector(type) {
     const selectorCreator = selectorCreatorsByType[type];
@@ -40,9 +36,40 @@ export function createAnySelectorCreator(selectorCreatorsByType) {
   return createAnySelector;
 }
 
-export const allSelectorTypes = {
-  TextQuoteSelector: createTextQuoteSelector,
-  RangeSelector: createRangeSelector,
-};
+export function makeRefinable(selector, { createAnySelector }) {
+  async function* refinableSelector({ descriptors, context }) {
+    const matches = selector({ descriptors, context });
+    for await (let match of matches) {
+      const refiningDescriptor = match.descriptor.refinedBy;
+      if (refiningDescriptor) {
+        const anySelector = createAnySelector();
+        const refiningMatches = anySelector({
+          descriptors: [refiningDescriptor],
+          context: matchAsContext(match),
+        });
+        for await (let refiningMatch of refiningMatches) {
+          const refinedMatch = composeMatches(refiningMatch, match);
+          yield refinedMatch;
+        }
+      } else {
+        yield match;
+      }
+    }
+  }
 
-export const createAnySelector = createAnySelectorCreator(allSelectorTypes);
+  return refinableSelector;
+}
+
+function matchAsContext(match) {
+  return match[0];
+}
+
+function composeMatches(...matches) {
+  return matches.reverse().reduce((match, refiningMatch) => {
+    const refinedMatch = [...refiningMatch];
+    refinedMatch.index = match.index + refiningMatch.index;
+    refinedMatch.input = match.input;
+    refinedMatch.descriptor = match.descriptor;
+    return refinedMatch;
+  });
+}

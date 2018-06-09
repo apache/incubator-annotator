@@ -13,9 +13,16 @@
  * the License.
  */
 
-import { createAnySelector } from '@annotator/any';
+import { createRangeSelector } from '@annotator/range';
+import { createAnySelectorCreator } from '@annotator/selector';
+import { createTextQuoteSelector } from '@annotator/text';
 
-const selectorFunc = createAnySelector();
+const allSelectorTypes = {
+  TextQuoteSelector: createTextQuoteSelector,
+  RangeSelector: createRangeSelector,
+};
+
+const selectorFunc = createAnySelectorCreator(allSelectorTypes)();
 
 /**
  * Locate a selector.
