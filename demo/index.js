@@ -18,7 +18,6 @@
 import '@babel/polyfill';
 import * as fragment from '@annotator/fragment-identifier';
 import { describeTextQuoteByRange as describeRange } from '@annotator/dom';
-// import { createAnySelector } from '@annotator/any';
 import { mark } from './mark.js';
 import { search } from './search.js';
 
