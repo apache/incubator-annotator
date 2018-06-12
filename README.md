@@ -9,24 +9,32 @@
 
 ## Development
 
-Requirements:
+##### Requirements
 
 - [node](https://nodejs.org) >= 6.x
 - [yarn](https://www.yarnpkg.com/) >= 1.5.x
 
-Setup:
+##### Setup
 
 ```sh
 $ yarn install
 ```
 
-Test:
+##### Test
 
 ```sh
 $ yarn test
 ```
 
-Run localhost server:
+By default the Web Annotation JSON-related tests will skipped. To use those
+with a specific local file you can use the `--url` parameter plus a local file
+path.
+
+```sh
+$ yarn test --url ../anno1.json
+```
+
+##### Run localhost demo server
 
 ```sh
 $ yarn start
