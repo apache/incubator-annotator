@@ -4,3 +4,4 @@
 --recursive
 --watch-extensions mjs
 packages/*/test/**/*.mjs
+test/**/*.mjs
