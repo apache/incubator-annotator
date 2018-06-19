@@ -11,7 +11,7 @@
 
 ##### Requirements
 
-- [node](https://nodejs.org) >= 6.x
+- [node](https://nodejs.org) >= ~~6.x~~ 8.1.0
 - [yarn](https://www.yarnpkg.com/) >= 1.5.x
 
 ##### Setup
