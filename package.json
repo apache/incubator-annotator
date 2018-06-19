@@ -59,7 +59,7 @@
     "webpack-serve": "^0.2.0"
   },
   "engines": {
-    "node": ">=6.0.0",
+    "node": ">=8.0.0",
     "yarn": "^1.5.0"
   },
   "workspaces": {
