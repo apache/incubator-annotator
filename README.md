@@ -7,12 +7,32 @@
 * [Issue Tracker](https://issues.apache.org/jira/browse/ANNO)
 * [Wiki](https://cwiki.apache.org/confluence/display/ANNO)
 
+## Usage
+
+We're currently pre-releasing development copies of each library that makes up
+the sum total of Apache Annotator's code. You can grab any of them from our
+[npm organization](https://www.npmjs.com/org/annotator).
+
+```sh
+$ # for example...
+$ npm install --save @annotator/dom
+```
+
+##### Requirements
+
+- [node](https://nodejs.org) >= 8.x
+- [yarn](https://www.yarnpkg.com/) >= 1.5.1
+
+
 ## Development
 
 ##### Requirements
 
-- [node](https://nodejs.org) >= 6.x
-- [yarn](https://www.yarnpkg.com/) >= 1.5.x
+We use [Lerna](https://lernajs.io/) to juggle the various Apache Annotator
+libraries. If you'd like to contribute, you'll need the following:
+
+- [node](https://nodejs.org) >= 8.x
+- [yarn](https://www.yarnpkg.com/) >= 1.5.1
 
 ##### Setup
 
