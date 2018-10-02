@@ -1,6 +1,7 @@
 language: node_js
 node_js:
-  - "node"
+  - "6"
+  - "8"
 
 # Travis is pretty behind the curve on their Yarn support...
 # https://docs.travis-ci.com/user/languages/javascript-with-nodejs/#Using-a-specific-yarn-version
