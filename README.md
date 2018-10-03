@@ -1,4 +1,4 @@
-# [Apache Annotator](http://annotator.apache.org/) (incubating)
+# [Apache Annotator](http://annotator.apache.org/) (incubating) [![Build Status](https://travis-ci.org/apache/incubator-annotator.svg?branch=master)](https://travis-ci.org/apache/incubator-annotator)
 
 > Apache Annotator provides annotation enabling code for browsers, servers,
 > and humans.
