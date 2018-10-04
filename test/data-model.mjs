@@ -37,7 +37,7 @@ const musts = JSON.parse(
   )
 );
 
-describe('Test schemas', () => {
+describe('Test JSON against Schemas', () => {
   let data = '';
 
   before(function() {
