@@ -3,5 +3,3 @@
 -r chai/register-assert
 --recursive
 --watch-extensions mjs
-packages/*/test/**/*.mjs
-test/**/*.mjs

@@ -46,14 +46,6 @@ $ yarn install
 $ yarn test
 ```
 
-By default the Web Annotation JSON-related tests will skipped. To use those
-with a specific local file you can use the `--url` parameter plus a local file
-path.
-
-```sh
-$ yarn test --url ../anno1.json
-```
-
 ##### Run localhost demo server
 
 ```sh
@@ -62,6 +54,18 @@ $ yarn start
 
 Once the test server has started, you can browse a local demo, and run tests in
 a browser by visiting `http://localhost:8080/`.
+
+
+## Web Annotation Data Model Validation
+
+If you have any Web Annotation Data Model JSON documents, you can validate them
+using the `validate` script:
+
+
+```sh
+$ yarn validate --url ../anno1.json
+```
+
 
 # License
 
