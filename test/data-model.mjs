@@ -2,6 +2,7 @@
 
 import fs from 'fs';
 import URL from 'url';
+import fetch from 'node-fetch';
 
 import Ajv from 'ajv';
 const ajv = new Ajv({ schemaId: 'auto' });
@@ -40,14 +41,15 @@ const musts = JSON.parse(
 describe('Test JSON against Schemas', () => {
   let data = '';
 
-  before(function() {
+  before(async function() {
     if (!found_url) {
       this.skip();
     } else {
       // load the data from the file or URL
       let url_parsed = URL.parse(url);
       if (url_parsed.path !== url_parsed.href) {
-        // TODO: GET the URL's JSON and use that
+        const data_response = await fetch(url_parsed.href);
+        data = await data_response.json();
       } else {
         // assume we have a local file and use that
         data = JSON.parse(fs.readFileSync(url_parsed.path, 'utf8'));
