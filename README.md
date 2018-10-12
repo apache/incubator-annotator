@@ -63,9 +63,22 @@ using the `validate` script:
 
 
 ```sh
-$ yarn validate --url ../anno1.json
+$ yarn validate --url https://raw.githubusercontent.com/w3c/web-annotation-tests/master/tools/samples/correct/anno1.json
 ```
 
+With the `--url` option you can pass in a URL or a local path to a JSON file.
+
+##### Examples
+
+Valid: 
+
+`https://raw.githubusercontent.com/w3c/web-annotation-tests/master/tools/samples/correct/anno1.json`
+
+Invalid:
+
+`https://raw.githubusercontent.com/w3c/web-annotation-tests/master/tools/samples/incorrect/anno1.json`
+
+[(More)](https://github.com/w3c/web-annotation-tests/tree/master/tools/samples)
 
 # License
 
