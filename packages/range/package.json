@@ -11,10 +11,8 @@
     "url": "https://gitbox.apache.org/repos/asf/incubator-annotator.git"
   },
   "dependencies": {
+    "@babel/runtime": "^7.0.0-beta.40",
     "cartesian": "^1.0.1"
-  },
-  "peerDependencies": {
-    "@babel/runtime": "^7.0.0-beta.40"
   },
   "publishConfig": {
     "access": "public"
