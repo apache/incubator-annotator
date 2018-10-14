@@ -54,10 +54,6 @@ module.exports = api => {
 
   // Options for the @babel/transform-runtime plugin.
   const runtimeOptions = {
-    // Do not polyfill; leave that to applications.
-    polyfill: false,
-    // Do not import polyfills for helpers.
-    useBuiltIns: true,
     // Use the module format of the target environment.
     // TODO: make this work again
     // useESModules: !CJS,

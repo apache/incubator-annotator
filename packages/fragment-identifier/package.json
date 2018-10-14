@@ -14,7 +14,7 @@
     "prepare": "pegjs --format es --output src/fragment.mjs src/fragment.pegjs"
   },
   "dependencies": {
-    "@babel/runtime": "^7.0.0-beta.42"
+    "@babel/runtime": "^7.1.2"
   },
   "devDependencies": {
     "pegjs": "^0.11.0-dev.273"
