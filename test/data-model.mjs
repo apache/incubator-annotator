@@ -13,22 +13,15 @@
  * the License.
  */
 
-/* global require, process, describe, before, it, assert */
+/* global process, describe, before, it, assert */
 
 import fs from 'fs';
 import URL from 'url';
-import fetch from 'node-fetch';
 
 import Ajv from 'ajv';
-const ajv = new Ajv({ schemaId: 'auto' });
-ajv.addMetaSchema(require('ajv/lib/refs/json-schema-draft-04.json'));
-
-// add defintion files to available schemas
-const defs = fs.readdirSync('node_modules/web-annotation-tests/definitions/');
-defs.forEach(def => {
-  if (def.substr(-4) === 'json')
-    ajv.addSchema(require('web-annotation-tests/definitions/' + def));
-});
+import META_SCHEMA from 'ajv/lib/refs/json-schema-draft-04.json';
+import fetch from 'node-fetch';
+import resolve from 'resolve';
 
 // file or URL location
 let url = '';
@@ -46,12 +39,28 @@ process.argv.forEach((val, index) => {
   }
 });
 
-// load the annotationMusts test list
-const musts = JSON.parse(
-  fs.readFileSync(
-    'node_modules/web-annotation-tests/annotations/annotationMusts.test'
-  )
-);
+function readSchema(schemaPath, base = 'web-annotation-tests/') {
+  const resolverOptions = { extensions: ['.json', '.test'] };
+  const resolvedPath = resolve.sync(`${base}${schemaPath}`, resolverOptions);
+  const schemaUnparsed = fs.readFileSync(resolvedPath);
+  return JSON.parse(schemaUnparsed);
+}
+
+const DEFINITIONS = [
+  'annotations',
+  'bodyTarget',
+  'choiceSet',
+  'collections',
+  'id',
+  'otherProperties',
+  'specificResource',
+].map(name => readSchema(`definitions/${name}`));
+
+const MUSTS = readSchema('annotations/annotationMusts');
+
+const ajv = new Ajv({ schemaId: 'auto' });
+ajv.addMetaSchema(META_SCHEMA);
+DEFINITIONS.forEach(schema => ajv.addSchema(schema));
 
 describe('Test JSON against Schemas', () => {
   let data = '';
@@ -75,8 +84,8 @@ describe('Test JSON against Schemas', () => {
     }
   });
 
-  musts.assertions.forEach(path => {
-    const schema = require('web-annotation-tests/' + path);
+  MUSTS.assertions.forEach(schemaPath => {
+    const schema = readSchema(schemaPath);
     it(schema.title, () => {
       let valid = ajv.validate(schema, data);
       assert.isOk(valid, ajv.errorsText());
