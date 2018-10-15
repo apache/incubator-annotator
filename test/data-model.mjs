@@ -13,7 +13,7 @@
  * the License.
  */
 
-/* global process, describe, before, it, assert */
+/* global process */
 
 import fs from 'fs';
 import URL from 'url';
