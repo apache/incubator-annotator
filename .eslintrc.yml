@@ -65,6 +65,7 @@ overrides:
       browser: true
   - files:
       - 'packages/*/test/**/*.mjs'
+      - 'test/**/*.mjs'
     env:
       mocha: true
     globals:
