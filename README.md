@@ -4,7 +4,7 @@
 > and humans.
 
 * [`dev@` Mailing List archive](http://mail-archives.apache.org/mod_mbox/incubator-annotator-dev/)
-* [Issue Tracker](https://issues.apache.org/jira/browse/ANNO)
+* [Issue Tracker](https://github.com/apache/incubator-annotator/issues)
 * [Wiki](https://cwiki.apache.org/confluence/display/ANNO)
 
 ## Usage
