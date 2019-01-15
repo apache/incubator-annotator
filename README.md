@@ -5,7 +5,7 @@
 
 * [`dev@` Mailing List archive](http://mail-archives.apache.org/mod_mbox/incubator-annotator-dev/)
 * [Issue Tracker](https://github.com/apache/incubator-annotator/issues)
-* [Wiki](https://github.com/apache/incubator-annotator)
+* [Wiki](https://github.com/apache/incubator-annotator/wiki)
 
 ## Usage
 
