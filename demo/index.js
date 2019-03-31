@@ -15,7 +15,6 @@
 
 /* global corpus, debug, module, selectable */
 
-import '@babel/polyfill';
 import * as fragment from '@annotator/fragment-identifier';
 import { describeTextQuoteByRange as describeRange } from '@annotator/dom';
 import { mark } from './mark.js';

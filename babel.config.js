@@ -14,24 +14,26 @@
  */
 
 module.exports = api => {
-  const ENV = api.env() || 'development';
+  const ENV = api.env();
   const DEV = ENV === 'development';
   const TEST = ENV === 'test';
   const CJS = ENV === 'cjs';
 
-  // Options for the @babel/transform-modules-commonjs plugin.
-  const cjsOptions = {
-    // Disable require default interop.
-    noInterop: true,
-    // Disable export default interop.
-    strict: true,
+  // Options for core-js.
+  const corejsOptions = {
+    // Do not polyfill proposals that have not shipped.
+    proposals: false,
+    // Use core-js version 3.
+    version: 3,
   };
 
   // Options for the @babel/env preset.
   const envOptions = {
-    // Do not enable automatic module transformation.
-    modules: false,
-    // Enable proposals that have shipped in browsers.
+    // Use core-js for runtime polyfills.
+    corejs: corejsOptions,
+    // Transform module syntax if necessary.
+    modules: CJS ? 'commonjs' : false,
+    // Enable transformations for shipped proposals.
     shippedProposals: true,
     // Set target environments.
     targets: {
@@ -40,8 +42,8 @@ module.exports = api => {
       // Node: LTS
       node: '6.0',
     },
-    // Use a minimal @babel/polyfill.
-    useBuiltIns: 'entry',
+    // Import polyfills where they are used, without polluting globals.
+    useBuiltIns: 'usage',
   };
 
   // Options for the module-resolver plugin.
@@ -54,11 +56,9 @@ module.exports = api => {
 
   // Options for the @babel/transform-runtime plugin.
   const runtimeOptions = {
-    // Do not polyfill; leave that to applications.
-    polyfill: false,
-    // Do not import polyfills for helpers.
-    useBuiltIns: true,
-    // Use the module format of the target environment.
+    // Use core-js for runtime helpers.
+    corejs: corejsOptions,
+    // Use helpers formatted for the target environment.
     // TODO: make this work again
     // useESModules: !CJS,
   };
@@ -67,7 +67,6 @@ module.exports = api => {
     plugins: [
       'preserve-comment-header',
       ['@babel/transform-runtime', runtimeOptions],
-      ...(CJS ? [['@babel/transform-modules-commonjs', cjsOptions]] : []),
       ...(DEV || TEST ? [['module-resolver', resolverOptions]] : []),
       ...(TEST ? ['istanbul'] : []),
     ],

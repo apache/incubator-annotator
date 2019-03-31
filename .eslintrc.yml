@@ -10,7 +10,7 @@ extends:
   - prettier
 
 globals:
-  global: true
+  globalThis: true
 
 parser: babel-eslint
 
