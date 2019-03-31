@@ -15,7 +15,6 @@
     "build:esm": "cross-env BABEL_ENV=esm yarn build:run --keep-file-extension",
     "build:run": "lerna exec --parallel -- babel -d lib src --config-file ../../babel.config.js",
     "clean": "lerna exec -- rimraf lib",
-    "precommit": "lint-staged",
     "lint": "eslint . --ext js,mjs --fix --quiet",
     "prepare": "lerna run prepare",
     "start": "webpack-serve",
@@ -46,7 +45,7 @@
     "eslint-plugin-node": "^6.0.1",
     "eslint-plugin-prettier": "^2.6.0",
     "esm": "^3.0.49",
-    "husky": "^0.14.0",
+    "husky": "^1.3.1",
     "lerna": "^2.9.0",
     "lint-staged": "^7.0.0",
     "mocha": "^5.0.5",
@@ -64,6 +63,11 @@
   "engines": {
     "node": ">=8.0.0",
     "yarn": "^1.5.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   },
   "workspaces": {
     "packages": [
