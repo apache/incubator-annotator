@@ -1,4 +1,4 @@
 /coverage
 /packages/*/lib/*
 /packages/*/node_modules/*
-/packages/fragment-identifier/src/fragment.mjs
+/packages/fragment-identifier/src/fragment.js
