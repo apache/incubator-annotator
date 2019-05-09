@@ -9,7 +9,8 @@
   },
   "license": "Apache-2.0",
   "author": "Apache Software Foundation",
-  "main": "lib",
+  "main": "lib/index.js",
+  "module": "esm/index.js",
   "scripts": {
     "prepare": "pegjs --format es --output src/fragment.js src/fragment.pegjs"
   },
