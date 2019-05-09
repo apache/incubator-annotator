@@ -3,11 +3,16 @@
   "private": true,
   "description": "Apache Annotator provides annotation enabling code for browsers, servers, and humans.",
   "homepage": "https://annotator.apache.org",
-  "license": "Apache-2.0",
-  "author": "Apache Software Foundation",
   "repository": {
     "type": "git",
     "url": "https://gitbox.apache.org/repos/asf/incubator-annotator.git"
+  },
+  "license": "Apache-2.0",
+  "author": "Apache Software Foundation",
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ]
   },
   "scripts": {
     "build": "yarn run build:cjs && yarn run build:esm",
@@ -20,6 +25,11 @@
     "start": "webpack-dev-server",
     "test": "cross-env BABEL_ENV=test nyc mocha packages/*/test/**/*.js",
     "validate": "cross-env BABEL_ENV=test nyc mocha test/**/*.js"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   },
   "devDependencies": {
     "@babel/cli": "^7.4.0",
@@ -63,15 +73,5 @@
   "engines": {
     "node": ">=8.0.0",
     "yarn": "^1.5.0"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
-  "workspaces": {
-    "packages": [
-      "packages/*"
-    ]
   }
 }

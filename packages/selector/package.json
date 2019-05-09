@@ -3,21 +3,21 @@
   "version": "0.0.0",
   "description": "Web Annotation selector for engine.",
   "homepage": "https://annotator.apache.org",
-  "license": "Apache-2.0",
-  "author": "Apache Software Foundation",
-  "main": "lib",
   "repository": {
     "type": "git",
     "url": "https://gitbox.apache.org/repos/asf/incubator-annotator.git"
   },
+  "license": "Apache-2.0",
+  "author": "Apache Software Foundation",
+  "main": "lib",
   "dependencies": {
     "@babel/runtime-corejs3": "^7.4.0",
     "core-js": "3"
   },
-  "publishConfig": {
-    "access": "public"
-  },
   "engines": {
     "node": ">=6.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
