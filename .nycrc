@@ -1,5 +1,6 @@
 {
   "exclude": [
+    ".mocharc.js",
     "packages/*/test"
   ],
   "instrument": false,

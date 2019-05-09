@@ -1,3 +1,0 @@
--r chai/register-assert
---recursive
---watch-extensions mjs

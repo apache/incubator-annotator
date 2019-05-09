@@ -45,6 +45,7 @@ settings:
 
 overrides:
   - files:
+      - '.mocharc.js'
       - 'babel.config.js'
       - 'scripts/*.js'
     env:
