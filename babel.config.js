@@ -19,26 +19,14 @@ module.exports = api => {
   const TEST = ENV === 'test';
   const CJS = ENV === 'cjs';
 
-  // Options for core-js.
-  const corejsOptions = {
-    // Do not polyfill proposals that have not shipped.
-    proposals: false,
-    // Use core-js version 3.
-    version: 3,
-  };
-
   // Options for the @babel/env preset.
   const envOptions = {
-    // Use core-js for runtime polyfills.
-    corejs: corejsOptions,
     // Transform module syntax if necessary.
     modules: CJS ? 'commonjs' : false,
     // Enable transformations for shipped proposals.
     shippedProposals: true,
     // Set target environment to default browsers.
     targets: 'defaults',
-    // Import polyfills where they are used, without polluting globals.
-    useBuiltIns: 'usage',
   };
 
   // Options for the module-resolver plugin.
@@ -51,8 +39,8 @@ module.exports = api => {
 
   // Options for the @babel/transform-runtime plugin.
   const runtimeOptions = {
-    // Use core-js for runtime helpers.
-    corejs: corejsOptions,
+    // Use core-js version 3.
+    corejs: 3,
     // Use helpers formatted for the target environment.
     useESModules: !CJS,
   };
