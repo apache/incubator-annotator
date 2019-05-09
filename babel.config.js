@@ -59,8 +59,7 @@ module.exports = api => {
     // Use core-js for runtime helpers.
     corejs: corejsOptions,
     // Use helpers formatted for the target environment.
-    // TODO: make this work again
-    // useESModules: !CJS,
+    useESModules: !CJS,
   };
 
   return {
