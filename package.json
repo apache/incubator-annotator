@@ -18,8 +18,8 @@
     "lint": "eslint . --ext js,mjs --fix --quiet",
     "prepare": "lerna run prepare",
     "start": "webpack-dev-server",
-    "test": "cross-env BABEL_ENV=test nyc mocha -r esm packages/*/test/**/*.js",
-    "validate": "cross-env BABEL_ENV=test nyc mocha -r esm test/**/*.js"
+    "test": "cross-env BABEL_ENV=test nyc mocha packages/*/test/**/*.js",
+    "validate": "cross-env BABEL_ENV=test nyc mocha test/**/*.js"
   },
   "devDependencies": {
     "@babel/cli": "^7.4.0",
@@ -44,7 +44,7 @@
     "eslint-plugin-import": "^2.16.0",
     "eslint-plugin-node": "^9.0.1",
     "eslint-plugin-prettier": "^3.0.1",
-    "esm": "^3.0.49",
+    "esm": "^3.2.22",
     "husky": "^1.3.1",
     "lerna": "^3.13.4",
     "lint-staged": "^8.1.5",

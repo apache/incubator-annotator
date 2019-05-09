@@ -3,5 +3,6 @@
     "packages/*/test"
   ],
   "instrument": false,
-  "sourceMap": false
+  "sourceMap": false,
+  "require": ["esm", "@babel/register"]
 }
