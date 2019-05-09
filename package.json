@@ -32,7 +32,7 @@
     "babel-plugin-istanbul": "^5.1.1",
     "babel-plugin-module-resolver": "^3.2.0",
     "babel-plugin-preserve-comment-header": "^1.0.1",
-    "chai": "^4.1.2",
+    "chai": "^4.2.0",
     "core-js": "3",
     "cross-env": "^5.2.0",
     "dom-highlight-range": "^1.0.1",
