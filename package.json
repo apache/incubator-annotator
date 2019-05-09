@@ -13,7 +13,7 @@
     "build": "lerna exec --parallel -- babel --root-mode upward -d lib src",
     "build:cjs": "cross-env BABEL_ENV=cjs yarn build:babel -d lib src",
     "build:esm": "cross-env BABEL_ENV=esm yarn build:babel -d esm src",
-    "clean": "lerna exec -- rimraf lib",
+    "clean": "lerna exec -- rimraf esm lib",
     "lint": "eslint . --ext js,mjs --fix --quiet",
     "prepare": "lerna run prepare",
     "start": "webpack-dev-server",
