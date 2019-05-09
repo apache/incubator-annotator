@@ -11,7 +11,7 @@
     "url": "https://gitbox.apache.org/repos/asf/incubator-annotator.git"
   },
   "scripts": {
-    "prepare": "pegjs --format es --output src/fragment.mjs src/fragment.pegjs"
+    "prepare": "pegjs --format es --output src/fragment.js src/fragment.pegjs"
   },
   "dependencies": {
     "@babel/runtime-corejs3": "^7.4.0",

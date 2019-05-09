@@ -41,7 +41,6 @@ rules:
       trailingComma: es5
 
 settings:
-  import/extensions: ['.mjs', '.js']
   import/resolver: babel-module
 
 overrides:
@@ -59,13 +58,12 @@ overrides:
       no-console: off
       node/no-unsupported-features: error
   - files:
-      - 'demo/**/*.mjs'
       - 'demo/**/*.js'
     env:
       browser: true
   - files:
-      - 'packages/*/test/**/*.mjs'
-      - 'test/**/*.mjs'
+      - 'packages/*/test/**/*.js'
+      - 'test/**/*.js'
     env:
       mocha: true
     globals:

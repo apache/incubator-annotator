@@ -24,7 +24,7 @@ module.exports = {
     demo: './demo/index.js',
     test: [
       'chai/register-assert',
-      'mocha-loader!multi-entry-loader?include=./packages/*/test/**/*.mjs!',
+      'mocha-loader!multi-entry-loader?include=./packages/*/test/**/*.js!',
     ],
   },
   devtool: 'inline-source-map',
@@ -32,7 +32,7 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.m?js$/,
+        test: /\.js$/,
         exclude: /node_modules/,
         use: 'babel-loader',
       },

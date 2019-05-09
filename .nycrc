@@ -2,10 +2,6 @@
   "exclude": [
     "packages/*/test"
   ],
-  "extension": [
-    ".js",
-    ".mjs"
-  ],
   "instrument": false,
   "sourceMap": false
 }

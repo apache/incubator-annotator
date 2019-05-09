@@ -18,8 +18,8 @@
     "lint": "eslint . --ext js,mjs --fix --quiet",
     "prepare": "lerna run prepare",
     "start": "webpack-dev-server",
-    "test": "cross-env BABEL_ENV=test nyc mocha -r esm packages/*/test/**/*.mjs",
-    "validate": "cross-env BABEL_ENV=test nyc mocha -r esm test/**/*.mjs"
+    "test": "cross-env BABEL_ENV=test nyc mocha -r esm packages/*/test/**/*.js",
+    "validate": "cross-env BABEL_ENV=test nyc mocha -r esm test/**/*.js"
   },
   "devDependencies": {
     "@babel/cli": "^7.4.0",
