@@ -35,13 +35,8 @@ module.exports = api => {
     modules: CJS ? 'commonjs' : false,
     // Enable transformations for shipped proposals.
     shippedProposals: true,
-    // Set target environments.
-    targets: {
-      // Browsers: > 1%, last 2 versions, Firefox ESR
-      browsers: ['defaults'],
-      // Node: LTS
-      node: '6.0',
-    },
+    // Set target environment to default browsers.
+    targets: 'defaults',
     // Import polyfills where they are used, without polluting globals.
     useBuiltIns: 'usage',
   };
