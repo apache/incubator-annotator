@@ -1,7 +1,7 @@
 {
-  "exclude": [
-    ".mocharc.js",
-    "packages/*/test"
+  "all": true,
+  "include": [
+    "packages/*/src/**/*.js"
   ],
   "instrument": false,
   "sourceMap": false,
