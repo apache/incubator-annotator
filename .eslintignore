@@ -1,4 +1,5 @@
 /coverage
+/packages/*/esm/*
 /packages/*/lib/*
 /packages/*/node_modules/*
 /packages/fragment-identifier/src/fragment.js

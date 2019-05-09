@@ -1,4 +1,5 @@
 .nyc_output
 coverage
 node_modules
+/packages/*/esm
 /packages/*/lib

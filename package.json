@@ -10,10 +10,9 @@
     "url": "https://gitbox.apache.org/repos/asf/incubator-annotator.git"
   },
   "scripts": {
-    "build": "yarn build:cjs && yarn build:esm",
-    "build:cjs": "cross-env BABEL_ENV=cjs yarn build:run",
-    "build:esm": "cross-env BABEL_ENV=esm yarn build:run --keep-file-extension",
-    "build:run": "lerna exec --parallel -- babel -d lib src --config-file ../../babel.config.js",
+    "build": "lerna exec --parallel -- babel --root-mode upward -d lib src",
+    "build:cjs": "cross-env BABEL_ENV=cjs yarn build:babel -d lib src",
+    "build:esm": "cross-env BABEL_ENV=esm yarn build:babel -d esm src",
     "clean": "lerna exec -- rimraf lib",
     "lint": "eslint . --ext js,mjs --fix --quiet",
     "prepare": "lerna run prepare",
