@@ -23,6 +23,7 @@
     "clean": "lerna exec -- rimraf esm lib",
     "lint": "eslint . --ext js,mjs --fix --quiet",
     "prepare": "lerna run prepare",
+    "prepublish": "yarn run build",
     "start": "webpack-dev-server --hot --mode development",
     "test": "cross-env BABEL_ENV=test nyc mocha packages/*/test/**/*.js",
     "validate": "cross-env BABEL_ENV=test nyc mocha test/**/*.js"
