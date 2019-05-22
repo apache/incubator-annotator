@@ -12,6 +12,7 @@
   "main": "lib/index.js",
   "module": "esm/index.js",
   "dependencies": {
+    "@annotator/text": "^0.0.0",
     "@babel/runtime-corejs3": "^7.4.0",
     "core-js": "3",
     "range-normalize": "^1.1.1"
