@@ -32,15 +32,15 @@ export async function* product(...iterables) {
       .then(
         // Label the result with iterableNr, to know which iterable produced
         // this value after Promise.race below.
-        ({ value, done }) => ({ value, done, iterableNr })
-      )
+        ({ value, done }) => ({ value, done, iterableNr }),
+      ),
   );
 
   // Keep listening as long as any of the iterables is not yet exhausted.
   while (nextValuePromises.some(p => p !== null)) {
     // Wait until any of the active iterators has produced a new value.
     const { value, done, iterableNr } = await Promise.race(
-      nextValuePromises.filter(p => p !== null)
+      nextValuePromises.filter(p => p !== null),
     );
 
     // If this iterable was exhausted, stop listening to it and move on.

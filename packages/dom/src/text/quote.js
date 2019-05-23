@@ -60,12 +60,12 @@ export async function describeTextQuoteByRange({ range, context }) {
       const matchEndIndex = match.index + match[0].length;
       const suffixOverlap = overlap(
         contextText.substring(matchEndIndex),
-        contextText.substring(rangeEndIndex)
+        contextText.substring(rangeEndIndex),
       );
       minSuffixes.push(suffixOverlap + 1);
       const prefixOverlap = overlapRight(
         contextText.substring(0, match.index),
-        contextText.substring(0, rangeIndex)
+        contextText.substring(0, rangeIndex),
       );
       minPrefixes.push(prefixOverlap + 1);
     }
@@ -74,13 +74,13 @@ export async function describeTextQuoteByRange({ range, context }) {
   if (minSuffix > 0) {
     descriptor.suffix = contextText.substring(
       rangeEndIndex,
-      rangeEndIndex + minSuffix
+      rangeEndIndex + minSuffix,
     );
   }
   if (minPrefix > 0) {
     descriptor.prefix = contextText.substring(
       rangeIndex - minPrefix,
-      rangeIndex
+      rangeIndex,
     );
   }
   return descriptor;
