@@ -1,0 +1,76 @@
+module.exports = {
+  root: true,
+  env: {
+    es6: true,
+    'shared-node-browser': true,
+  },
+  extends: ['eslint:recommended', 'plugin:import/recommended', 'prettier'],
+  globals: {
+    globalThis: true,
+  },
+  parser: 'babel-eslint',
+  parserOptions: {
+    ecmaVersion: '2018',
+  },
+  plugins: ['import', 'prettier'],
+  rules: {
+    'import/no-default-export': 'error',
+    'import/order': 'error',
+    'import/unambiguous': 'error',
+    'no-restricted-syntax': [
+      'error',
+      'BindExpression',
+      'ClassProperty',
+      'Decorator',
+      'DoExpression',
+      'ExportDefaultSpecifier',
+      'ExportNamespaceSpecifier',
+      'TypeAnnotation',
+      'JSXElement',
+    ],
+    'prettier/prettier': [
+      'error',
+      {
+        singleQuote: true,
+        trailingComma: 'es5',
+      },
+    ],
+  },
+  settings: {
+    'import/resolver': {
+      'babel-module': {},
+    },
+  },
+  overrides: [
+    {
+      files: ['.eslintrc.js', '.mocharc.js', 'babel.config.js', 'scripts/*.js'],
+      env: {
+        node: true,
+      },
+      parser: 'espree',
+      parserOptions: {
+        sourceType: 'script',
+      },
+      plugins: ['node'],
+      rules: {
+        'no-console': 'off',
+        'node/no-unsupported-features': 'error',
+      },
+    },
+    {
+      files: ['demo/**/*.js'],
+      env: {
+        browser: true,
+      },
+    },
+    {
+      files: ['packages/*/test/**/*.js', 'test/**/*.js'],
+      env: {
+        mocha: true,
+      },
+      globals: {
+        assert: true,
+      },
+    },
+  ],
+};
