@@ -59,7 +59,8 @@ async function onSelectionChange() {
   const selectableRange = document.createRange();
   selectableRange.selectNodeContents(selectable);
   const descriptor = await describeRange({ range, context: selectableRange });
-  window.location.hash = fragment.stringify(descriptor);
+  const nextFragment = fragment.stringify(descriptor);
+  window.history.replaceState(descriptor, null, `#${nextFragment}`);
 }
 
 function isWithinNode(range, node) {
@@ -71,14 +72,14 @@ function isWithinNode(range, node) {
   );
 }
 
-window.addEventListener('hashchange', refresh);
+window.addEventListener('popstate', refresh);
 document.addEventListener('DOMContentLoaded', refresh);
 document.addEventListener('selectionchange', onSelectionChange);
 
 if (module.hot) {
   module.hot.accept();
   module.hot.dispose(() => {
-    window.removeEventListener('hashchange', refresh);
+    window.removeEventListener('popstate', refresh);
     document.removeEventListener('DOMContentLoaded', refresh);
     document.removeEventListener('selectionchange', onSelectionChange);
   });
