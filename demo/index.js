@@ -61,6 +61,7 @@ async function onSelectionChange() {
   const descriptor = await describeRange({ range, context: selectableRange });
   const nextFragment = fragment.stringify(descriptor);
   window.history.replaceState(descriptor, null, `#${nextFragment}`);
+  refresh();
 }
 
 function isWithinNode(range, node) {
