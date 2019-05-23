@@ -15,9 +15,10 @@ module.exports = {
   plugins: ['import', 'prettier'],
   rules: {
     'import/extensions': ['error', 'always', { ignorePackages: true }],
+    'import/newline-after-import': 'error',
     'import/no-default-export': 'error',
     'import/no-internal-modules': 'error',
-    'import/order': 'error',
+    'import/order': ['error', { 'newlines-between': 'always' }],
     'import/unambiguous': 'error',
     'no-restricted-syntax': [
       'error',

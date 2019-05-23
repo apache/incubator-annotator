@@ -19,6 +19,7 @@
  */
 
 import highlightRange from 'dom-highlight-range';
+
 export function mark(range) {
   highlightRange(range, 'highlighted');
 }
