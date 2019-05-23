@@ -13,7 +13,7 @@
  * the License.
  */
 
-import { product } from './cartesian';
+import { product } from './cartesian.js';
 
 export function createRangeSelector({ createAnySelector }) {
   const startSelector = createAnySelector();

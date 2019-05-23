@@ -13,7 +13,7 @@
  * the License.
  */
 
-export { SyntaxError, parse } from './fragment';
+export { SyntaxError, parse } from './fragment.js';
 
 /**
  * Convert a Selector or State into a fragment identifier string.
