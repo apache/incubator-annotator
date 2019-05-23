@@ -19,6 +19,7 @@ module.exports = {
     'import/newline-after-import': 'error',
     'import/no-default-export': 'error',
     'import/no-internal-modules': 'error',
+    'import/no-relative-parent-imports': 'error',
     'import/order': ['error', { 'newlines-between': 'always' }],
     'import/unambiguous': 'error',
     'no-restricted-syntax': [
@@ -86,6 +87,7 @@ module.exports = {
             allow: ['ajv/lib/refs/json-schema-draft-04.json', 'src/**'],
           },
         ],
+        'import/no-relative-parent-imports': 'off',
       },
     },
   ],
