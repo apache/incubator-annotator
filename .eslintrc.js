@@ -38,7 +38,11 @@ module.exports = {
   },
   settings: {
     'import/resolver': {
-      'babel-module': {},
+      'babel-module': {
+        alias: {
+          '^@annotator/(.+)$': '@annotator/\\1/src/index.js',
+        },
+      },
     },
   },
   overrides: [
