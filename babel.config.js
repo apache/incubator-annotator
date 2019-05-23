@@ -33,7 +33,7 @@ module.exports = api => {
   // Used for resolving source files during development and testing.
   let resolverOptions = {
     alias: {
-      '^(@annotator/.+?)(/|$)': '\\1/src',
+      '^@annotator/(.+)$': '@annotator/\\1/src/index.js',
     },
   };
 
