@@ -16,6 +16,7 @@ module.exports = {
   rules: {
     'import/extensions': ['error', 'always', { ignorePackages: true }],
     'import/no-default-export': 'error',
+    'import/no-internal-modules': 'error',
     'import/order': 'error',
     'import/unambiguous': 'error',
     'no-restricted-syntax': [
@@ -75,6 +76,14 @@ module.exports = {
       },
       globals: {
         assert: true,
+      },
+      rules: {
+        'import/no-internal-modules': [
+          'error',
+          {
+            allow: ['ajv/lib/refs/json-schema-draft-04.json', 'src/**'],
+          },
+        ],
       },
     },
   ],
