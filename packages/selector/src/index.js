@@ -14,39 +14,37 @@
  */
 
 export function createAnySelectorCreator(selectorCreatorsByType) {
-  function selectSelector(type) {
-    const selectorCreator = selectorCreatorsByType[type];
-    if (selectorCreator === undefined) {
+  function selectSelector(context, type) {
+    const selectorCreatorForType = selectorCreatorsByType[type];
+    if (selectorCreatorForType === undefined) {
       throw new Error(`Unsupported selector type: ${type}`);
     }
-    let selector = selectorCreator({ createAnySelector });
-    selector = makeRefinable(selector, { createAnySelector });
+    let selector = selectorCreatorForType(context, selectorCreator);
+    selector = makeRefinable(selector, selectorCreator);
     return selector;
   }
 
-  function createAnySelector() {
-    async function* anySelector({ descriptors, context }) {
+  function selectorCreator(context) {
+    async function* anySelector(descriptors) {
       const descriptor = descriptors[0]; // TODO handle multiple descriptors
-      const selectorFunc = selectSelector(descriptor.type);
-      yield* selectorFunc({ descriptors: [descriptor], context });
+      const selectorFunc = selectSelector(context, descriptor.type);
+      yield* selectorFunc([descriptor]);
     }
     return anySelector;
   }
 
-  return createAnySelector;
+  return selectorCreator;
 }
 
-export function makeRefinable(selector, { createAnySelector }) {
-  async function* refinableSelector({ descriptors, context }) {
-    const matches = selector({ descriptors, context });
+export function makeRefinable(selector, selectorCreator) {
+  async function* refinableSelector(descriptors) {
+    const matches = selector(descriptors);
     for await (let match of matches) {
       const refiningDescriptor = match.descriptor.refinedBy;
       if (refiningDescriptor) {
-        const anySelector = createAnySelector();
-        const refiningMatches = anySelector({
-          descriptors: [refiningDescriptor],
-          context: matchAsContext(match),
-        });
+        const refiningContext = matchAsContext(match);
+        const refiningSelector = selectorCreator(refiningContext);
+        const refiningMatches = refiningSelector([refiningDescriptor]);
         for await (let refiningMatch of refiningMatches) {
           const refinedMatch = composeMatches(refiningMatch, match);
           yield refinedMatch;

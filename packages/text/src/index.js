@@ -13,8 +13,8 @@
  * the License.
  */
 
-export function createTextQuoteSelector() {
-  async function* exec({ descriptors, context }) {
+export function createTextQuoteSelector(context) {
+  async function* exec(descriptors) {
     for (let descriptor of descriptors) {
       const prefix = descriptor.prefix || '';
       const suffix = descriptor.suffix || '';

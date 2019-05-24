@@ -22,7 +22,7 @@ const allSelectorTypes = {
   RangeSelector: createRangeSelector,
 };
 
-const selectorFunc = createAnySelectorCreator(allSelectorTypes)();
+const createSelector = createAnySelectorCreator(allSelectorTypes);
 
 /**
  * Locate a selector.
@@ -34,10 +34,9 @@ export async function* search(root, descriptor) {
   for (const node of nodeIterator(root)) {
     if (!node.nodeValue) continue;
 
-    const matches = selectorFunc({
-      descriptors: [descriptor],
-      context: node.nodeValue,
-    });
+    const selector = createSelector(node.nodeValue);
+    const matches = selector([descriptor]);
+
     for await (let match of matches) {
       const startIndex = match.index;
       const endIndex = startIndex + match[0].length;

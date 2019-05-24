@@ -49,8 +49,8 @@ export async function describeTextQuoteByRange({ range, context }) {
   const rangeIndex = range.startOffset;
   const rangeEndIndex = range.endOffset;
 
-  const selector = createTextQuoteSelector();
-  const matches = selector({ descriptors: [descriptor], context: contextText });
+  const selector = createTextQuoteSelector(contextText);
+  const matches = selector([descriptor]);
   const minSuffixes = [];
   const minPrefixes = [];
   for await (let match of matches) {

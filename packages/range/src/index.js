@@ -15,20 +15,14 @@
 
 import { product } from './cartesian.js';
 
-export function createRangeSelector({ createAnySelector }) {
-  const startSelector = createAnySelector();
-  const endSelector = createAnySelector();
+export function createRangeSelector(context, createAnySelector) {
+  const startSelector = createAnySelector(context);
+  const endSelector = createAnySelector(context);
 
-  async function* rangeSelector({ descriptors, context }) {
+  async function* rangeSelector(descriptors) {
     const descriptor = descriptors[0]; // TODO handle multiple descriptors
-    const startMatches = startSelector({
-      descriptors: [descriptor.startSelector],
-      context,
-    });
-    const endMatches = endSelector({
-      descriptors: [descriptor.endSelector],
-      context,
-    });
+    const startMatches = startSelector([descriptor.startSelector]);
+    const endMatches = endSelector([descriptor.endSelector]);
     const pairs = product(startMatches, endMatches);
     for await (let [start, end] of pairs) {
       if (start.index > end.index) {
