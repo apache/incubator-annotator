@@ -13,29 +13,34 @@
  * the License.
  */
 
-import { createRangeSelector } from '@annotator/range';
-import { createAnySelectorCreator } from '@annotator/selector';
+import { makeRefinable } from '@annotator/selector';
+import { createRangeSelectorCreator } from '@annotator/range';
 import { createTextQuoteSelector } from '@annotator/text';
 
-const allSelectorTypes = {
-  TextQuoteSelector: createTextQuoteSelector,
-  RangeSelector: createRangeSelector,
-};
+const createSelector = makeRefinable(selector => {
+  const selectorCreator = {
+    TextQuoteSelector: createTextQuoteSelector,
+    RangeSelector: createRangeSelectorCreator(createSelector),
+  }[selector.type];
 
-const createSelector = createAnySelectorCreator(allSelectorTypes);
+  if (selectorCreator == null) {
+    throw new Error(`Unsupported selector type: ${selector.type}`);
+  }
+
+  return selectorCreator(selector);
+});
 
 /**
  * Locate a selector.
  * @param {Node} root node
- * @param {Selector} descriptor
+ * @param {Selector} selector
  * @return {Range}
  */
-export async function* search(root, descriptor) {
+export async function* search(root, selector) {
   for (const node of nodeIterator(root)) {
     if (!node.nodeValue) continue;
 
-    const selector = createSelector(node.nodeValue);
-    const matches = selector([descriptor]);
+    const matches = createSelector(selector)(node.nodeValue);
 
     for await (let match of matches) {
       const startIndex = match.index;

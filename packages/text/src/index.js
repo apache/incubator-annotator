@@ -13,32 +13,28 @@
  * the License.
  */
 
-export function createTextQuoteSelector(context) {
-  async function* exec(descriptors) {
-    for (let descriptor of descriptors) {
-      const prefix = descriptor.prefix || '';
-      const suffix = descriptor.suffix || '';
-      const pattern = prefix + descriptor.exact + suffix;
-      let lastIndex = 0;
-      let next = () => context.indexOf(pattern, lastIndex);
-      let match = next();
-      while (match !== -1) {
-        let result = [descriptor.exact];
-        result.index = match + prefix.length;
-        result.input = context;
-        result.descriptor = descriptor;
-        yield result;
-        lastIndex = match + 1;
-        match = next();
-      }
+export function createTextQuoteSelector(selector) {
+  return async function* matchAll(scope) {
+    const prefix = selector.prefix || '';
+    const suffix = selector.suffix || '';
+    const pattern = prefix + selector.exact + suffix;
+    let lastIndex = 0;
+    let next = () => scope.indexOf(pattern, lastIndex);
+    let match = next();
+    while (match !== -1) {
+      let result = [selector.exact];
+      result.index = match + prefix.length;
+      result.input = scope;
+      result.selector = selector;
+      yield result;
+      lastIndex = match + 1;
+      match = next();
     }
-  }
-
-  return exec;
+  };
 }
 
-export function describeTextQuote({ context, startIndex, endIndex }) {
-  const exact = context.substring(startIndex, endIndex);
+export function describeTextQuote({ scope, startIndex, endIndex }) {
+  const exact = scope.substring(startIndex, endIndex);
   return {
     type: 'TextQuoteSelector',
     exact,

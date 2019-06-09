@@ -30,7 +30,7 @@ export async function describeTextQuoteByRange({ range, context }) {
   const contextText = context.cloneContents().textContent;
   const exact = range.cloneContents().textContent;
 
-  const descriptor = {
+  const selector = {
     type: 'TextQuoteSelector',
     exact,
   };
@@ -46,11 +46,11 @@ export async function describeTextQuoteByRange({ range, context }) {
   ) {
     throw new Error(`Context not equal to range's container; not implemented.`);
   }
+
   const rangeIndex = range.startOffset;
   const rangeEndIndex = range.endOffset;
 
-  const selector = createTextQuoteSelector(contextText);
-  const matches = selector([descriptor]);
+  const matches = createTextQuoteSelector(selector)(contextText);
   const minSuffixes = [];
   const minPrefixes = [];
   for await (let match of matches) {
@@ -72,18 +72,15 @@ export async function describeTextQuoteByRange({ range, context }) {
   }
   const [minSuffix, minPrefix] = minimalSolution(minSuffixes, minPrefixes);
   if (minSuffix > 0) {
-    descriptor.suffix = contextText.substring(
+    selector.suffix = contextText.substring(
       rangeEndIndex,
       rangeEndIndex + minSuffix,
     );
   }
   if (minPrefix > 0) {
-    descriptor.prefix = contextText.substring(
-      rangeIndex - minPrefix,
-      rangeIndex,
-    );
+    selector.prefix = contextText.substring(rangeIndex - minPrefix, rangeIndex);
   }
-  return descriptor;
+  return selector;
 }
 
 function overlap(text1, text2) {

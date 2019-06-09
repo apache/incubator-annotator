@@ -15,32 +15,30 @@
 
 import { product } from './cartesian.js';
 
-export function createRangeSelector(context, createAnySelector) {
-  const startSelector = createAnySelector(context);
-  const endSelector = createAnySelector(context);
+export function createRangeSelectorCreator(createSelector) {
+  return function createRangeSelector(selector) {
+    const startSelector = createSelector(selector.startSelector);
+    const endSelector = createSelector(selector.endSelector);
 
-  async function* rangeSelector(descriptors) {
-    const descriptor = descriptors[0]; // TODO handle multiple descriptors
-    const startMatches = startSelector([descriptor.startSelector]);
-    const endMatches = endSelector([descriptor.endSelector]);
-    const pairs = product(startMatches, endMatches);
-    for await (let [start, end] of pairs) {
-      if (start.index > end.index) {
-        continue;
+    return async function* matchAll(scope) {
+      const startMatches = startSelector(scope);
+      const endMatches = endSelector(scope);
+      const pairs = product(startMatches, endMatches);
+      for await (let [start, end] of pairs) {
+        if (start.index > end.index) {
+          continue;
+        }
+        const text = rangeBetween({ start, end, scope });
+        const result = [text];
+        result.index = start.index;
+        result.input = scope;
+        yield result;
       }
-      const text = rangeBetween({ start, end, context });
-      const result = [text];
-      result.index = start.index;
-      result.input = context;
-      result.descriptor = descriptor;
-      yield result;
-    }
-  }
-
-  return rangeSelector;
+    };
+  };
 }
 
-function rangeBetween({ start, end, context }) {
-  const range = context.substring(start.index, end.index);
+function rangeBetween({ start, end, scope }) {
+  const range = scope.substring(start.index, end.index);
   return range;
 }

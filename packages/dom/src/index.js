@@ -15,11 +15,8 @@
 
 export * from './text';
 
-export function createCssSelector(context) {
-  async function* exec(descriptors) {
-    const cssSelector = descriptors.map(({ value }) => value).join(',');
-    yield* context.querySelectorAll(cssSelector);
-  }
-
-  return exec;
+export function createCssSelector(selector) {
+  return async function* matchAll(scope) {
+    yield* scope.querySelectorAll(selector.value);
+  };
 }

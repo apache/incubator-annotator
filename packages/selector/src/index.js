@@ -13,52 +13,30 @@
  * the License.
  */
 
-export function createAnySelectorCreator(selectorCreatorsByType) {
-  function selectSelector(context, type) {
-    const selectorCreatorForType = selectorCreatorsByType[type];
-    if (selectorCreatorForType === undefined) {
-      throw new Error(`Unsupported selector type: ${type}`);
-    }
-    let selector = selectorCreatorForType(context, selectorCreator);
-    selector = makeRefinable(selector, selectorCreator);
-    return selector;
-  }
+export function makeRefinable(selectorCreator) {
+  return function createSelector(source) {
+    const selector = selectorCreator(source);
 
-  function selectorCreator(context) {
-    async function* anySelector(descriptors) {
-      const descriptor = descriptors[0]; // TODO handle multiple descriptors
-      const selectorFunc = selectSelector(context, descriptor.type);
-      yield* selectorFunc([descriptor]);
-    }
-    return anySelector;
-  }
+    if (source.refinedBy) {
+      const refiningSelector = createSelector(source.refinedBy);
 
-  return selectorCreator;
-}
-
-export function makeRefinable(selector, selectorCreator) {
-  async function* refinableSelector(descriptors) {
-    const matches = selector(descriptors);
-    for await (let match of matches) {
-      const refiningDescriptor = match.descriptor.refinedBy;
-      if (refiningDescriptor) {
-        const refiningContext = matchAsContext(match);
-        const refiningSelector = selectorCreator(refiningContext);
-        const refiningMatches = refiningSelector([refiningDescriptor]);
-        for await (let refiningMatch of refiningMatches) {
-          const refinedMatch = composeMatches(refiningMatch, match);
-          yield refinedMatch;
+      return async function* matchAll(scope) {
+        const matches = selector(scope);
+        for await (let match of matches) {
+          const refiningScope = matchAsScope(match);
+          const refiningMatches = refiningSelector(refiningScope);
+          for await (let refiningMatch of refiningMatches) {
+            yield composeMatches(refiningMatch, match);
+          }
         }
-      } else {
-        yield match;
-      }
+      };
     }
-  }
 
-  return refinableSelector;
+    return selector;
+  };
 }
 
-function matchAsContext(match) {
+function matchAsScope(match) {
   return match[0];
 }
 
@@ -67,7 +45,6 @@ function composeMatches(...matches) {
     const refinedMatch = [...refiningMatch];
     refinedMatch.index = match.index + refiningMatch.index;
     refinedMatch.input = match.input;
-    refinedMatch.descriptor = match.descriptor;
     return refinedMatch;
   });
 }
