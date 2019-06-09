@@ -25,7 +25,6 @@ export function createTextQuoteSelector(selector) {
       let result = [selector.exact];
       result.index = match + prefix.length;
       result.input = scope;
-      result.selector = selector;
       yield result;
       lastIndex = match + 1;
       match = next();
