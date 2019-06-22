@@ -22,7 +22,8 @@ import { mark } from './mark.js';
 import { search } from './search.js';
 
 const refresh = async () => {
-  corpus.innerHTML = corpus.innerText;
+  corpus.innerHTML = selectable.innerHTML;
+
   debug.classList.remove('error');
 
   const identifier = window.location.hash.slice(1);
