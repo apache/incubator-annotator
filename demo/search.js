@@ -15,7 +15,7 @@
 
 import { makeRefinable } from '@annotator/selector';
 import { createRangeSelectorCreator } from '@annotator/range';
-import { createTextQuoteSelector } from '@annotator/text';
+import { createTextQuoteSelector } from '@annotator/dom';
 
 const createSelector = makeRefinable(selector => {
   const selectorCreator = {

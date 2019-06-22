@@ -16,7 +16,39 @@
 /* global Range */
 
 import normalizeRange from 'range-normalize';
-import { createTextQuoteSelector } from '@annotator/text';
+
+function textContent(scope) {
+  return typeof scope === 'string'
+    ? scope
+    : scope instanceof Object && 'textContent' in scope
+    ? scope.textContent
+    : String(scope);
+}
+
+export function createTextQuoteSelector(selector) {
+  return async function* matchAll(scope) {
+    const text = textContent(scope);
+
+    const prefix = selector.prefix || '';
+    const suffix = selector.suffix || '';
+    const pattern = prefix + selector.exact + suffix;
+
+    let fromIndex = -1;
+
+    while (true) {
+      const matchIndex = text.indexOf(pattern, fromIndex + 1);
+      if (matchIndex == -1) return;
+
+      const result = [selector.exact];
+      result.index = matchIndex + prefix.length;
+      result.input = text;
+
+      yield result;
+
+      fromIndex = matchIndex;
+    }
+  };
+}
 
 export async function describeTextQuoteByRange({ range, context }) {
   // Shrink range to fit in context, if needed.
@@ -50,7 +82,7 @@ export async function describeTextQuoteByRange({ range, context }) {
   const rangeIndex = range.startOffset;
   const rangeEndIndex = range.endOffset;
 
-  const matches = createTextQuoteSelector(selector)(contextText);
+  const matches = createTextQuoteSelector(selector)(context);
   const minSuffixes = [];
   const minPrefixes = [];
   for await (let match of matches) {
