@@ -1696,6 +1696,11 @@ ajv@^6.1.0, ajv@^6.10.0, ajv@^6.5.5, ajv@^6.9.1:
     json-schema-traverse "^0.4.1"
     uri-js "^4.2.2"
 
+ancestors@0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/ancestors/-/ancestors-0.0.3.tgz#124eb944447d68b302057047d15d077a9da5179d"
+  integrity sha1-Ek65RER9aLMCBXBH0V0Hep2lF50=
+
 ansi-colors@3.2.3:
   version "3.2.3"
   resolved "https://registry.yarnpkg.com/ansi-colors/-/ansi-colors-3.2.3.tgz#57d35b8686e851e2cc04c403f1c00203976a1813"
@@ -3010,7 +3015,7 @@ dateformat@^3.0.0:
   resolved "https://registry.yarnpkg.com/dateformat/-/dateformat-3.0.3.tgz#a6e37499a4d9a9cf85ef5872044d62901c9889ae"
   integrity sha512-jyCETtSl3VMZMWeRo7iY1FL19ges1t55hMo5yaam4Jrsm5EPL89UQkoQRyiI+Yf4k8r2ZpdngkV8hr1lIdjb3Q==
 
-debug@2, debug@2.6.9, debug@^2.2.0, debug@^2.3.3, debug@^2.6.8, debug@^2.6.9:
+debug@2.6.9, debug@^2.2.0, debug@^2.3.3, debug@^2.6.8, debug@^2.6.9:
   version "2.6.9"
   resolved "https://registry.yarnpkg.com/debug/-/debug-2.6.9.tgz#5d128515df134ff327e90a4c93f4e077a536341f"
   integrity sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==
@@ -3288,6 +3293,19 @@ doctrine@^3.0.0:
 dom-highlight-range@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/dom-highlight-range/-/dom-highlight-range-1.0.1.tgz#0634cb60fcf4565c2b222e32b66c626358148747"
+
+dom-node-iterator@^3.5.3:
+  version "3.5.3"
+  resolved "https://registry.yarnpkg.com/dom-node-iterator/-/dom-node-iterator-3.5.3.tgz#32b68aa440962f1734487029f544a3db704637b7"
+  integrity sha1-MraKpECWLxc0SHAp9USj23BGN7c=
+
+dom-seek@^4.0.3:
+  version "4.0.3"
+  resolved "https://registry.yarnpkg.com/dom-seek/-/dom-seek-4.0.3.tgz#f14dddf04b3fb062d901c7b00b0c142a06e0a94b"
+  integrity sha1-8U3d8Es/sGLZAcewCwwUKgbgqUs=
+  dependencies:
+    ancestors "0.0.3"
+    index-of "^0.2.0"
 
 domain-browser@^1.1.1:
   version "1.2.0"
@@ -4747,9 +4765,10 @@ indent-string@^3.0.0:
   resolved "https://registry.yarnpkg.com/indent-string/-/indent-string-3.2.0.tgz#4a5fd6d27cc332f37e5419a504dbb837105c9289"
   integrity sha1-Sl/W0nzDMvN+VBmlBNu4NxBckok=
 
-index-of@0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/index-of/-/index-of-0.1.0.tgz#61bc04b9ccda15c8bcc522af04d5df283be50dec"
+index-of@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/index-of/-/index-of-0.2.0.tgz#38c1e2367ea55dffad3b6eb592ec1cc3090d7d65"
+  integrity sha1-OMHiNn6lXf+tO261kuwcwwkNfWU=
 
 indexes-of@^1.0.1:
   version "1.0.1"
@@ -7308,14 +7327,6 @@ randomfill@^1.0.3:
     randombytes "^2.0.5"
     safe-buffer "^5.1.0"
 
-range-normalize@^1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/range-normalize/-/range-normalize-1.1.1.tgz#113bd2b928f4d2cff8b2bcca51c541ae35d07fd5"
-  dependencies:
-    debug "2"
-    index-of "0.1.0"
-    void-elements "1"
-
 range-parser@^1.2.1, range-parser@~1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/range-parser/-/range-parser-1.2.1.tgz#3cf37023d199e1c24d1a55b84800c2f3e6468031"
@@ -8904,10 +8915,6 @@ vm-browserify@0.0.4:
   integrity sha1-XX6kW7755Kb/ZflUOOCofDV9WnM=
   dependencies:
     indexof "0.0.1"
-
-void-elements@1:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/void-elements/-/void-elements-1.0.0.tgz#6e5db1e35d591f5ac690ce1a340f793a817b2c2a"
 
 watchpack@^1.5.0:
   version "1.6.0"

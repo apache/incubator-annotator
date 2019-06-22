@@ -13,9 +13,18 @@
  * the License.
  */
 
-/* global Range */
+import createNodeIterator from 'dom-node-iterator';
+import seek from 'dom-seek';
 
-import normalizeRange from 'range-normalize';
+// Node constants
+const TEXT_NODE = 3;
+
+// NodeFilter constants
+const SHOW_TEXT = 4;
+
+// Range constants
+const START_TO_START = 0;
+const END_TO_END = 1;
 
 function textContent(scope) {
   return typeof scope === 'string'
@@ -51,36 +60,31 @@ export function createTextQuoteSelector(selector) {
 }
 
 export async function describeTextQuoteByRange({ range, context }) {
-  // Shrink range to fit in context, if needed.
-  if (range.compareBoundaryPoints(Range.END_TO_END, context) > 0) {
-    range.setEnd(context.endContainer, context.endOffset);
-  }
-  if (range.compareBoundaryPoints(Range.START_TO_START, context) < 0) {
+  if (context.compareBoundaryPoints(START_TO_START, range) > 0) {
     range.setStart(context.startContainer, context.startOffset);
   }
 
-  const contextText = context.cloneContents().textContent;
-  const exact = range.cloneContents().textContent;
+  if (context.compareBoundaryPoints(END_TO_END, range) < 0) {
+    range.setEnd(context.endContainer, context.endOffset);
+  }
+
+  const contextText = context.toString();
+  const exact = range.toString();
 
   const selector = {
     type: 'TextQuoteSelector',
     exact,
   };
 
-  // FIXME We should get range index relative to context. Look at
-  // dom-anchor-text-position? For now, we implement the easy case where the
-  // ranges are within the same container.
-  context = normalizeRange(context);
-  range = normalizeRange(range);
-  if (
-    context.startContainer !== range.startContainer ||
-    context.startOffset !== 0
-  ) {
-    throw new Error(`Context not equal to range's container; not implemented.`);
-  }
+  const root = context.commonAncestorContainer;
+  const iter = createNodeIterator(root, SHOW_TEXT);
 
-  const rangeIndex = range.startOffset;
-  const rangeEndIndex = range.endOffset;
+  const rangeIndex =
+    range.startContainer.nodeType === TEXT_NODE
+      ? seek(iter, range.startContainer) + range.startOffset
+      : seek(iter, range.startContainer);
+
+  const rangeEndIndex = rangeIndex + exact.length;
 
   const matches = createTextQuoteSelector(selector)(context);
   const minSuffixes = [];
