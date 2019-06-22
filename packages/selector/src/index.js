@@ -21,12 +21,14 @@ export function makeRefinable(selectorCreator) {
       const refiningSelector = createSelector(source.refinedBy);
 
       return async function* matchAll(scope) {
-        const matches = selector(scope);
-        for await (let match of matches) {
-          const refiningScope = matchAsScope(match);
-          const refiningMatches = refiningSelector(refiningScope);
-          for await (let refiningMatch of refiningMatches) {
-            yield composeMatches(refiningMatch, match);
+        for await (const match of selector(scope)) {
+          const start = match.index;
+          const end = start + match[0].length;
+
+          for await (const refiningMatch of refiningSelector(scope)) {
+            if (refiningMatch.index < start) continue;
+            if (refiningMatch.index + refiningMatch[0].length > end) continue;
+            yield refiningMatch;
           }
         }
       };
@@ -34,17 +36,4 @@ export function makeRefinable(selectorCreator) {
 
     return selector;
   };
-}
-
-function matchAsScope(match) {
-  return match[0];
-}
-
-function composeMatches(...matches) {
-  return matches.reverse().reduce((match, refiningMatch) => {
-    const refinedMatch = [...refiningMatch];
-    refinedMatch.index = match.index + refiningMatch.index;
-    refinedMatch.input = match.input;
-    return refinedMatch;
-  });
 }
