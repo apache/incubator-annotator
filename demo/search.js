@@ -16,6 +16,8 @@
 import { makeRefinable } from '@annotator/selector';
 import { createRangeSelectorCreator } from '@annotator/range';
 import { createTextQuoteSelector } from '@annotator/dom';
+import createNodeIterator from 'dom-node-iterator';
+import seek from 'dom-seek';
 
 const createSelector = makeRefinable(selector => {
   const selectorCreator = {
@@ -37,30 +39,26 @@ const createSelector = makeRefinable(selector => {
  * @return {Range}
  */
 export async function* search(root, selector) {
-  for (const node of nodeIterator(root)) {
-    if (!node.nodeValue) continue;
+  const matches = createSelector(selector)(root);
 
-    const matches = createSelector(selector)(node.nodeValue);
+  for await (let match of matches) {
+    const matchIndex = match.index;
+    const matchLength = match[0].length;
 
-    for await (let match of matches) {
-      const startIndex = match.index;
-      const endIndex = startIndex + match[0].length;
-      const range = document.createRange();
-      range.setStart(node, startIndex);
-      range.setEnd(node, endIndex);
-      yield range;
-    }
-  }
-}
+    const iter = createNodeIterator(root, NodeFilter.SHOW_TEXT);
 
-/**
- * Iterate over the nodes of a sub-tree of the document.
- * @param {Node} node
- */
-function* nodeIterator(node) {
-  yield node;
+    const startIndex = seek(iter, matchIndex);
+    const startContainer = iter.referenceNode;
+    const startOffset = match.index - startIndex;
 
-  for (const child of node.childNodes) {
-    yield* nodeIterator(child);
+    const endIndex = startIndex + seek(iter, startOffset + matchLength);
+    const endContainer = iter.referenceNode;
+    const endOffset = matchIndex + matchLength - endIndex;
+
+    const range = document.createRange();
+    range.setStart(startContainer, startOffset);
+    range.setEnd(endContainer, endOffset);
+
+    yield range;
   }
 }
