@@ -15,30 +15,36 @@
 
 import { product } from './cartesian.js';
 
+function textContent(scope) {
+  return typeof scope === 'string'
+    ? scope
+    : scope instanceof Object && 'textContent' in scope
+    ? scope.textContent
+    : String(scope);
+}
+
 export function createRangeSelectorCreator(createSelector) {
   return function createRangeSelector(selector) {
     const startSelector = createSelector(selector.startSelector);
     const endSelector = createSelector(selector.endSelector);
 
     return async function* matchAll(scope) {
+      const text = textContent(scope);
+
       const startMatches = startSelector(scope);
       const endMatches = endSelector(scope);
+
       const pairs = product(startMatches, endMatches);
+
       for await (let [start, end] of pairs) {
-        if (start.index > end.index) {
-          continue;
-        }
-        const text = rangeBetween({ start, end, scope });
-        const result = [text];
+        if (start.index > end.index) continue;
+
+        const result = [text.substring(start.index, end.index)];
         result.index = start.index;
-        result.input = scope;
+        result.input = text;
+
         yield result;
       }
     };
   };
-}
-
-function rangeBetween({ start, end, scope }) {
-  const range = scope.substring(start.index, end.index);
-  return range;
 }
