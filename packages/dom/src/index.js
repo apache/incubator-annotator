@@ -13,10 +13,5 @@
  * the License.
  */
 
+export * from './css';
 export * from './text';
-
-export function createCssSelector(selector) {
-  return async function* matchAll(scope) {
-    yield* scope.querySelectorAll(selector.value);
-  };
-}
