@@ -13,7 +13,7 @@ module.exports = {
     ecmaFeatures: {
       impliedStrict: true,
     },
-    ecmaVersion: '2019',
+    ecmaVersion: 2019,
     sourceType: 'module',
   },
   plugins: ['import', 'prettier'],
