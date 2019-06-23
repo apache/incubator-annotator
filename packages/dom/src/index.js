@@ -14,4 +14,4 @@
  */
 
 export * from './css';
-export * from './text';
+export * from './text-quote';
