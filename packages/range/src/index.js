@@ -16,9 +16,7 @@
 import { product } from './cartesian.js';
 
 function textContent(scope) {
-  return typeof scope === 'string'
-    ? scope
-    : scope instanceof Object && 'textContent' in scope
+  return scope instanceof Object && 'textContent' in scope
     ? scope.textContent
     : String(scope);
 }

@@ -27,9 +27,7 @@ const START_TO_START = 0;
 const END_TO_END = 1;
 
 function textContent(scope) {
-  return typeof scope === 'string'
-    ? scope
-    : scope instanceof Object && 'textContent' in scope
+  return scope instanceof Object && 'textContent' in scope
     ? scope.textContent
     : String(scope);
 }
