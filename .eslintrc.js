@@ -10,9 +10,6 @@ module.exports = {
   },
   parser: 'babel-eslint',
   parserOptions: {
-    ecmaFeatures: {
-      impliedStrict: true,
-    },
     ecmaVersion: 2019,
     sourceType: 'module',
   },
