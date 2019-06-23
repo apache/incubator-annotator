@@ -24,7 +24,7 @@ const SHOW_TEXT = 4;
 
 // Range constants
 const START_TO_START = 0;
-const END_TO_END = 1;
+const END_TO_END = 2;
 
 function textContent(scope) {
   return scope instanceof Object && 'textContent' in scope
