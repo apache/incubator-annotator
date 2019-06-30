@@ -133,8 +133,7 @@ export async function describeTextQuoteByRange({ range, context }) {
       : seek(iter, startNode);
   const endIndex = startIndex + exact.length;
 
-  const minSuffixes = [];
-  const minPrefixes = [];
+  const affixLengthPairs = [[0, 0]];
 
   for await (const match of selector(context)) {
     const matchIter = createNodeIterator(root, SHOW_TEXT);
@@ -152,34 +151,33 @@ export async function describeTextQuoteByRange({ range, context }) {
     }
 
     // Determine how many prefix characters are shared.
-    const prefixOverlap = overlapRight(
+    const prefixLength = overlapRight(
       text.substring(0, matchStartIndex),
       text.substring(0, startIndex),
     );
 
     // Determine how many suffix characters are shared.
-    const suffixOverlap = overlap(
+    const suffixLength = overlap(
       text.substring(matchEndIndex),
       text.substring(endIndex),
     );
 
-    // Record the prefix or suffix lengths that would not have matched.
-    minPrefixes.push(prefixOverlap + 1);
-    minSuffixes.push(suffixOverlap + 1);
+    // Record the affix lengths that would have precluded this match.
+    affixLengthPairs.push([prefixLength + 1, suffixLength + 1]);
   }
 
   // Construct and return an unambiguous selector.
   const result = { type: 'TextQuoteSelector', exact };
 
-  if (minPrefixes.length > 0 || minSuffixes.length > 0) {
-    const [minPrefix, minSuffix] = minimalSolution(minPrefixes, minSuffixes);
+  if (affixLengthPairs.length) {
+    const [prefixLength, suffixLength] = minimalSolution(affixLengthPairs);
 
-    if (minPrefix > 0) {
-      result.prefix = text.substring(startIndex - minPrefix, startIndex);
+    if (prefixLength > 0) {
+      result.prefix = text.substring(startIndex - prefixLength, startIndex);
     }
 
-    if (minSuffix > 0) {
-      result.suffix = text.substring(endIndex, endIndex + minSuffix);
+    if (suffixLength > 0) {
+      result.suffix = text.substring(endIndex, endIndex + suffixLength);
     }
   }
 
@@ -188,44 +186,43 @@ export async function describeTextQuoteByRange({ range, context }) {
 
 function overlap(text1, text2) {
   let count = 0;
-  while (text1[count] === text2[count]) {
+
+  while (count < text1.length && count < text2.length) {
+    const c1 = text1[count];
+    const c2 = text2[count];
+    if (c1 !== c2) break;
     count++;
-    if (count >= text1.length) {
-      return Infinity;
-    }
   }
+
   return count;
 }
 
 function overlapRight(text1, text2) {
   let count = 0;
-  while (text1[text1.length - 1 - count] === text2[text2.length - 1 - count]) {
+
+  while (count < text1.length && count < text2.length) {
+    const c1 = text1[text1.length - 1 - count];
+    const c2 = text2[text2.length - 1 - count];
+    if (c1 !== c2) break;
     count++;
-    if (count >= text1.length) {
-      return Infinity;
-    }
   }
+
   return count;
 }
 
-function minimalSolution(reqs1, reqs2) {
-  if (reqs1.length !== reqs2.length) {
-    throw new Error('unequal lengths');
-  }
-  // Add 0 as an option to try.
-  reqs1.push(0);
-  reqs2.push(0);
-  let bestResult = [Infinity, Infinity];
-  for (let i = 0; i < reqs1.length; i++) {
-    const req1 = reqs1[i];
-    // The values to satisfy for req2, given the proposed req1.
-    const reqsToSatisfy = reqs1.map((v, i) => (v > req1 ? reqs2[i] : 0));
-    // Take the lowest value that satisfies them all.
-    const req2 = Math.max(...reqsToSatisfy);
-    // If this combination is the best so far, remember it.
-    if (req1 + req2 < bestResult[0] + bestResult[1]) {
-      bestResult = [req1, req2];
+function minimalSolution(requirements) {
+  // Build all the pairs and order them by their sums.
+  const pairs = requirements.flatMap(l => requirements.map(r => [l[0], r[1]]));
+  pairs.sort((a, b) => a[0] + a[1] - (b[0] + b[1]));
+
+  // Find the first pair that satisfies every requirement.
+  for (const pair of pairs) {
+    const [p0, p1] = pair;
+    if (requirements.every(([r0, r1]) => r0 <= p0 || r1 <= p1)) {
+      return pair;
     }
   }
-  return bestResult;
+
+  // Return the largest pairing (unreachable).
+  return pairs[pairs.length - 1];
 }
