@@ -16,6 +16,8 @@
 import createNodeIterator from 'dom-node-iterator';
 import seek from 'dom-seek';
 
+import { ownerDocument, rangeFromScope } from './scope.js';
+
 // Node constants
 const TEXT_NODE = 3;
 
@@ -30,27 +32,6 @@ function firstTextNodeInRange(range) {
   const root = range.commonAncestorContainer;
   const iter = createNodeIterator(root, SHOW_TEXT);
   return iter.nextNode();
-}
-
-function ownerDocument(scope) {
-  if ('commonAncestorContainer' in scope) {
-    return scope.commonAncestorContainer.ownerDocument;
-  }
-
-  return scope.ownerDocument;
-}
-
-function rangeFromScope(scope) {
-  if ('commonAncestorContainer' in scope) {
-    return scope;
-  }
-
-  const document = scope.ownerDocument;
-  const range = document.createRange();
-
-  range.selectNodeContents(scope);
-
-  return range;
 }
 
 export function createTextQuoteSelector(selector) {

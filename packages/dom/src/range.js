@@ -13,15 +13,8 @@
  * the License.
  */
 
+import { ownerDocument } from './scope.js';
 import { product } from './cartesian.js';
-
-function ownerDocument(scope) {
-  if ('commonAncestorContainer' in scope) {
-    return scope.commonAncestorContainer.ownerDocument;
-  }
-
-  return scope.ownerDocument;
-}
 
 export function createRangeSelectorCreator(createSelector) {
   return function createRangeSelector(selector) {
