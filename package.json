@@ -49,8 +49,6 @@
     "core-js": "3",
     "cross-env": "^5.2.0",
     "dom-highlight-range": "^1.0.1",
-    "dom-node-iterator": "^3.5.3",
-    "dom-seek": "^4.0.3",
     "eslint": "^5.16.0",
     "eslint-config-prettier": "^4.1.0",
     "eslint-import-resolver-babel-module": "^5.0.1",

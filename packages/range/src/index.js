@@ -15,10 +15,12 @@
 
 import { product } from './cartesian.js';
 
-function textContent(scope) {
-  return scope instanceof Object && 'textContent' in scope
-    ? scope.textContent
-    : String(scope);
+function ownerDocument(scope) {
+  if ('commonAncestorContainer' in scope) {
+    return scope.commonAncestorContainer.ownerDocument;
+  }
+
+  return scope.ownerDocument;
 }
 
 export function createRangeSelectorCreator(createSelector) {
@@ -27,7 +29,7 @@ export function createRangeSelectorCreator(createSelector) {
     const endSelector = createSelector(selector.endSelector);
 
     return async function* matchAll(scope) {
-      const text = textContent(scope);
+      const document = ownerDocument(scope);
 
       const startMatches = startSelector(scope);
       const endMatches = endSelector(scope);
@@ -35,13 +37,12 @@ export function createRangeSelectorCreator(createSelector) {
       const pairs = product(startMatches, endMatches);
 
       for await (let [start, end] of pairs) {
-        if (start.index > end.index) continue;
+        const result = document.createRange();
 
-        const result = [text.substring(start.index, end.index)];
-        result.index = start.index;
-        result.input = text;
+        result.setStart(start.endContainer, start.endOffset);
+        result.setEnd(end.startContainer, end.startOffset);
 
-        yield result;
+        if (!result.collapsed) yield result;
       }
     };
   };

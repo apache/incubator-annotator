@@ -22,14 +22,7 @@ export function makeRefinable(selectorCreator) {
 
       return async function* matchAll(scope) {
         for await (const match of selector(scope)) {
-          const start = match.index;
-          const end = start + match[0].length;
-
-          for await (const refiningMatch of refiningSelector(scope)) {
-            if (refiningMatch.index < start) continue;
-            if (refiningMatch.index + refiningMatch[0].length > end) continue;
-            yield refiningMatch;
-          }
+          yield* refiningSelector(match);
         }
       };
     }

@@ -22,99 +22,187 @@ const TEXT_NODE = 3;
 // NodeFilter constants
 const SHOW_TEXT = 4;
 
-// Range constants
-const START_TO_START = 0;
-const END_TO_END = 2;
+function firstTextNodeInRange(range) {
+  const { startContainer } = range;
 
-function textContent(scope) {
-  return scope instanceof Object && 'textContent' in scope
-    ? scope.textContent
-    : String(scope);
+  if (startContainer.nodeType === TEXT_NODE) return startContainer;
+
+  const root = range.commonAncestorContainer;
+  const iter = createNodeIterator(root, SHOW_TEXT);
+  return iter.nextNode();
+}
+
+function ownerDocument(scope) {
+  if ('commonAncestorContainer' in scope) {
+    return scope.commonAncestorContainer.ownerDocument;
+  }
+
+  return scope.ownerDocument;
+}
+
+function rangeFromScope(scope) {
+  if ('commonAncestorContainer' in scope) {
+    return scope;
+  }
+
+  const document = scope.ownerDocument;
+  const range = document.createRange();
+
+  range.selectNodeContents(scope);
+
+  return range;
 }
 
 export function createTextQuoteSelector(selector) {
   return async function* matchAll(scope) {
-    const text = textContent(scope);
+    const document = ownerDocument(scope);
+    const range = rangeFromScope(scope);
+    const root = range.commonAncestorContainer;
+    const text = range.toString();
 
+    const exact = selector.exact;
     const prefix = selector.prefix || '';
     const suffix = selector.suffix || '';
-    const pattern = prefix + selector.exact + suffix;
+    const pattern = prefix + exact + suffix;
 
-    let fromIndex = -1;
+    const iter = createNodeIterator(root, SHOW_TEXT);
 
-    while (true) {
-      const matchIndex = text.indexOf(pattern, fromIndex + 1);
-      if (matchIndex == -1) return;
+    let fromIndex = 0;
+    let referenceNodeIndex = 0;
 
-      const result = [selector.exact];
-      result.index = matchIndex + prefix.length;
-      result.input = text;
+    if (range.startContainer.nodeType === TEXT_NODE) {
+      referenceNodeIndex -= range.startOffset;
+    }
 
-      yield result;
+    while (fromIndex < text.length) {
+      const patternStartIndex = text.indexOf(pattern, fromIndex);
+      if (patternStartIndex === -1) return;
 
-      fromIndex = matchIndex;
+      const match = document.createRange();
+
+      const matchStartIndex = patternStartIndex + prefix.length;
+      const matchEndIndex = matchStartIndex + exact.length;
+
+      // Seek to the start of the match.
+      referenceNodeIndex += seek(iter, matchStartIndex - referenceNodeIndex);
+
+      // Normalize the reference to the start of the match.
+      if (!iter.pointerBeforeReferenceNode) {
+        // Peek forward and skip over any empty nodes.
+        if (iter.nextNode()) {
+          while (iter.referenceNode.nodeValue.length === 0) {
+            iter.nextNode();
+          }
+
+          // The iterator now points to the end of the reference node.
+          // Move the iterator back to the start of the reference node.
+          iter.previousNode();
+        }
+      }
+
+      // Record the start container and offset.
+      match.setStart(iter.referenceNode, matchStartIndex - referenceNodeIndex);
+
+      // Seek to the end of the match.
+      referenceNodeIndex += seek(iter, matchEndIndex - referenceNodeIndex);
+
+      // Normalize the reference to the end of the match.
+      if (!iter.pointerBeforeReferenceNode) {
+        // Peek forward and skip over any empty nodes.
+        if (iter.nextNode()) {
+          while (iter.referenceNode.nodeValue.length === 0) {
+            iter.nextNode();
+          }
+
+          // The iterator now points to the end of the reference node.
+          // Move the iterator back to the start of the reference node.
+          iter.previousNode();
+        }
+
+        // Maybe seek backwards to the start of the node.
+        referenceNodeIndex += seek(iter, iter.referenceNode);
+      }
+
+      // Record the end container and offset.
+      match.setEnd(iter.referenceNode, matchEndIndex - referenceNodeIndex);
+
+      // Yield the match.
+      yield match;
+
+      // Advance the search forward.
+      fromIndex = matchStartIndex + 1;
+      referenceNodeIndex += seek(iter, fromIndex - referenceNodeIndex);
     }
   };
 }
 
 export async function describeTextQuoteByRange({ range, context }) {
-  if (context.compareBoundaryPoints(START_TO_START, range) > 0) {
-    range.setStart(context.startContainer, context.startOffset);
-  }
-
-  if (context.compareBoundaryPoints(END_TO_END, range) < 0) {
-    range.setEnd(context.endContainer, context.endOffset);
-  }
-
-  const contextText = context.toString();
-  const exact = range.toString();
-
-  const selector = {
-    type: 'TextQuoteSelector',
-    exact,
-  };
-
   const root = context.commonAncestorContainer;
+  const text = context.toString();
+
+  const exact = range.toString();
+  const selector = createTextQuoteSelector({ exact });
+
   const iter = createNodeIterator(root, SHOW_TEXT);
 
-  const rangeIndex =
+  const startNode = firstTextNodeInRange(range);
+  const startIndex =
     range.startContainer.nodeType === TEXT_NODE
-      ? seek(iter, range.startContainer) + range.startOffset
-      : seek(iter, range.startContainer);
+      ? seek(iter, startNode) + range.startOffset
+      : seek(iter, startNode);
+  const endIndex = startIndex + exact.length;
 
-  const rangeEndIndex = rangeIndex + exact.length;
-
-  const matches = createTextQuoteSelector(selector)(context);
   const minSuffixes = [];
   const minPrefixes = [];
-  for await (let match of matches) {
-    // For every match that is not our range, we look how many characters we
-    // have to add as prefix or suffix to disambiguate.
-    if (match.index !== rangeIndex) {
-      const matchEndIndex = match.index + match[0].length;
-      const suffixOverlap = overlap(
-        contextText.substring(matchEndIndex),
-        contextText.substring(rangeEndIndex),
-      );
-      minSuffixes.push(suffixOverlap + 1);
-      const prefixOverlap = overlapRight(
-        contextText.substring(0, match.index),
-        contextText.substring(0, rangeIndex),
-      );
-      minPrefixes.push(prefixOverlap + 1);
+
+  for await (const match of selector(context)) {
+    const matchIter = createNodeIterator(root, SHOW_TEXT);
+
+    const matchStartNode = firstTextNodeInRange(match);
+    const matchStartIndex =
+      match.startContainer.nodeType === TEXT_NODE
+        ? seek(matchIter, matchStartNode) + match.startOffset
+        : seek(matchIter, matchStartNode);
+    const matchEndIndex = matchStartIndex + match.toString().length;
+
+    // If the match is the same as the input range, continue.
+    if (matchStartIndex === startIndex || matchEndIndex === endIndex) {
+      continue;
+    }
+
+    // Determine how many prefix characters are shared.
+    const prefixOverlap = overlapRight(
+      text.substring(0, matchStartIndex),
+      text.substring(0, startIndex),
+    );
+
+    // Determine how many suffix characters are shared.
+    const suffixOverlap = overlap(
+      text.substring(matchEndIndex),
+      text.substring(endIndex),
+    );
+
+    // Record the prefix or suffix lengths that would not have matched.
+    minPrefixes.push(prefixOverlap + 1);
+    minSuffixes.push(suffixOverlap + 1);
+  }
+
+  // Construct and return an unambiguous selector.
+  const result = { type: 'TextQuoteSelector', exact };
+
+  if (minPrefixes.length > 0 || minSuffixes.length > 0) {
+    const [minPrefix, minSuffix] = minimalSolution(minPrefixes, minSuffixes);
+
+    if (minPrefix > 0) {
+      result.prefix = text.substring(startIndex - minPrefix, startIndex);
+    }
+
+    if (minSuffix > 0) {
+      result.suffix = text.substring(endIndex, endIndex + minSuffix);
     }
   }
-  const [minSuffix, minPrefix] = minimalSolution(minSuffixes, minPrefixes);
-  if (minSuffix > 0) {
-    selector.suffix = contextText.substring(
-      rangeEndIndex,
-      rangeEndIndex + minSuffix,
-    );
-  }
-  if (minPrefix > 0) {
-    selector.prefix = contextText.substring(rangeIndex - minPrefix, rangeIndex);
-  }
-  return selector;
+
+  return result;
 }
 
 function overlap(text1, text2) {
