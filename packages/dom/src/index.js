@@ -14,4 +14,5 @@
  */
 
 export * from './css';
+export * from './range';
 export * from './text-quote';

@@ -13,6 +13,7 @@
   "module": "esm/index.js",
   "dependencies": {
     "@babel/runtime-corejs3": "^7.4.0",
+    "cartesian": "^1.0.1",
     "core-js": "3",
     "dom-node-iterator": "^3.5.3",
     "dom-seek": "^4.0.3"

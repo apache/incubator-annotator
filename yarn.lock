@@ -2364,6 +2364,7 @@ caniuse-lite@^1.0.30000974:
 cartesian@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/cartesian/-/cartesian-1.0.1.tgz#ae3fc8a63e2ba7e2c4989ce696207457bcae65af"
+  integrity sha1-rj/Ipj4rp+LEmJzmliB0V7yuZa8=
   dependencies:
     xtend "^4.0.1"
 
