@@ -15,63 +15,64 @@
 
 /* global corpus, debug, module, selectable */
 
-import * as fragment from '@annotator/fragment-identifier';
+import {
+  parse as parseFragment,
+  stringify as stringifyFragment,
+  SyntaxError as FragmentSyntaxError,
+} from '@annotator/fragment-identifier';
 import { describeTextQuoteByRange as describeRange } from '@annotator/dom';
 
 import { mark } from './mark.js';
 import { search } from './search.js';
 
-const refresh = async () => {
+function clear() {
   corpus.innerHTML = selectable.innerHTML;
+}
 
-  debug.classList.remove('error');
+const refresh = async () => {
+  clear();
 
   const identifier = window.location.hash.slice(1);
   if (!identifier) return;
 
   try {
-    const { selector } = fragment.parse(identifier);
+    const { selector } = parseFragment(identifier);
+    for await (const range of search(corpus, selector)) mark(range);
+    debug.classList.remove('error');
     debug.innerText = JSON.stringify(selector, null, 2);
-    const results = search(corpus, selector);
-    const ranges = [];
-    for await (let range of results) {
-      ranges.push(range);
-    }
-    for (let range of ranges) {
-      mark(range);
-    }
   } catch (e) {
     debug.classList.add('error');
     debug.innerText = JSON.stringify(e, null, 2);
-    if (e instanceof fragment.SyntaxError) return;
+    if (e instanceof FragmentSyntaxError) return;
     else throw e;
   }
 };
 
-async function onSelectionChange() {
+async function describeSelection() {
   const selection = document.getSelection();
-  if (selection === null || selection.isCollapsed) {
-    return;
-  }
+  if (selection.isCollapsed) return;
+
   const range = selection.getRangeAt(0);
-  if (!isWithinNode(range, selectable)) {
-    return;
-  }
-  const selectableRange = document.createRange();
-  selectableRange.selectNodeContents(selectable);
-  const descriptor = await describeRange({ range, context: selectableRange });
-  const nextFragment = fragment.stringify(descriptor);
-  window.history.replaceState(descriptor, null, `#${nextFragment}`);
-  refresh();
+  const context = document.createRange();
+  context.selectNodeContents(selectable);
+
+  if (!context.isPointInRange(range.startContainer, range.startOffset)) return;
+  if (!context.isPointInRange(range.endContainer, range.endOffset)) return;
+
+  return describeRange({ range, context });
 }
 
-function isWithinNode(range, node) {
-  const nodeRange = document.createRange();
-  nodeRange.selectNode(node);
-  return (
-    range.compareBoundaryPoints(Range.START_TO_START, nodeRange) >= 0 &&
-    range.compareBoundaryPoints(Range.END_TO_END, nodeRange) <= 0
-  );
+async function onSelectionChange() {
+  const selector = await describeSelection();
+
+  if (selector) {
+    const fragment = stringifyFragment(selector);
+    window.history.replaceState(selector, null, `#${fragment}`);
+  } else {
+    window.history.replaceState(null, null, location.pathname);
+  }
+
+  refresh();
 }
 
 window.addEventListener('popstate', refresh);
