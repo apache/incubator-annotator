@@ -117,9 +117,11 @@ export function createTextQuoteSelector(selector) {
   };
 }
 
-export async function describeTextQuoteByRange({ range, context }) {
-  const root = context.commonAncestorContainer;
-  const text = context.toString();
+export async function describeTextQuote(range, scope = null) {
+  scope = rangeFromScope(scope || ownerDocument(range).documentElement);
+
+  const root = scope.commonAncestorContainer;
+  const text = scope.toString();
 
   const exact = range.toString();
   const selector = createTextQuoteSelector({ exact });
@@ -135,7 +137,7 @@ export async function describeTextQuoteByRange({ range, context }) {
 
   const affixLengthPairs = [[0, 0]];
 
-  for await (const match of selector(context)) {
+  for await (const match of selector(scope)) {
     const matchIter = createNodeIterator(root, SHOW_TEXT);
 
     const matchStartNode = firstTextNodeInRange(match);

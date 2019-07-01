@@ -22,7 +22,7 @@ import {
 import {
   createRangeSelectorCreator,
   createTextQuoteSelector,
-  describeTextQuoteByRange as describeRange,
+  describeTextQuote,
 } from '@annotator/dom';
 import { makeRefinable } from '@annotator/selector';
 import highlightRange from 'dom-highlight-range';
@@ -70,13 +70,13 @@ async function describeSelection() {
   if (selection.isCollapsed) return;
 
   const range = selection.getRangeAt(0);
-  const context = document.createRange();
-  context.selectNodeContents(selectable);
+  const scope = document.createRange();
+  scope.selectNodeContents(selectable);
 
-  if (!context.isPointInRange(range.startContainer, range.startOffset)) return;
-  if (!context.isPointInRange(range.endContainer, range.endOffset)) return;
+  if (!scope.isPointInRange(range.startContainer, range.startOffset)) return;
+  if (!scope.isPointInRange(range.endContainer, range.endOffset)) return;
 
-  return describeRange({ range, context });
+  return describeTextQuote(range, scope);
 }
 
 async function onSelectionChange() {
