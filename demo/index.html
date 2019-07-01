@@ -28,13 +28,10 @@ specific language governing permissions and limitations under the License.
         background-color: rgba(255, 255, 120, 0.5);
         outline: 0.1px solid rgba(255, 100, 0, 0.8);
       }
-      #debug {
+      #selector {
         color: #666;
         background: #f8f8f8;
         padding: 2em;
-      }
-      #debug.error {
-        color: red;
       }
       #selectable, #corpus {
         display: inline-block;
@@ -73,7 +70,7 @@ specific language governing permissions and limitations under the License.
       <a href="https://www.w3.org/TR/2017/NOTE-selectors-states-20170223/#frags"
         target="_blank">as the fragment identifier</a>.</p>
     <p>Here is the selector in JSON format:</p>
-    <pre id="debug"></pre>
+    <pre id="parsed"></pre>
     <p>Notice how, when the text of your selection appears multiple times, just
       enough characters around it are stored in the selector to find the right
       occurrence again.</p>

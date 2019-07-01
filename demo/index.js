@@ -13,12 +13,11 @@
  * the License.
  */
 
-/* global corpus, debug, module, selectable */
+/* global corpus, module, parsed, selectable */
 
 import {
   parse as parseFragment,
   stringify as stringifyFragment,
-  SyntaxError as FragmentSyntaxError,
 } from '@annotator/fragment-identifier';
 import { describeTextQuoteByRange as describeRange } from '@annotator/dom';
 
@@ -35,26 +34,18 @@ const refresh = async () => {
   const identifier = window.location.hash.slice(1);
   if (!identifier) return;
 
-  try {
-    const { selector } = parseFragment(identifier);
-    const ranges = [];
+  const { selector } = parseFragment(identifier);
+  const ranges = [];
 
-    for await (const range of search(corpus, selector)) {
-      ranges.push(range);
-    }
-
-    for (const range of ranges) {
-      mark(range);
-    }
-
-    debug.classList.remove('error');
-    debug.innerText = JSON.stringify(selector, null, 2);
-  } catch (e) {
-    debug.classList.add('error');
-    debug.innerText = JSON.stringify(e, null, 2);
-    if (e instanceof FragmentSyntaxError) return;
-    else throw e;
+  for await (const range of search(corpus, selector)) {
+    ranges.push(range);
   }
+
+  for (const range of ranges) {
+    mark(range);
+  }
+
+  parsed.innerText = JSON.stringify(selector, null, 2);
 };
 
 async function describeSelection() {
