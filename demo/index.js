@@ -37,7 +37,16 @@ const refresh = async () => {
 
   try {
     const { selector } = parseFragment(identifier);
-    for await (const range of search(corpus, selector)) mark(range);
+    const ranges = [];
+
+    for await (const range of search(corpus, selector)) {
+      ranges.push(range);
+    }
+
+    for (const range of ranges) {
+      mark(range);
+    }
+
     debug.classList.remove('error');
     debug.innerText = JSON.stringify(selector, null, 2);
   } catch (e) {
