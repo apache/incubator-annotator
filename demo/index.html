@@ -12,82 +12,65 @@ specific language governing permissions and limitations under the License.
 -->
 <!doctype html>
 <html>
-  <head>
-    <meta charset="UTF-8">
-    <title>Apache Annotator (incubating) demo</title>
-    <style>
-      * {
-        box-sizing: border-box;
-      }
-      body {
-        max-width: 50em;
-        margin: 0 auto;
-        padding: 1em;
-      }
-      .highlighted {
-        background-color: rgba(255, 255, 120, 0.5);
-        outline: 0.1px solid rgba(255, 100, 0, 0.8);
-      }
-      #parsed {
-        color: #666;
-        background: #f8f8f8;
-        padding: 2em;
-      }
-      #selectable, #corpus {
-        display: inline-block;
-        max-width: 15em;
-        padding: 1em;
-        line-height: 1.4em;
-        font-size: 18px;
-        font-family: sans-serif;
-        border: 1px solid lightgrey;
-      }
-      a[href^="#selector"]:before {
-        content: '📌';
-        font-size: 75%
-      }
-    </style>
-  </head>
-  <body>
-    <p>Hi! Let's play with some annotator tools! This page demonstrates <a
-        href="https://www.w3.org/TR/2017/REC-annotation-model-20170223/#selectors"
-        target="_blank">Selectors</a>.</p>
-    <p>Try select some text in the paragraphs below:</p>
-    <div id="selectable">
-      <p>Hello, annotated world!</p>
-      <p>To annotate, or not to annotate, that is the question.</p>
-    </div>
-    <div id="corpus">
-      <p>Hello, annotated world!</p>
-      <p>To annotate, or not to annotate, that is the question.</p>
-    </div>
-    <p>Upon a change of selection, a
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Apache Annotator (incubating) demo</title>
+  <link rel="stylesheet" href="https://unpkg.com/awsm.css/dist/awsm.min.css">
+  <style>
+    blockquote {
+      font-style: italic;
+    }
+    a[href^="#selector"]:before {
+      content: '📌';
+      font-size: 75%;
+    }
+    #parsed {
+      height: 15rem;
+      overflow: scroll;
+    }
+    .highlighted {
+      background-color: rgba(255, 255, 120, 0.5);
+      outline: 0.1px solid rgba(255, 100, 0, 0.8);
+    }
+  </style>
+  <main>
+    <h1>Selector Demonstration</h1>
+    <p>This page demonstrates
       <a
-        href="https://www.w3.org/TR/2017/REC-annotation-model-20170223/#text-quote-selector"
-        target="_blank">TextQuoteSelector</a>
-      will be created, that describes what was selected.
-      The selector is serialised and shown the window location,
-      <a href="https://www.w3.org/TR/2017/NOTE-selectors-states-20170223/#frags"
-        target="_blank">as the fragment identifier</a>.</p>
-    <p>Here is the selector in JSON format:</p>
-    <pre id="parsed"></pre>
-    <p>Notice how, when the text of your selection appears multiple times, just
-      enough characters around it are stored in the selector to find the right
-      occurrence again.</p>
-    <p>Also reasonably functional:</p>
+        href="https://www.w3.org/TR/2017/REC-annotation-model-20170223/#selectors"
+        target="_blank">Selectors</a>.
+      <h2>Fragments</h2>
+    <p>Linking to this page with a selector fragment causes the matching text to
+      be highlighted in the following paragraphs:
+    <blockquote id="corpus">
+      <p>Hello, annotated world!
+      <p>To annotate, or not to annotate, that is the question.
+    </blockquote>
+    <p>Try some examples:
     <ul>
       <li>
         <a href="#selector(type=RangeSelector,startSelector=selector(type=TextQuoteSelector,exact=ann),endSelector=selector(type=TextQuoteSelector,exact=!))">RangeSelector</a>
         (<a href="https://www.w3.org/TR/2017/REC-annotation-model-20170223/#range-selector" target="_blank">spec</a>)
-      </li>
       <li>
         <a href="#selector(type=TextQuoteSelector,exact=annotated%20world,refinedBy=selector(type=TextQuoteSelector,exact=tat))">Refining
           a selector using another selector</a>
         (<a href="https://www.w3.org/TR/2017/REC-annotation-model-20170223/#refinement-of-selection" target="blank">spec</a>)
-      </li>
-      <li><a href="#selector(type=TextQuoteSelector,exact=not)">Multiple matches</a> (but overlapping matches currently mess up the highlighter)</li>
-      <li><a href="#selector(type=TextQuoteSelector,exact=To%20annotate%2C%20or%20not%20to%20annotate%2C,refinedBy=selector(type=RangeSelector,startSelector=selector(type=TextQuoteSelector,exact=To%20annotate,refinedBy=selector(type=TextQuoteSelector,exact=annotate)),endSelector=selector(type=TextQuoteSelector,exact=not%20to%20annotate,refinedBy=selector(type=TextQuoteSelector,exact=%20to)),refinedBy=selector(type=TextQuoteSelector,exact=o)))">Any deeper nesting of the above</a></li>
+      <li><a href="#selector(type=TextQuoteSelector,exact=not)">Multiple matches</a> (but overlapping matches currently mess up the highlighter)
+      <li><a href="#selector(type=TextQuoteSelector,exact=To%20annotate%2C%20or%20not%20to%20annotate%2C,refinedBy=selector(type=RangeSelector,startSelector=selector(type=TextQuoteSelector,exact=To%20annotate,refinedBy=selector(type=TextQuoteSelector,exact=annotate)),endSelector=selector(type=TextQuoteSelector,exact=not%20to%20annotate,refinedBy=selector(type=TextQuoteSelector,exact=%20to)),refinedBy=selector(type=TextQuoteSelector,exact=o)))">Any deeper nesting of the above</a>
     </ul>
-    <script src="/demo.js"></script>
-  </body>
-</html>
+    <p>Below, the same paragraphs are presented again. Selecting some of the text
+      creates a
+      <a
+        href="https://www.w3.org/TR/2017/REC-annotation-model-20170223/#text-quote-selector"
+        target="_blank">TextQuoteSelector</a>
+      that matches the selection <em>unambiguously</em> within the context of
+      the paragraphs.
+    <blockquote id="selectable">
+      <p>Hello, annotated world!
+      <p>To annotate, or not to annotate, that is the question.
+    </blockquote>
+    <p>Here is the selector in JSON format:
+    <pre><code id="parsed"></code></pre>
+  </main>
+  <script src="/demo.js"></script>
