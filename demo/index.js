@@ -19,14 +19,30 @@ import {
   parse as parseFragment,
   stringify as stringifyFragment,
 } from '@annotator/fragment-identifier';
-import { describeTextQuoteByRange as describeRange } from '@annotator/dom';
-
-import { mark } from './mark.js';
-import { search } from './search.js';
+import {
+  createRangeSelectorCreator,
+  createTextQuoteSelector,
+  describeTextQuoteByRange as describeRange,
+} from '@annotator/dom';
+import { makeRefinable } from '@annotator/selector';
+import highlightRange from 'dom-highlight-range';
 
 function clear() {
   corpus.innerHTML = selectable.innerHTML;
 }
+
+const createSelector = makeRefinable(selector => {
+  const selectorCreator = {
+    TextQuoteSelector: createTextQuoteSelector,
+    RangeSelector: createRangeSelectorCreator(createSelector),
+  }[selector.type];
+
+  if (selectorCreator == null) {
+    throw new Error(`Unsupported selector type: ${selector.type}`);
+  }
+
+  return selectorCreator(selector);
+});
 
 const refresh = async () => {
   clear();
@@ -35,14 +51,15 @@ const refresh = async () => {
   if (!identifier) return;
 
   const { selector } = parseFragment(identifier);
+  const matchAll = createSelector(selector);
   const ranges = [];
 
-  for await (const range of search(corpus, selector)) {
+  for await (const range of matchAll(corpus)) {
     ranges.push(range);
   }
 
   for (const range of ranges) {
-    mark(range);
+    highlightRange(range, 'highlighted');
   }
 
   parsed.innerText = JSON.stringify(selector, null, 2);
