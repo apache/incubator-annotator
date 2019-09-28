@@ -135,7 +135,7 @@ export async function describeTextQuote(range, scope = null) {
       : seek(iter, startNode);
   const endIndex = startIndex + exact.length;
 
-  const affixLengthPairs = [[0, 0]];
+  const affixLengthPairs = [];
 
   for await (const match of selector(scope)) {
     const matchIter = createNodeIterator(root, SHOW_TEXT);
@@ -174,11 +174,11 @@ export async function describeTextQuote(range, scope = null) {
   if (affixLengthPairs.length) {
     const [prefixLength, suffixLength] = minimalSolution(affixLengthPairs);
 
-    if (prefixLength > 0) {
+    if (prefixLength > 0 && startIndex > 0) {
       result.prefix = text.substring(startIndex - prefixLength, startIndex);
     }
 
-    if (suffixLength > 0) {
+    if (suffixLength > 0 && endIndex < text.length) {
       result.suffix = text.substring(endIndex, endIndex + suffixLength);
     }
   }
