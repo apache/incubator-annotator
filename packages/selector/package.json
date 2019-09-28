@@ -12,8 +12,8 @@
   "main": "lib/index.js",
   "module": "esm/index.js",
   "dependencies": {
-    "@babel/runtime-corejs3": "^7.4.0",
-    "core-js": "3"
+    "@babel/runtime-corejs3": "^7.6.2",
+    "core-js": "3.2.1"
   },
   "engines": {
     "node": ">=6.0.0"

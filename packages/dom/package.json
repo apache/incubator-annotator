@@ -12,9 +12,9 @@
   "main": "lib/index.js",
   "module": "esm/index.js",
   "dependencies": {
-    "@babel/runtime-corejs3": "^7.4.0",
+    "@babel/runtime-corejs3": "^7.6.2",
     "cartesian": "^1.0.1",
-    "core-js": "3",
+    "core-js": "3.2.1",
     "dom-node-iterator": "^3.5.3",
     "dom-seek": "^4.0.3"
   },
