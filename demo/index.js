@@ -117,9 +117,11 @@ const refresh = async () => {
 
 async function describeSelection() {
   const selection = document.getSelection();
-  if (selection.isCollapsed) return;
+  if (selection.type !== 'Range') return;
 
   const range = selection.getRangeAt(0);
+  if (range.collapsed) return;
+
   const scope = document.createRange();
   scope.selectNodeContents(selectable);
 
