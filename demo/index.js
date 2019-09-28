@@ -97,10 +97,10 @@ const createSelector = makeRefinable(selector => {
 const refresh = async () => {
   clear();
 
-  const identifier = window.location.hash.slice(1);
-  if (!identifier) return;
+  const fragment = window.location.hash.slice(1);
+  if (!fragment) return;
 
-  const { selector } = parseFragment(identifier);
+  const { selector } = parseFragment(fragment);
   const matchAll = createSelector(selector);
   const ranges = [];
 
@@ -131,15 +131,14 @@ async function describeSelection() {
 
 async function onSelectionChange() {
   const selector = await describeSelection();
+  const fragment = selector ? stringifyFragment(selector) : '';
+  const url = new URL(window.location.href);
+  url.hash = fragment ? `#${fragment}` : '';
 
-  if (selector) {
-    const fragment = stringifyFragment(selector);
-    window.history.replaceState(selector, null, `#${fragment}`);
-  } else {
-    window.history.replaceState(null, null, location.pathname);
+  if (url.href !== window.location.href) {
+    window.history.replaceState(selector, null, url.href);
+    refresh();
   }
-
-  refresh();
 }
 
 window.addEventListener('popstate', refresh);
