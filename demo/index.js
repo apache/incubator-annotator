@@ -25,10 +25,60 @@ import {
   describeTextQuote,
 } from '@annotator/dom';
 import { makeRefinable } from '@annotator/selector';
-import highlightRange from 'dom-highlight-range';
 
 function clear() {
   corpus.innerHTML = selectable.innerHTML;
+}
+
+function highlight(range) {
+  for (const node of textNodes(range)) {
+    const mark = document.createElement('mark');
+    const markRange = document.createRange();
+    markRange.selectNode(node);
+    markRange.surroundContents(mark);
+  }
+}
+
+function textNodes(range) {
+  const nodes = [];
+
+  if (range.collapsed) return nodes;
+
+  let startNode = range.startContainer;
+  let startOffset = range.startOffset;
+
+  if (startNode.nodeType === 3) {
+    if (startOffset > 0 && startOffset < startNode.length) {
+      startNode = startNode.splitText(startOffset);
+      startOffset = 0;
+    }
+  }
+
+  let endNode = range.endContainer;
+  let endOffset = range.endOffset;
+
+  if (endNode.nodeType === 3) {
+    if (endOffset > 0 && endOffset < endNode.length) {
+      endNode = endNode.splitText(endOffset);
+      endOffset = 0;
+    }
+  }
+
+  const walker = document.createTreeWalker(document.documentElement);
+  walker.currentNode = startNode;
+
+  while (walker.currentNode !== endNode) {
+    if (walker.currentNode.nodeType === 3) {
+      nodes.push(walker.currentNode);
+    }
+    walker.nextNode();
+  }
+
+  if (endNode.nodeType === 3 && endOffset > 0) {
+    nodes.push(endNode);
+  }
+
+  return nodes;
 }
 
 const createSelector = makeRefinable(selector => {
@@ -59,7 +109,7 @@ const refresh = async () => {
   }
 
   for (const range of ranges) {
-    highlightRange(range, 'highlighted');
+    highlight(range);
   }
 
   parsed.innerText = JSON.stringify(selector, null, 2);
