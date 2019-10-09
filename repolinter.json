@@ -38,7 +38,7 @@
           "human-readable-content": "email address"
         }
       ],
-      "source-license-headers-exist:file-starts-with": ["warning", {"files": ["**/*.js", "!node_modules/**"], "lineCount": 5, "patterns": ["Licensed to the Apache Software Foundation"], "flags": "i"}],
+      "source-license-headers-exist:file-starts-with": ["warning", {"files": ["**/*.js", "**/*.html", "!node_modules/**"], "lineCount": 5, "patterns": ["Licensed to the Apache Software Foundation"], "flags": "i"}],
       "github-issue-template-exists:file-existence": ["info", {"files": ["ISSUE_TEMPLATE*", ".github/ISSUE_TEMPLATE*"]}],
       "github-pull-request-template-exists:file-existence": ["info", {"files": ["PULL_REQUEST_TEMPLATE*", ".github/PULL_REQUEST_TEMPLATE*"]}]
     },
