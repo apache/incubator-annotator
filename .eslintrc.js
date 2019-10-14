@@ -1,3 +1,5 @@
+const path = require('path');
+
 const babel = require('@babel/core');
 
 // Use the root babel.config.js for module resolution.
@@ -90,7 +92,10 @@ module.exports = {
         'import/no-internal-modules': [
           'error',
           {
-            allow: ['ajv/lib/refs/json-schema-draft-04.json', 'src/**'],
+            allow: [
+              'ajv/lib/refs/json-schema-draft-04.json',
+              path.resolve(__dirname, './packages/*/src/**'),
+            ],
           },
         ],
         'import/no-relative-parent-imports': 'off',
