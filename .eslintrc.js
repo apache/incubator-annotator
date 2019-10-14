@@ -1,3 +1,12 @@
+const babel = require('@babel/core');
+
+// Use the root babel.config.js for module resolution.
+// Relevant issue: tleunen/eslint-import-resolver-babel-module#89
+const babelOptions = babel.loadOptions({ cwd: __dirname });
+const babelModuleResolver = babelOptions.plugins.find(
+  ({ key }) => key === 'module-resolver',
+);
+
 module.exports = {
   root: true,
   env: {
@@ -44,11 +53,7 @@ module.exports = {
   },
   settings: {
     'import/resolver': {
-      'babel-module': {
-        alias: {
-          '^@annotator/(.+)$': '@annotator/\\1/src/index.js',
-        },
-      },
+      'babel-module': babelModuleResolver.options,
     },
   },
   overrides: [
