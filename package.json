@@ -26,7 +26,7 @@
     "prepublishOnly": "yarn run build",
     "start": "webpack-dev-server --hot --mode development",
     "test": "cross-env BABEL_ENV=test nyc mocha packages/*/test/**/*.js",
-    "validate": "cross-env BABEL_ENV=test nyc mocha test/**/*.js"
+    "validate": "cross-env BABEL_ENV=test mocha -r esm test/**/*.js"
   },
   "husky": {
     "hooks": {
