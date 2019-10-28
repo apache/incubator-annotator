@@ -60,7 +60,12 @@ module.exports = {
   },
   overrides: [
     {
-      files: ['.eslintrc.js', '.mocharc.js', 'babel.config.js', 'scripts/*.js'],
+      files: [
+        '.eslintrc.js',
+        '.mocharc.js',
+        'babel.config.js',
+        'nyc.config.js',
+      ],
       env: {
         node: true,
       },
