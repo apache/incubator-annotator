@@ -1,9 +1,0 @@
-{
-  "all": true,
-  "include": [
-    "packages/*/src/**/*.js"
-  ],
-  "instrument": false,
-  "sourceMap": false,
-  "require": ["esm", "@babel/register"]
-}
