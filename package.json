@@ -58,7 +58,7 @@
     "husky": "^3.0.7",
     "lerna": "^3.16.4",
     "lint-staged": "^9.4.0",
-    "mocha": "^6.2.0",
+    "mocha": "^6.2.2",
     "mocha-loader": "^3.0.0",
     "multi-entry-loader": "^1.1.2",
     "node-fetch": "^2.5.0",
