@@ -28,8 +28,6 @@ module.exports = api => {
   const envOptions = {
     // Transform module syntax if necessary.
     modules: CJS ? 'commonjs' : false,
-    // Enable transformations for shipped proposals.
-    shippedProposals: true,
     // Set target environment to default browsers.
     targets: 'defaults',
   };
