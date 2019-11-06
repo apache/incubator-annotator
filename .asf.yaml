@@ -1,0 +1,10 @@
+github:
+  description: "Apache Annotator provides annotation enabling code for browsers, servers, and humans."
+  homepage: https://annotator.apache.org/
+  labels:
+    - annotator
+    - web-annotation
+    - open-annotation
+    - html
+    - dom
+    - incubating
