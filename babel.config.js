@@ -45,7 +45,8 @@ module.exports = api => {
     // Use core-js version 3.
     corejs: 3,
     // Use helpers formatted for the target environment.
-    useESModules: !CJS,
+    // Disabled in testing until standard-things/esm#855 is resolved.
+    useESModules: !CJS && !TEST,
   };
 
   return {
