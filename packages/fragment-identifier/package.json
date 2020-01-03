@@ -15,8 +15,8 @@
     "prepare": "pegjs --format es --output src/fragment.js src/fragment.pegjs"
   },
   "dependencies": {
-    "@babel/runtime-corejs3": "^7.6.3",
-    "core-js": "3.3.4"
+    "@babel/runtime-corejs3": "^7.7.0",
+    "core-js": "^3.6.0"
   },
   "devDependencies": {
     "pegjs": "^0.11.0-dev.273"
