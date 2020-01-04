@@ -34,6 +34,17 @@ module.exports = {
     'import/no-relative-parent-imports': 'error',
     'import/order': ['error', { 'newlines-between': 'always' }],
     'import/unambiguous': 'error',
+    'no-restricted-syntax': [
+      'error',
+      'BindExpression',
+      'ClassProperty',
+      'Decorator',
+      'DoExpression',
+      'ExportDefaultSpecifier',
+      'ExportNamespaceSpecifier',
+      'TypeAnnotation',
+      'JSXElement',
+    ],
     'prettier/prettier': [
       'error',
       {
