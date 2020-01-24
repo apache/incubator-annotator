@@ -23,5 +23,5 @@ module.exports = {
   include: ['packages/*/src/**/*.js'],
   instrument: false,
   sourceMap: false,
-  require: ['esm', '@babel/register'],
+  require: ['@babel/register'],
 };

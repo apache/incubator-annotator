@@ -26,7 +26,7 @@
     "prepublishOnly": "yarn run build",
     "start": "webpack-dev-server --hot --mode development",
     "test": "cross-env BABEL_ENV=test nyc mocha packages/*/test/**/*.js",
-    "validate": "cross-env BABEL_ENV=test mocha -r esm test/**/*.js"
+    "validate": "cross-env BABEL_ENV=test mocha test/**/*.js"
   },
   "husky": {
     "hooks": {
@@ -54,7 +54,6 @@
     "eslint-plugin-import": "^2.20.0",
     "eslint-plugin-node": "^11.0.0",
     "eslint-plugin-prettier": "^3.1.2",
-    "esm": "^3.2.22",
     "husky": "^4.2.1",
     "lerna": "^3.20.2",
     "lint-staged": "^10.0.2",

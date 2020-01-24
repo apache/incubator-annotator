@@ -27,7 +27,7 @@ module.exports = api => {
   // Options for the @babel/env preset.
   const envOptions = {
     // Transform module syntax if necessary.
-    modules: CJS ? 'commonjs' : false,
+    modules: CJS || TEST ? 'commonjs' : false,
     // Set target environment to default browsers.
     targets: 'defaults',
   };
@@ -45,7 +45,6 @@ module.exports = api => {
     // Use core-js version 3.
     corejs: 3,
     // Use helpers formatted for the target environment.
-    // Disabled in testing until standard-things/esm#855 is resolved.
     useESModules: !CJS && !TEST,
   };
 
