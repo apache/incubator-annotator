@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@babel/runtime-corejs3": "^7.8.3",
-    "core-js": "^3.6.0"
+    "core-js": "^3.6.4"
   },
   "devDependencies": {
     "pegjs": "^0.11.0-dev.273"

@@ -14,7 +14,7 @@
   "dependencies": {
     "@babel/runtime-corejs3": "^7.8.3",
     "cartesian": "^1.0.1",
-    "core-js": "^3.6.0",
+    "core-js": "^3.6.4",
     "dom-node-iterator": "^3.5.3",
     "dom-seek": "^4.0.3"
   },

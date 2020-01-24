@@ -13,7 +13,7 @@
   "module": "esm/index.js",
   "dependencies": {
     "@babel/runtime-corejs3": "^7.8.3",
-    "core-js": "^3.6.0"
+    "core-js": "^3.6.4"
   },
   "engines": {
     "node": ">=6.0.0"
