@@ -20,7 +20,7 @@ $ npm install --save @annotator/dom
 
 ##### Requirements
 
-- [node](https://nodejs.org) >= 8.x
+- [node](https://nodejs.org) >= 10.x
 - [yarn](https://www.yarnpkg.com/) >= 1.5.1
 
 
@@ -31,7 +31,7 @@ $ npm install --save @annotator/dom
 We use [Lerna](https://lernajs.io/) to juggle the various Apache Annotator
 libraries. If you'd like to contribute, you'll need the following:
 
-- [node](https://nodejs.org) >= 8.x
+- [node](https://nodejs.org) >= 10.x
 - [yarn](https://www.yarnpkg.com/) >= 1.5.1
 
 ##### Setup
@@ -70,7 +70,7 @@ With the `--url` option you can pass in a URL or a local path to a JSON file.
 
 ##### Examples
 
-Valid: 
+Valid:
 
 `https://raw.githubusercontent.com/w3c/web-annotation-tests/master/tools/samples/correct/anno1.json`
 

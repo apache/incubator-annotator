@@ -19,7 +19,7 @@
     "dom-seek": "^4.0.3"
   },
   "engines": {
-    "node": ">=6.0.0"
+    "node": ">=10.0.0"
   },
   "publishConfig": {
     "access": "public"
