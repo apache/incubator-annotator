@@ -12,7 +12,7 @@
   "main": "lib/index.js",
   "module": "esm/index.js",
   "dependencies": {
-    "@babel/runtime-corejs3": "^7.7.0",
+    "@babel/runtime-corejs3": "^7.8.3",
     "core-js": "^3.6.0"
   },
   "engines": {
