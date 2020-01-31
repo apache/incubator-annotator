@@ -1,3 +1,4 @@
+.asf.yaml
 .editorconfig
 .eslintignore
 .eslintrc.js
@@ -7,6 +8,7 @@
 .nycrc
 .ratignore
 .travis.yml
+fragment.pegjs
 lerna.json
 node_modules
 package.json
