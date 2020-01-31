@@ -1,6 +1,6 @@
 {
   "name": "@annotator/fragment-identifier",
-  "version": "0.1.1-0.1.0-dev.1.0",
+  "version": "0.0.0",
   "description": "Convert to and from Web Annotation fragment identifiers.",
   "homepage": "https://annotator.apache.org",
   "repository": {
