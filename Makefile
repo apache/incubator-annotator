@@ -30,4 +30,9 @@ dist:
 		--output apache-annotator-$(ANNOTATOR_VERSION).tar.gz \
 		--prefix apache-annotator-$(ANNOTATOR_VERSION)/ \
 		HEAD
+	@gpg -ab apache-annotator-$(ANNOTATOR_VERSION).tar.gz
+	@sha256sum apache-annotator-$(ANNOTATOR_VERSION).tar.gz \
+	  > apache-annotator-$(ANNOTATOR_VERSION).tar.gz.sha256
+	@sha512sum apache-annotator-$(ANNOTATOR_VERSION).tar.gz \
+	  > apache-annotator-$(ANNOTATOR_VERSION).tar.gz.sha512
 	@echo "Done: apache-annotator-$(ANNOTATOR_VERSION).tar.gz"
