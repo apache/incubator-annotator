@@ -4,5 +4,11 @@
   "useWorkspaces": true,
   "packages": [
     "packages/*"
-  ]
+  ],
+  "command": {
+    "version": {
+      "signGitCommit": true,
+      "signGitTag": true
+    }
+  }
 }
