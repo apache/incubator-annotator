@@ -83,3 +83,10 @@ Invalid:
 # License
 
 Apache License 2.0
+
+# Disclaimer
+
+Apache Annotator is currently undergoing incubation at The Apache Software
+Foundation.
+
+See the accompanying [DISCLAIMER](./DISCLAIMER) file for details.
