@@ -57,8 +57,8 @@ build:
 clean:
 	@yarn run clean
 
-.PHONY: test
-test: build
+.PHONY: check
+check:
 	@yarn test
 
 ifeq ($(vsn_tag),)
@@ -86,6 +86,6 @@ dist:
 .PHONY: distcheck
 distcheck: dist
 	@tar xzf apache-annotator-$(annotator_vsn)$(vsn_pre)-incubating.tar.gz
-	@make -C apache-annotator-$(annotator_vsn)-incubating test
+	@make -C apache-annotator-$(annotator_vsn)-incubating check
 
 endif
