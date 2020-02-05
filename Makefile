@@ -57,10 +57,14 @@ build:
 clean:
 	@yarn run clean
 
+.PHONY: test
+test: build
+	@yarn test
+
 ifeq ($(vsn_tag),)
 
 .PHONY: dist
-dist:
+dist distcheck:
 	$(error No tag found for release)
 
 else
@@ -78,5 +82,10 @@ dist:
 	@sha512sum apache-annotator-$(annotator_vsn)$(vsn_pre)-incubating.tar.gz \
         > apache-annotator-$(annotator_vsn)$(vsn_pre)-incubating.tar.gz.sha512
 	@echo "Done: apache-annotator-$(annotator_vsn)$(vsn_pre)-incubating.tar.gz"
+
+.PHONY: distcheck
+distcheck: dist
+	@tar xzf apache-annotator-$(annotator_vsn)$(vsn_pre)-incubating.tar.gz
+	@make -C apache-annotator-$(annotator_vsn)-incubating test
 
 endif
