@@ -84,6 +84,7 @@ dist:
 	@echo "Done: apache-annotator-$(annotator_vsn)$(vsn_pre)-incubating.tar.gz"
 
 .PHONY: distcheck
+distcheck: export HUSKY_SKIP_INSTALL=1
 distcheck: dist
 	@tar xzf apache-annotator-$(annotator_vsn)$(vsn_pre)-incubating.tar.gz
 	@make -C apache-annotator-$(annotator_vsn)-incubating check
