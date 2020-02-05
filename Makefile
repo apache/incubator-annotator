@@ -58,7 +58,7 @@ clean:
 	@yarn run clean
 
 .PHONY: check
-check:
+check: build
 	@yarn test
 
 ifeq ($(vsn_tag),)
