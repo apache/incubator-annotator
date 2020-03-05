@@ -32,8 +32,13 @@ import {
 } from '@annotator/dom';
 import { makeRefinable } from '@annotator/selector';
 
-function clear() {
-  corpus.innerHTML = selectable.innerHTML;
+const cleanupFunctions = [];
+
+function cleanup() {
+  let removeHighlight;
+  while (removeHighlight = cleanupFunctions.shift()) {
+    removeHighlight();
+  }
 }
 
 const createSelector = makeRefinable(selector => {
@@ -50,7 +55,7 @@ const createSelector = makeRefinable(selector => {
 });
 
 const refresh = async () => {
-  clear();
+  cleanup();
 
   const fragment = window.location.hash.slice(1);
   if (!fragment) return;
@@ -64,7 +69,8 @@ const refresh = async () => {
   }
 
   for (const range of ranges) {
-    highlightRange(range);
+    const removeHighlight = highlightRange(range);
+    cleanupFunctions.push(removeHighlight);
   }
 
   parsed.innerText = JSON.stringify(selector, null, 2);
