@@ -55,12 +55,28 @@ $ yarn start
 Once the test server has started, you can browse a local demo, and run tests in
 a browser by visiting `http://localhost:8080/`.
 
+## Selectors
+
+Many Annotations refer to part of a resource, rather than all of it, as the Target. We call that part of the resource a Segment (of Interest). A Selector is used to describe how to determine the Segment from within the Source resource.
+
+The [W3C Web Annotation Data Model](https://www.w3.org/TR/annotation-model) outlines a number of different selectors. See table below for full list and status.
+
+| Selector                                                                        | Description                                                                                                                                                                                          | Implementation Status |
+| ------------------------------------------------------------------------------: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | --------------------: |
+| [Text Quote](https://www.w3.org/TR/annotation-model/#text-quote-selector)       | This Selector describes a range of text, including some of the text immediately before (a prefix) and after (a suffix) it to distinguish between multiple copies of the same sequence of characters. | Yes                   |
+| [CSS](https://www.w3.org/TR/annotation-model/#css-selector)                     | CSS Selectors allow for a wide variety of well supported ways to describe the path to an element in a web page.                                                                                      | Yes                   |
+| [Text Position](https://www.w3.org/TR/annotation-model/#text-position-selector) | This Selector describes a range of text by recording the start and end positions of the selection in the stream.                                                                                     | No                    |
+| [Fragment](https://www.w3.org/TR/annotation-model/#fragment-selector)           | Uses the fragment part of an IRI defined by the representation's media type.                                                                                                                         | No                    |
+| [XPath](https://www.w3.org/TR/annotation-model/#xpath-selector)                 | Implements an XPath based selection.                                                                                                                                                                 | No                    |
+| [Data Postion](https://www.w3.org/TR/annotation-model/#data-position-selector)  | Similar to the Text Position Selector, the Data Position Selector uses the same properties but works at the byte in bitstream level rather than the character in text level.                         | No                    |
+| [SVG](https://www.w3.org/TR/annotation-model/#svg-selector)                     | An SvgSelector defines an area through the use of the Scalable Vector Graphics standard.                                                                                                             | No                    |
+| [Range](https://www.w3.org/TR/annotation-model/#range-selector)                 | A Range Selector can be used to identify the beginning and the end of the selection by using other Selectors.                                                                                        | Yes                   |
+| [Refinement](https://www.w3.org/TR/annotation-model/#refinement-of-selection)   | Select a part of a selection, rather than as a selection of the complete resource.                                                                                                                   |                       |
 
 ## Web Annotation Data Model Validation
 
 If you have any Web Annotation Data Model JSON documents, you can validate them
 using the `validate` script:
-
 
 ```sh
 $ yarn validate --url https://raw.githubusercontent.com/w3c/web-annotation-tests/master/tools/samples/correct/anno1.json
