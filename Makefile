@@ -76,11 +76,6 @@ dist:
         --output apache-annotator-$(annotator_vsn)$(vsn_pre)-incubating.tar.gz \
         --prefix apache-annotator-$(annotator_vsn)-incubating/ \
         HEAD
-	@gpg -ab apache-annotator-$(annotator_vsn)$(vsn_pre)-incubating.tar.gz
-	@sha256sum apache-annotator-$(annotator_vsn)$(vsn_pre)-incubating.tar.gz \
-        > apache-annotator-$(annotator_vsn)$(vsn_pre)-incubating.tar.gz.sha256
-	@sha512sum apache-annotator-$(annotator_vsn)$(vsn_pre)-incubating.tar.gz \
-        > apache-annotator-$(annotator_vsn)$(vsn_pre)-incubating.tar.gz.sha512
 	@echo "Done: apache-annotator-$(annotator_vsn)$(vsn_pre)-incubating.tar.gz"
 
 .PHONY: distcheck
@@ -88,5 +83,13 @@ distcheck: export HUSKY_SKIP_INSTALL=1
 distcheck: dist
 	@tar xzf apache-annotator-$(annotator_vsn)$(vsn_pre)-incubating.tar.gz
 	@make -C apache-annotator-$(annotator_vsn)-incubating check
+
+.PHONY: distsign
+distsign: dist
+	@gpg -ab apache-annotator-$(annotator_vsn)$(vsn_pre)-incubating.tar.gz
+	@sha256sum apache-annotator-$(annotator_vsn)$(vsn_pre)-incubating.tar.gz \
+        > apache-annotator-$(annotator_vsn)$(vsn_pre)-incubating.tar.gz.sha256
+	@sha512sum apache-annotator-$(annotator_vsn)$(vsn_pre)-incubating.tar.gz \
+        > apache-annotator-$(annotator_vsn)$(vsn_pre)-incubating.tar.gz.sha512
 
 endif
