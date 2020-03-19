@@ -55,6 +55,17 @@ $ yarn start
 Once the test server has started, you can browse a local demo, and run tests in
 a browser by visiting `http://localhost:8080/`.
 
+##### Validate Licensing
+
+[Apache Rat (Release Audit Tool)](https://creadur.apache.org/rat/) is a
+preferred code license checking tool used by [the ASF](https://apache.org/).
+The included `.ratignore` file contains a list of files to exclude from scans.
+
+To check for included licenses, run the following and view the output report:
+```sh
+java -jar ~/bin/apache-rat-0.13/apache-rat-0.13.jar -E .ratignore -d . > rat_report.txt
+```
+
 ## Selectors
 
 Many Annotations refer to part of a resource, rather than all of it, as the Target. We call that part of the resource a Segment (of Interest). A Selector is used to describe how to determine the Segment from within the Source resource.
