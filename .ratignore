@@ -8,7 +8,7 @@
 .nycrc
 .ratignore
 .travis.yml
-fragment.pegjs
+fragment.js
 lerna.json
 node_modules
 package.json
