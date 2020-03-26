@@ -39,6 +39,7 @@ function cleanup() {
   while (removeHighlight = cleanupFunctions.shift()) {
     removeHighlight();
   }
+  corpus.normalize();
 }
 
 const createSelector = makeRefinable(selector => {
