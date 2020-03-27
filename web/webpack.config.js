@@ -25,6 +25,9 @@ const path = require('path');
 
 module.exports = {
   context: path.resolve(__dirname),
+  devServer: {
+    contentBase: path.resolve(__dirname),
+  },
   entry: {
     demo: './demo/index.js',
     test: [
@@ -43,7 +46,7 @@ module.exports = {
     ],
   },
   output: {
-    filename: '[name].js',
-    publicPath: '/',
+    path: path.resolve(__dirname),
+    filename: '[name]/bundle.js',
   },
 };
