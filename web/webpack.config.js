@@ -28,6 +28,7 @@ module.exports = {
   entry: {
     index: [
       './index.html',
+      './style.css',
     ],
     demo: [
       './demo/index.html',
