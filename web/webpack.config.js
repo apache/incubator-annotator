@@ -26,8 +26,15 @@ const path = require('path');
 module.exports = {
   context: path.resolve(__dirname),
   entry: {
-    demo: './demo/index.js',
+    index: [
+      './index.html',
+    ],
+    demo: [
+      './demo/index.html',
+      './demo/index.js'
+    ],
     test: [
+      './test/index.html',
       'chai/register-assert',
       'mocha-loader!multi-entry-loader?include=./packages/*/test/**/*.js!',
     ],
@@ -40,10 +47,19 @@ module.exports = {
         exclude: /node_modules/,
         use: 'babel-loader',
       },
+      {
+        exclude: /\.js$/,
+        use: [{
+          loader: 'file-loader',
+          options: {
+            name: '[path][name].[ext]',
+          },
+        }],
+      },
     ],
   },
   output: {
-    filename: '[name].js',
-    publicPath: '/',
+    path: path.resolve(__dirname, 'dist'),
+    filename: '[name]/index.js',
   },
 };

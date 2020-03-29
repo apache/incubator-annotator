@@ -24,9 +24,11 @@
     "lint": "eslint --fix --quiet .",
     "prepare": "lerna run prepare",
     "prepublishOnly": "yarn run build",
-    "start": "webpack-dev-server --hot --mode development",
+    "start": "yarn run web:server",
     "test": "cross-env BABEL_ENV=test nyc mocha packages/*/test/**/*.js",
-    "validate": "cross-env BABEL_ENV=test mocha test/**/*.js"
+    "validate": "cross-env BABEL_ENV=test mocha test/**/*.js",
+    "web:build": "webpack  --config=web/webpack.config.js --mode development",
+    "web:server": "webpack-dev-server --config=web/webpack.config.js --hot --mode development"
   },
   "husky": {
     "hooks": {
@@ -54,6 +56,7 @@
     "eslint-plugin-import": "^2.20.0",
     "eslint-plugin-node": "^11.0.0",
     "eslint-plugin-prettier": "^3.1.2",
+    "file-loader": "^6.0.0",
     "husky": "^4.2.1",
     "lerna": "^3.20.2",
     "lint-staged": "^10.0.2",
