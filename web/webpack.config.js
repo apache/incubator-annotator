@@ -62,4 +62,7 @@ module.exports = {
     path: path.resolve(__dirname, 'dist'),
     filename: '[name]/index.js',
   },
+  devServer: {
+    contentBase: false,
+  },
 };
