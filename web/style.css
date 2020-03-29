@@ -1,0 +1,52 @@
+body {
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif;
+  line-height: 1.5;
+  margin: 2rem;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 500;
+}
+
+h1 { font-size: 1.4em; }
+h2 { font-size: 1.2em; }
+h3 { font-size: 1.1em; }
+
+header {
+  border-bottom: 1px solid lightgrey;
+  font-size: 0.8em;
+}
+
+nav {
+  margin: 2rem;
+}
+
+main > *:not(.full-width) {
+  max-width: 40rem;
+  margin: 2rem auto;
+}
+
+blockquote {
+  font-style: italic;
+}
+
+li {
+  margin-top: 1em;
+}
+
+mark {
+  background-color: rgba(255, 255, 0, 0.5);
+  outline: 0.1px solid rgba(255, 100, 0, 0.8);
+}
+
+.columns {
+  display: flex;
+  flex-flow: row wrap;
+}
+
+.column {
+  min-width: 10rem;
+  width: 10rem;
+  flex-grow: 1;
+  margin: 1rem;
+}
