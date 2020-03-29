@@ -1,7 +1,7 @@
 .nyc_output
 coverage
 node_modules
-web/**/bundle.js
+/web/dist
 /packages/*/LICENSE
 /packages/*/NOTICE
 /packages/*/esm
