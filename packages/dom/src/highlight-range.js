@@ -114,6 +114,8 @@ function wrapNodeInHighlight(node, tagName, attributes) {
 
 // Remove a highlight element created with wrapNodeInHighlight.
 function removeHighlight(highlightElement) {
+  // If it has somehow been removed already, there is nothing to be done.
+  if (!highlightElement.parentNode) return;
   if (highlightElement.childNodes.length === 1) {
     highlightElement.parentNode.replaceChild(highlightElement.firstChild, highlightElement);
   } else {
