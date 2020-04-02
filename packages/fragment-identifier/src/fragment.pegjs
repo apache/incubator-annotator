@@ -47,5 +47,15 @@ value
 atom
     = chars:validchar+ { return chars.join(""); }
 
+// FIXME
+// While an opening parenthesis is always valid, a closing parenthesis
+// *might* be part of the value, but could also be the delimiter that
+// closes a selector(…) or state(…). The attempt below uses a look-ahead
+// to not match ')' before a comma or before another ')', or at the end
+// of the input. However, it will fail if a last param’s value ends with
+// ')', or if a key or value contains '))'. For example:
+//   selector(type=TextQuoteSelector,exact=example%20(that%20fails))
+//   selector(type=TextQuoteSelector,exact=another))failure)
 validchar
-    = [a-zA-Z0-9\<\>\/\[\]\:%+@.\-!\$\&\;*_]
+    = [a-zA-Z0-9\<\>\/\[\]\:%+@.\-!\$\&\;*_\(]
+    / $( ")" &[^,)] )
