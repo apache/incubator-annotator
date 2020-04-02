@@ -1,19 +1,3 @@
-{
-    function collect() {
-      var ret = {};
-      var len = arguments.length;
-      for (var i=0; i<len; i++) {
-        for (var p in arguments[i]) {
-          if (arguments[i].hasOwnProperty(p)) {
-            ret[p] = arguments[i][p];
-          }
-        }
-      }
-      return ret;
-    }
-}
-
-
 start =
     top
 
@@ -26,11 +10,7 @@ top
 params
     = k1: key_value_pair k2:("," key_value_pair)*
         {
-            var f = k1;
-            for( var i = 0; i < k2.length; i++ ) {
-                f = collect(f, k2[i][1])
-            }
-            return f;
+            return k2.reduce((acc, cur) => Object.assign(acc, cur[1]), k1);
         }
 
 key_value_pair
