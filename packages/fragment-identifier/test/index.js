@@ -29,6 +29,16 @@ const specExamples = Object.fromEntries(Object.entries(specExamplesRaw).map(
     [name, { fragId: uri.split('#')[1], selector, state }]
 ));
 
+const specialCasesToStringify = {
+  'Value with parentheses (to be percent-encoded)': {
+    fragId: 'selector(type=TextQuoteSelector,exact=example%20%28with%20parentheses%29)',
+    selector: {
+      type: 'TextQuoteSelector',
+      exact: 'example (with parentheses)',
+    },
+  },
+};
+
 describe('stringify', () => {
   // Test examples in the spec, ignoring their URI encoding
   for (const [name, example] of Object.entries(specExamples)) {
@@ -38,6 +48,13 @@ describe('stringify', () => {
         decodeURIComponent(result),
         decodeURIComponent(example.fragId)
       );
+    });
+  }
+
+  for (const [name, example] of Object.entries(specialCasesToStringify)) {
+    it(`should properly stringify: '${name}'`, () => {
+      const result = stringify(example.selector || example.state);
+      assert.equal(result, example.fragId);
     });
   }
 });
