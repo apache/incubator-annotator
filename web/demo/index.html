@@ -25,17 +25,17 @@ under the License.
   <title>Apache Annotator (incubating) demo</title>
   <link rel="stylesheet" href="../style.css"/>
   <style>
-    a[href^="#selector"]:before {
+    a[data-run-example]:before {
       content: '📌 ';
     }
 
-    #selectable, #corpus {
+    #source, #target {
       padding: 1em;
       border: 1px solid lightgrey;
       background: white;
     }
 
-    #parsed {
+    #info {
       height: 15em;
       overflow: scroll;
       background: white;
@@ -59,53 +59,39 @@ under the License.
   <main>
     <h1>Selector Demonstration</h1>
 
-    <p>
-      This page demonstrates Web Annotation
+    <p>This page demonstrates Web Annotation
       <a href="https://www.w3.org/TR/2017/REC-annotation-model-20170223/#selectors" target="_blank">Selectors</a>,
-      standardised JSON objects that describe a selection inside a document with sufficient information to find it back.
-     </p>
+      standardised JSON objects that describe a selection inside a document with sufficient information to find it back.</p>
 
     <div class="columns full-width">
       <div class="column">
         <h2>Select text here</h2>
-        <p id="selectable">Hello, annotated world! To annotate, or not to annotate, that is the question.</p>
-        <p>
-          Try selecting some text in this paragraph above.
+        <p id="source">Hello, annotated world! To annotate, or not to annotate, that is the question.</p>
+        <p>Try selecting some text in this paragraph above.
           Upon a change of selection, a
           <a rel="external" href="https://www.w3.org/TR/2017/REC-annotation-model-20170223/#text-quote-selector" target="_blank">TextQuoteSelector</a>
-          will be created, that describes what was selected.
-        </p>
+          will be created, that describes what was selected.</p>
       </div>
       <div class="column">
         <h2>Text is found here</h2>
-        <p id="corpus" contenteditable>Hello, annotated world! To annotate, or not to annotate, that is the question.</p>
-        <p>
-          The selector is ‘anchored’ here: the segment it describes is found and highlighted.
-        </p>
+        <p id="target" contenteditable>Hello, annotated world! To annotate, or not to annotate, that is the question.</p>
+        <p>The selector is ‘anchored’ here: the segment it describes is found and highlighted.</p>
       </div>
       <div class="column" style="min-width: 20em;">
         <h2>The selector as JSON:</h2>
-        <pre id="parsed"></pre>
+        <pre id="info"></pre>
       </div>
     </div>
-    <p>
-      Note that the selector is also serialised and shown in the window location, as the fragment identifier
-      (following <a rel="external" href="https://www.w3.org/TR/2017/NOTE-selectors-states-20170223/#frags" target="_blank">this specification</a>).
-      In fact, it is this fragment identifier that is parsed back into JSON and then anchored in the text above.
-    </p>
-    <p>
-      Here are other selectors you can anchor in the text above:
-    </p>
+    <p>Here are other selectors you can anchor in the text above:</p>
     <ul>
-      <li><a href="#selector(type=TextQuoteSelector,exact=not)">An ambiguous selector (i.e. with multiple matches)</a>
+      <li><a href="#" data-run-example="1">An ambiguous selector (i.e. with multiple matches)</a>
       <li>
-        <a href="#selector(type=RangeSelector,startSelector=selector(type=TextQuoteSelector,exact=ann),endSelector=selector(type=TextQuoteSelector,exact=!))">RangeSelector</a>
+        <a href="#" data-run-example="2">RangeSelector</a>
         (<a href="https://www.w3.org/TR/2017/REC-annotation-model-20170223/#range-selector" target="_blank">spec</a>)
       <li>
-        <a href="#selector(type=TextQuoteSelector,exact=annotated%20world,refinedBy=selector(type=TextQuoteSelector,exact=tat))">Refining
-          a selector using another selector</a>
+        <a href="#" data-run-example="3">Refining a selector using another selector</a>
         (<a href="https://www.w3.org/TR/2017/REC-annotation-model-20170223/#refinement-of-selection" target="blank">spec</a>)
-      <li><a href="#selector(type=TextQuoteSelector,exact=To%20annotate%2C%20or%20not%20to%20annotate%2C,refinedBy=selector(type=RangeSelector,startSelector=selector(type=TextQuoteSelector,exact=To%20annotate,refinedBy=selector(type=TextQuoteSelector,exact=annotate)),endSelector=selector(type=TextQuoteSelector,exact=not%20to%20annotate,refinedBy=selector(type=TextQuoteSelector,exact=%20to)),refinedBy=selector(type=TextQuoteSelector,exact=o)))">Any deeper nesting of the above</a>
+      <li><a href="#" data-run-example="4">Any deeper nesting of the above</a>
     </ul>
   </main>
 </body>
