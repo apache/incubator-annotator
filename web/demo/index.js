@@ -36,7 +36,7 @@ const cleanupFunctions = [];
 
 function cleanup() {
   let removeHighlight;
-  while (removeHighlight = cleanupFunctions.shift()) {
+  while ((removeHighlight = cleanupFunctions.shift())) {
     removeHighlight();
   }
   corpus.normalize();

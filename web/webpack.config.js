@@ -26,14 +26,8 @@ const path = require('path');
 module.exports = {
   context: path.resolve(__dirname),
   entry: {
-    index: [
-      './index.html',
-      './style.css',
-    ],
-    demo: [
-      './demo/index.html',
-      './demo/index.js'
-    ],
+    index: ['./index.html', './style.css'],
+    demo: ['./demo/index.html', './demo/index.js'],
     test: [
       './test/index.html',
       'chai/register-assert',
@@ -50,12 +44,14 @@ module.exports = {
       },
       {
         exclude: /\.js$/,
-        use: [{
-          loader: 'file-loader',
-          options: {
-            name: '[path][name].[ext]',
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              name: '[path][name].[ext]',
+            },
           },
-        }],
+        ],
       },
     ],
   },

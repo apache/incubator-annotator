@@ -54,7 +54,10 @@ export function highlightRange(range, tagName = 'mark', attributes = {}) {
 // Return an array of the text nodes in the range. Split the start and end nodes if required.
 function textNodesInRange(range) {
   // If the start or end node is a text node and only partly in the range, split it.
-  if (range.startContainer.nodeType === Node.TEXT_NODE && range.startOffset > 0) {
+  if (
+    range.startContainer.nodeType === Node.TEXT_NODE &&
+    range.startOffset > 0
+  ) {
     const endOffset = range.endOffset; // (this may get lost when the splitting the node)
     const createdNode = range.startContainer.splitText(range.startOffset);
     if (range.endContainer === range.startContainer) {
@@ -64,8 +67,8 @@ function textNodesInRange(range) {
     range.setStart(createdNode, 0);
   }
   if (
-    range.endContainer.nodeType === Node.TEXT_NODE
-    && range.endOffset < range.endContainer.length
+    range.endContainer.nodeType === Node.TEXT_NODE &&
+    range.endOffset < range.endContainer.length
   ) {
     range.endContainer.splitText(range.endOffset);
   }
@@ -74,7 +77,10 @@ function textNodesInRange(range) {
   const walker = range.startContainer.ownerDocument.createTreeWalker(
     range.commonAncestorContainer,
     NodeFilter.SHOW_TEXT,
-    node => range.intersectsNode(node) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT,
+    node =>
+      range.intersectsNode(node)
+        ? NodeFilter.FILTER_ACCEPT
+        : NodeFilter.FILTER_REJECT,
   );
   walker.currentNode = range.startContainer;
 
@@ -117,11 +123,17 @@ function removeHighlight(highlightElement) {
   // If it has somehow been removed already, there is nothing to be done.
   if (!highlightElement.parentNode) return;
   if (highlightElement.childNodes.length === 1) {
-    highlightElement.parentNode.replaceChild(highlightElement.firstChild, highlightElement);
+    highlightElement.parentNode.replaceChild(
+      highlightElement.firstChild,
+      highlightElement,
+    );
   } else {
     // If the highlight somehow contains multiple nodes now, move them all.
     while (highlightElement.firstChild) {
-      highlightElement.parentNode.insertBefore(highlightElement.firstChild, highlightElement);
+      highlightElement.parentNode.insertBefore(
+        highlightElement.firstChild,
+        highlightElement,
+      );
     }
     highlightElement.remove();
   }
