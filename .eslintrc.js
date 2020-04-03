@@ -106,5 +106,11 @@ module.exports = {
         'import/no-relative-parent-imports': 'off',
       },
     },
+    {
+      files: ['packages/dom/{src,test}/**/*.js'],
+      env: {
+        browser: true,
+      },
+    },
   ],
 };
