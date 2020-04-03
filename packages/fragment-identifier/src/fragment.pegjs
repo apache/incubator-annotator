@@ -71,5 +71,5 @@ atom
 //   selector(type=TextQuoteSelector,exact=example%20(that%20fails))
 //   selector(type=TextQuoteSelector,exact=another))failure)
 validchar
-    = [a-zA-Z0-9\<\>\/\[\]\:%+@.\-!\$\&\;*_\(]
+    = [a-zA-Z0-9<>/[\]:%+@.\-!$&;*_~';(]
     / $( ")" &[^,)] )
