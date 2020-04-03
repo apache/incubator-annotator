@@ -52,4 +52,9 @@ describe('parse', () => {
       assert.deepEqual(result, expected);
     });
   }
+
+  it('should throw when given an unknown type of fragment identifier', () => {
+    assert.throws(() => parse('section4'));
+    assert.throws(() => parse('t=3,8'));
+  });
 });
