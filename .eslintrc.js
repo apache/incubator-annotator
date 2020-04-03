@@ -64,6 +64,7 @@ module.exports = {
         '.eslintrc.js',
         '.mocharc.js',
         'babel.config.js',
+        'husky.config.js',
         'nyc.config.js',
       ],
       env: {
