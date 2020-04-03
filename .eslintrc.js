@@ -80,7 +80,7 @@ module.exports = {
       },
     },
     {
-      files: ['demo/**/*.js'],
+      files: ['web/demo/**/*.js'],
       env: {
         browser: true,
       },
