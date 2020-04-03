@@ -18,12 +18,8 @@
  * under the License.
  */
 
-/* global corpus, module, parsed, selectable */
+/* global info, module, source, target */
 
-import {
-  parse as parseFragment,
-  stringify as stringifyFragment,
-} from '@annotator/fragment-identifier';
 import {
   createRangeSelectorCreator,
   createTextQuoteSelector,
@@ -32,6 +28,59 @@ import {
 } from '@annotator/dom';
 import { makeRefinable } from '@annotator/selector';
 
+const EXAMPLE_SELECTORS = [
+  {
+    type: 'TextQuoteSelector',
+    exact: 'not',
+  },
+  {
+    type: 'RangeSelector',
+    startSelector: {
+      type: 'TextQuoteSelector',
+      exact: 'ann',
+    },
+    endSelector: {
+      type: 'TextQuoteSelector',
+      exact: '!',
+    },
+  },
+  {
+    type: 'TextQuoteSelector',
+    exact: 'annotated world',
+    refinedBy: {
+      type: 'TextQuoteSelector',
+      exact: 'tat',
+    },
+  },
+  {
+    type: 'TextQuoteSelector',
+    exact: 'To annotate, or not to annotate,',
+    refinedBy: {
+      type: 'RangeSelector',
+      startSelector: {
+        type: 'TextQuoteSelector',
+        exact: 'To annotate',
+        refinedBy: {
+          type: 'TextQuoteSelector',
+          exact: 'annotate',
+        },
+      },
+      endSelector: {
+        type: 'TextQuoteSelector',
+        exact: 'not to annotate',
+        refinedBy: {
+          type: 'TextQuoteSelector',
+          exact: ' to',
+        },
+      },
+      refinedBy: {
+        type: 'TextQuoteSelector',
+        exact: 'o',
+      },
+    },
+  },
+];
+
 const cleanupFunctions = [];
 
 function cleanup() {
@@ -39,7 +88,7 @@ function cleanup() {
   while ((removeHighlight = cleanupFunctions.shift())) {
     removeHighlight();
   }
-  corpus.normalize();
+  target.normalize();
 }
 
 const createSelector = makeRefinable(selector => {
@@ -55,17 +104,13 @@ const createSelector = makeRefinable(selector => {
   return selectorCreator(selector);
 });
 
-const refresh = async () => {
+const refresh = async selector => {
   cleanup();
 
-  const fragment = window.location.hash.slice(1);
-  if (!fragment) return;
-
-  const { selector } = parseFragment(fragment);
   const matchAll = createSelector(selector);
   const ranges = [];
 
-  for await (const range of matchAll(corpus)) {
+  for await (const range of matchAll(target)) {
     ranges.push(range);
   }
 
@@ -74,7 +119,7 @@ const refresh = async () => {
     cleanupFunctions.push(removeHighlight);
   }
 
-  parsed.innerText = JSON.stringify(selector, null, 2);
+  info.innerText = JSON.stringify(selector, null, 2);
 };
 
 async function describeSelection() {
@@ -85,7 +130,7 @@ async function describeSelection() {
   if (range.collapsed) return;
 
   const scope = document.createRange();
-  scope.selectNodeContents(selectable);
+  scope.selectNodeContents(source);
 
   if (!scope.isPointInRange(range.startContainer, range.startOffset)) return;
   if (!scope.isPointInRange(range.endContainer, range.endOffset)) return;
@@ -95,19 +140,22 @@ async function describeSelection() {
 
 async function onSelectionChange() {
   const selector = await describeSelection();
-  const fragment = selector ? stringifyFragment(selector) : '';
-  const url = new URL(window.location.href);
-  url.hash = fragment ? `#${fragment}` : '';
-
-  if (url.href !== window.location.href) {
-    window.history.replaceState(selector, null, url.href);
-    refresh();
-  }
+  refresh(selector);
 }
 
-window.addEventListener('popstate', refresh);
-document.addEventListener('DOMContentLoaded', refresh);
+function onSelectorExampleClick(event) {
+  if (event.target.getAttribute('name') !== 'example') return;
+  event.preventDefault();
+  const exampleAnchors = document.querySelectorAll('[name=example]');
+  const index = Array.from(exampleAnchors).indexOf(event.target);
+  const selector = EXAMPLE_SELECTORS[index];
+  refresh(selector);
+}
+
+window.addEventListener('popstate', () => refresh());
+document.addEventListener('DOMContentLoaded', () => refresh());
 document.addEventListener('selectionchange', onSelectionChange);
+document.addEventListener('click', onSelectorExampleClick);
 
 if (module.hot) {
   module.hot.accept();
@@ -115,5 +163,6 @@ if (module.hot) {
     window.removeEventListener('popstate', refresh);
     document.removeEventListener('DOMContentLoaded', refresh);
     document.removeEventListener('selectionchange', onSelectionChange);
+    document.removeEventListener('click', onSelectorExampleClick);
   });
 }
