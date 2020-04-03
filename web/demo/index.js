@@ -104,9 +104,7 @@ const createSelector = makeRefinable(selector => {
   return selectorCreator(selector);
 });
 
-const refresh = async selector => {
-  cleanup();
-
+async function anchor(selector) {
   const matchAll = createSelector(selector);
   const ranges = [];
 
@@ -140,28 +138,27 @@ async function describeSelection() {
 
 async function onSelectionChange() {
   const selector = await describeSelection();
-  refresh(selector);
+  if (selector) {
+    cleanup();
+    anchor(selector);
+  }
 }
 
 function onSelectorExampleClick(event) {
-  if (event.target.getAttribute('name') !== 'example') return;
+  const exampleNumber = event.target.dataset.runExample;
+  if (!exampleNumber) return;
+  const selector = EXAMPLE_SELECTORS[exampleNumber];
+  cleanup();
+  anchor(selector);
   event.preventDefault();
-  const exampleAnchors = document.querySelectorAll('[name=example]');
-  const index = Array.from(exampleAnchors).indexOf(event.target);
-  const selector = EXAMPLE_SELECTORS[index];
-  refresh(selector);
 }
 
-window.addEventListener('popstate', () => refresh());
-document.addEventListener('DOMContentLoaded', () => refresh());
 document.addEventListener('selectionchange', onSelectionChange);
 document.addEventListener('click', onSelectorExampleClick);
 
 if (module.hot) {
   module.hot.accept();
   module.hot.dispose(() => {
-    window.removeEventListener('popstate', refresh);
-    document.removeEventListener('DOMContentLoaded', refresh);
     document.removeEventListener('selectionchange', onSelectionChange);
     document.removeEventListener('click', onSelectorExampleClick);
   });
