@@ -1,3 +1,17 @@
+{
+    function debug(input, range) {
+      // Prints the location of the parser.
+      // Use e.g. in an action: { debug(input, range); return text(); }
+      const [start, end] = range();
+      const underline = (end > start + 1)
+        ? ' '.repeat(start) + '\\' + '_'.repeat(end - start - 2) + '/'
+        : ' '.repeat(start) + '^';
+      console.log(input);
+      console.log(underline);
+    }
+}
+
+
 start =
     top
 
