@@ -1,15 +1,13 @@
 {
-    function collect() {
-      var ret = {};
-      var len = arguments.length;
-      for (var i=0; i<len; i++) {
-        for (var p in arguments[i]) {
-          if (arguments[i].hasOwnProperty(p)) {
-            ret[p] = arguments[i][p];
-          }
-        }
-      }
-      return ret;
+    function debug(input, range) {
+      // Prints the location of the parser.
+      // Use e.g. in an action: { debug(input, range); return text(); }
+      const [start, end] = range();
+      const underline = (end > start + 1)
+        ? ' '.repeat(start) + '\\' + '_'.repeat(end - start - 2) + '/'
+        : ' '.repeat(start) + '^';
+      console.log(input);
+      console.log(underline);
     }
 }
 
@@ -26,11 +24,7 @@ top
 params
     = k1: key_value_pair k2:("," key_value_pair)*
         {
-            var f = k1;
-            for( var i = 0; i < k2.length; i++ ) {
-                f = collect(f, k2[i][1])
-            }
-            return f;
+            return k2.reduce((acc, cur) => Object.assign(acc, cur[1]), k1);
         }
 
 key_value_pair
@@ -67,5 +61,15 @@ value
 atom
     = chars:validchar+ { return chars.join(""); }
 
+// FIXME
+// While an opening parenthesis is always valid, a closing parenthesis
+// *might* be part of the value, but could also be the delimiter that
+// closes a selector(…) or state(…). The attempt below uses a look-ahead
+// to not match ')' before a comma or before another ')', or at the end
+// of the input. However, it will fail if a last param’s value ends with
+// ')', or if a key or value contains '))'. For example:
+//   selector(type=TextQuoteSelector,exact=example%20(that%20fails))
+//   selector(type=TextQuoteSelector,exact=another))failure)
 validchar
-    = [a-zA-Z0-9\<\>\/\[\]\:%+@.\-!\$\&\;*_]
+    = [a-zA-Z0-9<>/[\]:%+@.\-!$&;*_~';(]
+    / $( ")" &[^,)] )

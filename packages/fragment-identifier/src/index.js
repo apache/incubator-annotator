@@ -31,14 +31,20 @@ export function stringify(resource) {
       let value = resource[key];
       if (value instanceof Object) value = value.valueOf();
       if (value instanceof Object) {
-        value = stringify(value);
-        return `${encodeURIComponent(key)}=${value}`;
+        return `${encode(key)}=${stringify(value)}`;
+      } else {
+        return `${encode(key)}=${encode(value)}`;
       }
-      return [key, value].map(encodeURIComponent).join('=');
     })
     .join(',');
 
   if (/Selector$/.test(resource.type)) return `selector(${data})`;
   if (/State$/.test(resource.type)) return `state(${data})`;
   throw new TypeError('Resource must be a Selector or State');
+}
+
+function encode(string) {
+  return encodeURIComponent(string)
+    .replace(/\(/g, '%28')
+    .replace(/\)/g, '%29')
 }
