@@ -42,8 +42,57 @@ describe('stringify', () => {
   }
 });
 
+const specialCasesToParse = {
+  'One closing parenthesis inside a value': {
+    fragId: 'selector(type=TextQuoteSelector,exact=(not)%20a%20problem)',
+    selector: {
+      type: 'TextQuoteSelector',
+      exact: '(not) a problem',
+    },
+  },
+
+  'Two closing parenthesis inside a value': {
+    fragId: 'selector(type=TextQuoteSelector,exact=Hey))%20this%20breaks)',
+    selector: {
+      type: 'TextQuoteSelector',
+      exact: 'Hey)) this breaks',
+    },
+  },
+
+  'Two closing parentheses: one of value, one of selector': {
+    fragId: 'selector(type=TextQuoteSelector,exact=example%20(that%20fails))',
+    selector: {
+      type: 'TextQuoteSelector',
+      exact: 'example (that fails)',
+    },
+  },
+
+  'Three closing parentheses: one of the value, two of nested selectors': {
+    // Example from <https://github.com/w3c/web-annotation/issues/443>
+    fragId: `
+      selector(
+        type=RangeSelector,
+        startSelector=selector(type=TextQuoteSelector,exact=(but),
+        endSelector=selector(type=TextQuoteSelector,exact=crazy))
+      )
+      `.replace(/\s/g, ''),
+    selector: {
+      type: 'RangeSelector',
+      startSelector: {
+        type: 'TextQuoteSelector',
+        exact: '(but',
+      },
+      endSelector: {
+        type: 'TextQuoteSelector',
+        exact: 'crazy)',
+      },
+    },
+  },
+};
+
 describe('parse', () => {
-  for (const [name, example] of Object.entries(specExamples)) {
+  const allCasesToParse = { ...specExamples, ...specialCasesToParse };
+  for (const [name, example] of Object.entries(allCasesToParse)) {
     it(`should properly parse: ${name}`, () => {
       const expected = (example.selector !== undefined)
         ? { selector: example.selector }
