@@ -100,6 +100,17 @@ Invalid:
 
 Apache License 2.0
 
+#### Validate Licensing
+
+[Apache Rat (Release Audit Tool)](https://creadur.apache.org/rat/) is a
+preferred code license checking tool used by [the ASF](https://apache.org/).
+The included `.ratignore` file contains a list of files to exclude from scans.
+
+To check for included licenses, run the following and view the output report:
+```sh
+java -jar ~/bin/apache-rat-0.13/apache-rat-0.13.jar -E .ratignore -d . > rat_report.txt
+```
+
 # Disclaimer
 
 Apache Annotator is currently undergoing incubation at The Apache Software
