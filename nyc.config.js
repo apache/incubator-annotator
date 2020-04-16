@@ -20,8 +20,8 @@
 
 module.exports = {
   all: true,
-  include: ['packages/*/src/**/*.js'],
+  include: ['packages/*/src/**/*.[jt]s'],
   instrument: false,
   sourceMap: false,
-  require: ['@babel/register'],
+  require: ['./babel-register.js'],
 };

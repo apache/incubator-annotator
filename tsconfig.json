@@ -1,0 +1,21 @@
+{
+    "compilerOptions": {
+        "noImplicitAny": true,
+        "target": "ES2017",
+        "lib": [
+            "ES2020",
+            "DOM",
+            "DOM.Iterable"
+        ],
+        "moduleResolution": "Node",
+        "allowSyntheticDefaultImports": true,
+        "typeRoots": [
+            "./node_modules/@types",
+            "./@types"
+        ]
+    },
+    "files": [
+        "packages/dom/src/index.ts",
+        "packages/selector/src/index.ts",
+    ]
+}

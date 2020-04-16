@@ -31,19 +31,22 @@ module.exports = {
     test: [
       './test/index.html',
       'chai/register-assert',
-      'mocha-loader!multi-entry-loader?include=./packages/*/test/**/*.js!',
+      'mocha-loader!multi-entry-loader?include=./packages/*/test/**/*.[jt]s!',
     ],
+  },
+  resolve: {
+    extensions: ['.ts', '.js'],
   },
   devtool: 'inline-source-map',
   module: {
     rules: [
       {
-        test: /\.js$/,
+        test: /\.[jt]s$/,
         exclude: /node_modules/,
         use: 'babel-loader',
       },
       {
-        exclude: /\.js$/,
+        exclude: /\.[jt]s$/,
         use: [
           {
             loader: 'file-loader',
