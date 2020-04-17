@@ -18,8 +18,24 @@
  * under the License.
  */
 
-export function createCssSelector(selector) {
-  return async function* matchAll(scope) {
-    yield* scope.querySelectorAll(selector.value);
-  };
+import { DomScope } from './types';
+
+export function ownerDocument(scope: DomScope): Document {
+  if ('commonAncestorContainer' in scope)
+    return scope.commonAncestorContainer.ownerDocument;
+  else
+    return scope.ownerDocument;
+}
+
+export function rangeFromScope(scope: DomScope | null): Range {
+  if ('commonAncestorContainer' in scope) {
+    return scope;
+  }
+
+  const document = scope.ownerDocument;
+  const range = document.createRange();
+
+  range.selectNodeContents(scope);
+
+  return range;
 }

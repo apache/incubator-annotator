@@ -18,7 +18,7 @@
  * under the License.
  */
 
-import { product } from '../src/cartesian.js';
+import { product } from '../src/cartesian';
 
 async function* gen1() {
   yield 1;

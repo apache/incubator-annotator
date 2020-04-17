@@ -21,26 +21,22 @@
 import createNodeIterator from 'dom-node-iterator';
 import seek from 'dom-seek';
 
-import { ownerDocument, rangeFromScope } from './scope.js';
+import { TextQuoteSelector } from '../../selector/src';
+import { DomScope, DomMatcher } from './types';
+import { ownerDocument, rangeFromScope } from './scope';
 
-// Node constants
-const TEXT_NODE = 3;
-
-// NodeFilter constants
-const SHOW_TEXT = 4;
-
-function firstTextNodeInRange(range) {
+function firstTextNodeInRange(range: Range): Text {
   const { startContainer } = range;
 
-  if (startContainer.nodeType === TEXT_NODE) return startContainer;
+  if (isTextNode(startContainer)) return startContainer;
 
   const root = range.commonAncestorContainer;
-  const iter = createNodeIterator(root, SHOW_TEXT);
-  return iter.nextNode();
+  const iter = createNodeIterator(root, NodeFilter.SHOW_TEXT);
+  return iter.nextNode() as Text;
 }
 
-export function createTextQuoteSelector(selector) {
-  return async function* matchAll(scope) {
+export function createTextQuoteSelectorMatcher(selector: TextQuoteSelector): DomMatcher {
+  return async function* matchAll(scope: DomScope) {
     const document = ownerDocument(scope);
     const range = rangeFromScope(scope);
     const root = range.commonAncestorContainer;
@@ -51,12 +47,12 @@ export function createTextQuoteSelector(selector) {
     const suffix = selector.suffix || '';
     const pattern = prefix + exact + suffix;
 
-    const iter = createNodeIterator(root, SHOW_TEXT);
+    const iter = createNodeIterator(root, NodeFilter.SHOW_TEXT);
 
     let fromIndex = 0;
     let referenceNodeIndex = 0;
 
-    if (range.startContainer.nodeType === TEXT_NODE) {
+    if (isTextNode(range.startContainer)) {
       referenceNodeIndex -= range.startOffset;
     }
 
@@ -122,32 +118,49 @@ export function createTextQuoteSelector(selector) {
   };
 }
 
-export async function describeTextQuote(range, scope = null) {
-  scope = rangeFromScope(scope || ownerDocument(range).documentElement);
-
-  const root = scope.commonAncestorContainer;
-  const text = scope.toString();
-
+export async function describeTextQuote(
+  range: Range,
+  scope: DomScope = null
+): Promise<TextQuoteSelector> {
   const exact = range.toString();
-  const selector = createTextQuoteSelector({ exact });
 
-  const iter = createNodeIterator(root, SHOW_TEXT);
+  const result: TextQuoteSelector = { type: 'TextQuoteSelector', exact };
+
+  const { prefix, suffix } = await calculateContextForDisambiguation(range, result, scope);
+  result.prefix = prefix;
+  result.suffix = suffix;
+
+  return result
+}
+
+async function calculateContextForDisambiguation(
+  range: Range,
+  selector: TextQuoteSelector,
+  scope: DomScope
+): Promise<{ prefix?: string, suffix?: string }> {
+  const scopeAsRange = rangeFromScope(scope || ownerDocument(range).documentElement);
+  const root = scopeAsRange.commonAncestorContainer;
+  const text = scopeAsRange.toString();
+
+  const matcher = createTextQuoteSelectorMatcher(selector);
+
+  const iter = createNodeIterator(root, NodeFilter.SHOW_TEXT);
 
   const startNode = firstTextNodeInRange(range);
   const startIndex =
-    range.startContainer.nodeType === TEXT_NODE
+    isTextNode(range.startContainer)
       ? seek(iter, startNode) + range.startOffset
       : seek(iter, startNode);
-  const endIndex = startIndex + exact.length;
+  const endIndex = startIndex + selector.exact.length;
 
-  const affixLengthPairs = [];
+  const affixLengthPairs: Array<[number, number]> = [];
 
-  for await (const match of selector(scope)) {
-    const matchIter = createNodeIterator(root, SHOW_TEXT);
+  for await (const match of matcher(scopeAsRange)) {
+    const matchIter = createNodeIterator(root, NodeFilter.SHOW_TEXT);
 
     const matchStartNode = firstTextNodeInRange(match);
     const matchStartIndex =
-      match.startContainer.nodeType === TEXT_NODE
+      isTextNode(match.startContainer)
         ? seek(matchIter, matchStartNode) + match.startOffset
         : seek(matchIter, matchStartNode);
     const matchEndIndex = matchStartIndex + match.toString().length;
@@ -174,24 +187,23 @@ export async function describeTextQuote(range, scope = null) {
   }
 
   // Construct and return an unambiguous selector.
-  const result = { type: 'TextQuoteSelector', exact };
-
+  let prefix, suffix;
   if (affixLengthPairs.length) {
     const [prefixLength, suffixLength] = minimalSolution(affixLengthPairs);
 
     if (prefixLength > 0 && startIndex > 0) {
-      result.prefix = text.substring(startIndex - prefixLength, startIndex);
+      prefix = text.substring(startIndex - prefixLength, startIndex);
     }
 
     if (suffixLength > 0 && endIndex < text.length) {
-      result.suffix = text.substring(endIndex, endIndex + suffixLength);
+      suffix = text.substring(endIndex, endIndex + suffixLength);
     }
   }
 
-  return result;
+  return { prefix, suffix };
 }
 
-function overlap(text1, text2) {
+function overlap(text1: string, text2: string) {
   let count = 0;
 
   while (count < text1.length && count < text2.length) {
@@ -204,7 +216,7 @@ function overlap(text1, text2) {
   return count;
 }
 
-function overlapRight(text1, text2) {
+function overlapRight(text1: string, text2: string) {
   let count = 0;
 
   while (count < text1.length && count < text2.length) {
@@ -217,9 +229,9 @@ function overlapRight(text1, text2) {
   return count;
 }
 
-function minimalSolution(requirements) {
+function minimalSolution(requirements: Array<[number, number]>): [number, number] {
   // Build all the pairs and order them by their sums.
-  const pairs = requirements.flatMap(l => requirements.map(r => [l[0], r[1]]));
+  const pairs = requirements.flatMap(l => requirements.map<[number, number]>(r => [l[0], r[1]]));
   pairs.sort((a, b) => a[0] + a[1] - (b[0] + b[1]));
 
   // Find the first pair that satisfies every requirement.
@@ -232,4 +244,8 @@ function minimalSolution(requirements) {
 
   // Return the largest pairing (unreachable).
   return pairs[pairs.length - 1];
+}
+
+function isTextNode(node: Node): node is Text {
+  return node.nodeType === Node.TEXT_NODE
 }

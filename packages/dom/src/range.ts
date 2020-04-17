@@ -18,19 +18,23 @@
  * under the License.
  */
 
-import { ownerDocument } from './scope.js';
-import { product } from './cartesian.js';
+import { ownerDocument } from './scope';
+import { product } from './cartesian';
+import { RangeSelector, Selector } from '../../selector/src/types';
+import { DomMatcher, DomScope } from './types';
 
-export function createRangeSelectorCreator(createSelector) {
-  return function createRangeSelector(selector) {
-    const startSelector = createSelector(selector.startSelector);
-    const endSelector = createSelector(selector.endSelector);
+export function makeCreateRangeSelectorMatcher(
+  createMatcher: <T extends Selector>(selector: T) => DomMatcher
+): (selector: RangeSelector) => DomMatcher {
+  return function createRangeSelectorMatcher(selector: RangeSelector) {
+    const startMatcher = createMatcher(selector.startSelector);
+    const endMatcher = createMatcher(selector.endSelector);
 
-    return async function* matchAll(scope) {
+    return async function* matchAll(scope: DomScope) {
       const document = ownerDocument(scope);
 
-      const startMatches = startSelector(scope);
-      const endMatches = endSelector(scope);
+      const startMatches = startMatcher(scope);
+      const endMatches = endMatcher(scope);
 
       const pairs = product(startMatches, endMatches);
 
