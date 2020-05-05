@@ -64,7 +64,7 @@ check: build
 ifeq ($(vsn_tag),)
 
 .PHONY: dist
-dist distcheck:
+dist:
 	$(error No tag found for release)
 
 else
@@ -77,6 +77,8 @@ dist:
         --prefix apache-annotator-$(annotator_vsn)-incubating/ \
         HEAD
 	@echo "Done: apache-annotator-$(annotator_vsn)$(vsn_pre)-incubating.tar.gz"
+
+endif
 
 .PHONY: distcheck
 distcheck: export HUSKY_SKIP_INSTALL=1
@@ -91,5 +93,3 @@ distsign: dist
         > apache-annotator-$(annotator_vsn)$(vsn_pre)-incubating.tar.gz.sha256
 	@sha512sum apache-annotator-$(annotator_vsn)$(vsn_pre)-incubating.tar.gz \
         > apache-annotator-$(annotator_vsn)$(vsn_pre)-incubating.tar.gz.sha512
-
-endif
