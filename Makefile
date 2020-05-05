@@ -10,20 +10,6 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-# Determine the version identifier from lerna.json or git.
-
-# Are we in a release?
-in_release = $(shell if [ ! -d .git ]; then echo true; fi)
-
-ifeq ($(in_release), true)
-
-# Get the version information from lerna.json.
-annotator_vsn = $(shell jq -r .version < lerna.json)
-
-else
-
-# Get the version information from git.
-
 # What is the prerelease version?
 vsn_pre = $(shell git describe --tags --always --first-parent \
         | grep -Eo -- '(-rc\.[0-9]+)?$$' \
@@ -42,9 +28,6 @@ vsn_tag = $(shell git describe --tags --always --first-parent \
         2>/dev/null)
 
 annotator_vsn = $(vsn_rel)
-
-endif
-
 
 .PHONY: all
 all: build
@@ -71,17 +54,24 @@ else
 
 .PHONY: dist
 dist:
-	@rm -rf apache-annotator-$(annotator_vsn)$(vsn_pre)-incubating
-	@git archive \
-        --output apache-annotator-$(annotator_vsn)$(vsn_pre)-incubating.tar.gz \
-        --prefix apache-annotator-$(annotator_vsn)-incubating/ \
-        HEAD
+	@rm -rf apache-annotator-$(annotator_vsn)-incubating
+	@git clone \
+        --branch v$(vsn_tag) \
+        --config advice.detachedHead=false \
+        --depth 1 \
+        --quiet \
+        file://"$(shell git rev-parse --show-toplevel)" \
+        apache-annotator-$(annotator_vsn)-incubating
+	@git --git-dir apache-annotator-$(annotator_vsn)-incubating/.git config \
+        remote.origin.url https://github.com/apache/incubator-annotator.git
+	@tar czf \
+        apache-annotator-$(annotator_vsn)$(vsn_pre)-incubating.tar.gz \
+        apache-annotator-$(annotator_vsn)-incubating
 	@echo "Done: apache-annotator-$(annotator_vsn)$(vsn_pre)-incubating.tar.gz"
 
 endif
 
 .PHONY: distcheck
-distcheck: export HUSKY_SKIP_INSTALL=1
 distcheck: dist
 	@tar xzf apache-annotator-$(annotator_vsn)$(vsn_pre)-incubating.tar.gz
 	@make -C apache-annotator-$(annotator_vsn)-incubating check
