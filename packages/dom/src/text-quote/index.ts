@@ -18,7 +18,5 @@
  * under the License.
  */
 
-export * from './css';
-export * from './range';
-export * from './text-quote/index';
-export * from './highlight-range';
+ export * from './describe';
+export * from './match';
