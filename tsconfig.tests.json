@@ -1,0 +1,15 @@
+{
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        "allowSyntheticDefaultImports": true,
+        "resolveJsonModule": true,
+        "typeRoots": [
+            "./node_modules/@types",
+            "./@types"
+        ]
+    },
+    "include": [
+        "test/**/*.ts",
+        "packages/*/test/**/*.ts"
+    ]
+}
