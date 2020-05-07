@@ -20,7 +20,7 @@
 
 import cartesianArrays from 'cartesian';
 
-export async function* product<T>(...iterables: AsyncGenerator<T>[]): AsyncGenerator<Array<T>, void, undefined> {
+export async function* product<T>(...iterables: AsyncIterable<T>[]): AsyncGenerator<Array<T>, void, undefined> {
   // We listen to all iterators in parallel, while logging all the values they
   // produce. Whenever an iterator produces a value, we produce and yield all
   // combinations of that value with the logged values from other iterators.
