@@ -18,6 +18,7 @@
  * under the License.
  */
 
+import { assert } from 'chai';
 import { product } from '../src/cartesian';
 
 async function* gen1() {
@@ -49,7 +50,7 @@ describe('cartesian', () => {
         [3, 4, 6],
       ];
 
-      const result = [];
+      const result: number[][] = [];
       for await (let value of cart) {
         result.push(value);
       }

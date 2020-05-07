@@ -19,5 +19,5 @@
  */
 
 module.exports = {
-  require: ['./babel-register.js', 'chai/register-assert'],
+  require: ['./babel-register.js'],
 };

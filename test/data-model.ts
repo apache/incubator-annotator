@@ -25,6 +25,7 @@ import URL from 'url';
 
 import Ajv from 'ajv';
 import META_SCHEMA from 'ajv/lib/refs/json-schema-draft-04.json';
+import { assert } from 'chai';
 import fetch from 'node-fetch';
 import resolve from 'resolve';
 
@@ -44,11 +45,11 @@ process.argv.forEach((val, index) => {
   }
 });
 
-function readSchema(schemaPath, base = 'web-annotation-tests/') {
+function readSchema(schemaPath: string, base: string = 'web-annotation-tests/'): any {
   const resolverOptions = { extensions: ['.json', '.test'] };
   const resolvedPath = resolve.sync(`${base}${schemaPath}`, resolverOptions);
   const schemaUnparsed = fs.readFileSync(resolvedPath);
-  return JSON.parse(schemaUnparsed);
+  return JSON.parse(schemaUnparsed.toString());
 }
 
 const DEFINITIONS = [
@@ -89,7 +90,7 @@ describe('Test JSON against Schemas', () => {
     }
   });
 
-  MUSTS.assertions.forEach(schemaPath => {
+  MUSTS.assertions.forEach((schemaPath: string) => {
     const schema = readSchema(schemaPath);
     it(schema.title, () => {
       let valid = ajv.validate(schema, data);
