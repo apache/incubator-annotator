@@ -38,7 +38,7 @@ function firstTextNodeInRange(range: Range): Text {
 
 export async function describeTextQuote(
   range: Range,
-  scope: DomScope = null
+  scope: DomScope = ownerDocument(range).documentElement,
 ): Promise<TextQuoteSelector> {
   const exact = range.toString();
 
@@ -54,9 +54,9 @@ export async function describeTextQuote(
 async function calculateContextForDisambiguation(
   range: Range,
   selector: TextQuoteSelector,
-  scope: DomScope
+  scope: DomScope,
 ): Promise<{ prefix?: string, suffix?: string }> {
-  const scopeAsRange = rangeFromScope(scope || ownerDocument(range).documentElement);
+  const scopeAsRange = rangeFromScope(scope);
   const root = scopeAsRange.commonAncestorContainer;
   const text = scopeAsRange.toString();
 

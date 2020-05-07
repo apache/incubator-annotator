@@ -33,8 +33,6 @@ export function highlightRange(
   tagName: string = 'mark',
   attributes: Record<string, string> = {}
 ): () => void {
-  if (range.collapsed) return;
-
   // First put all nodes in an array (splits start and end nodes if needed)
   const nodes = textNodesInRange(range);
 
@@ -57,6 +55,9 @@ export function highlightRange(
 
 // Return an array of the text nodes in the range. Split the start and end nodes if required.
 function textNodesInRange(range: Range): Text[] {
+  // If the range is empty, avoid creating and returning an empty text node.
+  if (range.collapsed) return [];
+
   // If the start or end node is a text node and only partly in the range, split it.
   if (
     isTextNode(range.startContainer) &&
@@ -78,6 +79,8 @@ function textNodesInRange(range: Range): Text[] {
   }
 
   // Collect the text nodes.
+  if (!range.startContainer.ownerDocument)
+    throw new TypeError('range.startContainer lacks an ownerDocument');
   const walker = range.startContainer.ownerDocument.createTreeWalker(
     range.commonAncestorContainer,
     NodeFilter.SHOW_TEXT,
@@ -114,6 +117,7 @@ function textNodesInRange(range: Range): Text[] {
 
 // Replace [node] with <tagName ...attributes>[node]</tagName>
 function wrapNodeInHighlight(node: Node, tagName: string, attributes: Record<string, string>): HTMLElement {
+  if (!node.ownerDocument) throw new TypeError('Node to be highlighted lacks an ownerDocument');
   const highlightElement = node.ownerDocument.createElement(tagName);
   Object.keys(attributes).forEach(key => {
     highlightElement.setAttribute(key, attributes[key]);
@@ -130,7 +134,7 @@ function removeHighlight(highlightElement: HTMLElement) {
   if (!highlightElement.parentNode) return;
   if (highlightElement.childNodes.length === 1) {
     highlightElement.parentNode.replaceChild(
-      highlightElement.firstChild,
+      highlightElement.firstChild as ChildNode,
       highlightElement,
     );
   } else {

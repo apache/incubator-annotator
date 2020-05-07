@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "noImplicitAny": true,
+        "strict": true,
         "noEmit": true,
         "target": "ES2017",
         "lib": [

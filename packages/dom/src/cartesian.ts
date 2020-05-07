@@ -30,7 +30,16 @@ export async function* product<T>(...iterables: AsyncIterable<T>[]): AsyncGenera
   // Initialise an empty log for each iterable.
   const logs: T[][] = iterables.map(() => []);
 
-  const nextValuePromises = iterators.map((iterator, iterableNr) =>
+  type NumberedResultPromise = Promise<{
+    nextResult: IteratorResult<T>,
+    iterableNr: number
+  }>;
+
+  function notNull(p: NumberedResultPromise | null): p is NumberedResultPromise {
+    return p !== null
+  }
+
+  const nextValuePromises: Array<NumberedResultPromise | null> = iterators.map((iterator, iterableNr) =>
     iterator
       .next()
       .then(
@@ -41,10 +50,10 @@ export async function* product<T>(...iterables: AsyncIterable<T>[]): AsyncGenera
   );
 
   // Keep listening as long as any of the iterables is not yet exhausted.
-  while (nextValuePromises.some(p => p !== null)) {
+  while (nextValuePromises.some(notNull)) {
     // Wait until any of the active iterators has produced a new value.
     const { nextResult, iterableNr } = await Promise.race(
-      nextValuePromises.filter(p => p !== null),
+      nextValuePromises.filter(notNull),
     );
 
     // If this iterable was exhausted, stop listening to it and move on.

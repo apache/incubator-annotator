@@ -62,7 +62,7 @@ export function createTextQuoteSelectorMatcher(selector: TextQuoteSelector): Dom
       if (!iter.pointerBeforeReferenceNode) {
         // Peek forward and skip over any empty nodes.
         if (iter.nextNode()) {
-          while (iter.referenceNode.nodeValue.length === 0) {
+          while ((iter.referenceNode.nodeValue as String).length === 0) {
             iter.nextNode();
           }
 
@@ -82,7 +82,7 @@ export function createTextQuoteSelectorMatcher(selector: TextQuoteSelector): Dom
       if (!iter.pointerBeforeReferenceNode) {
         // Peek forward and skip over any empty nodes.
         if (iter.nextNode()) {
-          while (iter.referenceNode.nodeValue.length === 0) {
+          while ((iter.referenceNode.nodeValue as String).length === 0) {
             iter.nextNode();
           }
 

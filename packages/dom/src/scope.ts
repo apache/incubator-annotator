@@ -21,18 +21,22 @@
 import { DomScope } from './types';
 
 export function ownerDocument(scope: DomScope): Document {
+  let document;
   if ('commonAncestorContainer' in scope)
-    return scope.commonAncestorContainer.ownerDocument;
+    document = scope.commonAncestorContainer.ownerDocument;
   else
-    return scope.ownerDocument;
+    document = scope.ownerDocument;
+  if (!document) throw new TypeError('scope lacks an ownerDocument');
+  return document;
 }
 
-export function rangeFromScope(scope: DomScope | null): Range {
+export function rangeFromScope(scope: DomScope): Range {
   if ('commonAncestorContainer' in scope) {
     return scope;
   }
 
   const document = scope.ownerDocument;
+  if (!document) throw new TypeError('scope lacks an ownerDocument');
   const range = document.createRange();
 
   range.selectNodeContents(scope);
