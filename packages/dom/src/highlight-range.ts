@@ -79,9 +79,8 @@ function textNodesInRange(range: Range): Text[] {
   }
 
   // Collect the text nodes.
-  if (!range.startContainer.ownerDocument)
-    throw new TypeError('range.startContainer lacks an ownerDocument');
-  const walker = range.startContainer.ownerDocument.createTreeWalker(
+  const document = range.startContainer.ownerDocument || range.startContainer as Document;
+  const walker = document.createTreeWalker(
     range.commonAncestorContainer,
     NodeFilter.SHOW_TEXT,
     {
@@ -116,13 +115,13 @@ function textNodesInRange(range: Range): Text[] {
 }
 
 // Replace [node] with <tagName ...attributes>[node]</tagName>
-function wrapNodeInHighlight(node: Node, tagName: string, attributes: Record<string, string>): HTMLElement {
-  if (!node.ownerDocument) throw new TypeError('Node to be highlighted lacks an ownerDocument');
-  const highlightElement = node.ownerDocument.createElement(tagName);
+function wrapNodeInHighlight(node: ChildNode, tagName: string, attributes: Record<string, string>): HTMLElement {
+  const document = node.ownerDocument as Document;
+  const highlightElement = document.createElement(tagName);
   Object.keys(attributes).forEach(key => {
     highlightElement.setAttribute(key, attributes[key]);
   });
-  const tempRange = node.ownerDocument.createRange();
+  const tempRange = document.createRange();
   tempRange.selectNode(node);
   tempRange.surroundContents(highlightElement);
   return highlightElement;

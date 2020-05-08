@@ -21,25 +21,21 @@
 import { DomScope } from './types';
 
 export function ownerDocument(scope: DomScope): Document {
-  let document;
-  if ('commonAncestorContainer' in scope)
-    document = scope.commonAncestorContainer.ownerDocument;
-  else
-    document = scope.ownerDocument;
-  if (!document) throw new TypeError('scope lacks an ownerDocument');
-  return document;
+  const node = isRange(scope)
+    ? scope.commonAncestorContainer
+    : scope;
+  return node.ownerDocument || node as Document;
 }
 
 export function rangeFromScope(scope: DomScope): Range {
-  if ('commonAncestorContainer' in scope) {
+  if (isRange(scope)) {
     return scope;
   }
-
-  const document = scope.ownerDocument;
-  if (!document) throw new TypeError('scope lacks an ownerDocument');
-  const range = document.createRange();
-
+  const range = ownerDocument(scope).createRange();
   range.selectNodeContents(scope);
-
   return range;
+}
+
+function isRange(scope: DomScope): scope is Range {
+  return 'collapsed' in scope;
 }
