@@ -32,16 +32,16 @@ const testCases: {
   }
 } = {
   "simple": {
-    html: `<!doctype html><html><head></head><body><b>lorem ipsum dolor amet yada yada</b></body></html>`,
+    html: `<b>lorem ipsum dolor amet yada yada</b>`,
     selector: {
       type: 'TextQuoteSelector',
       exact: 'dolor am',
     },
     expected: [
       {
-        startContainer: [1, 1, 0, 0],
+        startContainer: '//b/text()',
         startOffset: 12,
-        endContainer: [1, 1, 0, 0],
+        endContainer: '//b/text()',
         endOffset: 20,
       },
     ]
@@ -54,27 +54,46 @@ describe('createTextQuoteSelectorMatcher', () => {
       const doc = domParser.parseFromString(html, 'text/html');
       const matcher = createTextQuoteSelectorMatcher(selector);
       const matches = await asyncIterableToArray(matcher(doc.body));
-      assert.deepEqual(matches.map(rangeToInfo), expected);
+      assert.deepEqual(
+        matches.map(range => canonicalRangeSerialisation(range)),
+        expected.map(info => canonicalRangeSerialisation(info, doc)),
+      );
     });
   }
 });
 
-// RangeInfo encodes a Range’s start&end containers as their positions in the DOM tree.
+// RangeInfo encodes a Range’s start&end containers as XPaths.
 type RangeInfo = {
-  startContainer: number[],
+  startContainer: string,
   startOffset: number,
-  endContainer: number[],
+  endContainer: string,
   endOffset: number,
 };
 
-function rangeToInfo(range: Range | RangeInfo): RangeInfo {
-  if (!('collapsed' in range)) return range;
+function canonicalRangeSerialisation(range: Range): RangeInfo
+function canonicalRangeSerialisation(range: RangeInfo, doc: Document): RangeInfo
+function canonicalRangeSerialisation(range: Range | RangeInfo, doc?: Document): RangeInfo {
+  if (!('collapsed' in range)) {
+    // range is already serialised; re-serialise to ensure it is canonical.
+    return {
+      ...range,
+      startContainer: createXPath(evaluateXPathOne(doc, range.startContainer)),
+      endContainer: createXPath(evaluateXPathOne(doc, range.endContainer)),
+    };
+  }
   return {
-    startContainer: pathToNode(range.startContainer),
+    startContainer: createXPath(range.startContainer),
     startOffset: range.startOffset,
-    endContainer: pathToNode(range.endContainer),
+    endContainer: createXPath(range.endContainer),
     endOffset: range.endOffset,
   };
+}
+
+function infoToRange(info: RangeInfo | Range, doc: Document): Range {
+  if ('collapsed' in info) return info;
+  const range = document.createRange();
+  range.setStart(evaluateXPathOne(doc, info.startContainer), info.startOffset);
+  range.setEnd(evaluateXPathOne(doc, info.startContainer), info.startOffset);
 }
 
 async function asyncIterableToArray<T>(source: AsyncIterable<T>): Promise<T[]> {
@@ -85,12 +104,50 @@ async function asyncIterableToArray<T>(source: AsyncIterable<T>): Promise<T[]> {
   return values;
 }
 
-// Return the array of child indexes that leads from the root node to the given node.
-function pathToNode(node: Node): number[] {
-  const path: number[] = [];
+// Return an XPath expression for the given node.
+function createXPath(node: Node): string { // wrap the actual function with a self-test.
+  const result = _createXPath(node);
+  try {
+    const selfCheck = evaluateXPathAll(node.ownerDocument || node as Document, result);
+    assert.deepEqual(selfCheck, [node]);
+  } catch (err) {
+    assert.fail(`Test suite itself created an incorrect XPath: '${result}'`);
+  }
+  return result;
+}
+function _createXPath(node: Node): string {
+  let path = ''
   while (node.parentNode !== null) {
-    path.unshift([...node.parentNode.childNodes].indexOf(node as ChildNode));
+    if (node.nodeType === Node.ELEMENT_NODE) {
+      const name = (node as Element).tagName.toLowerCase();
+      const matchingElements = evaluateXPathAll(node.ownerDocument || node as Document, `//${name}`);
+      if (matchingElements.length > 1)
+        return `//${name}[${matchingElements.indexOf(node) + 1}]${path}`;
+      else
+        return `//${name}${path}`;
+    }
+    const childIndex = [...node.parentNode.childNodes].indexOf(node as ChildNode);
+    const xpathNodeTypes = {
+      [Node.COMMENT_NODE]: 'comment',
+      [Node.TEXT_NODE]: 'text',
+      [Node.PROCESSING_INSTRUCTION_NODE]: 'processing-instruction',
+    }
+    const nodeType = xpathNodeTypes[node.nodeType] || 'node';
+    path = `/${nodeType}()[${childIndex + 1}]` + path;
     node = node.parentNode;
   }
   return path;
+}
+
+function evaluateXPathAll(doc: Document, xpath: string): Node[] {
+  const result = doc.evaluate(xpath, doc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE);
+  return new Array(result.snapshotLength).fill(undefined).map((_, i) => result.snapshotItem(i));
+}
+
+function evaluateXPathOne(doc: Document, xpath: string): Node {
+  const nodes = evaluateXPathAll(doc, xpath);
+  assert.equal(nodes.length, 1,
+    `Test suite contains XPath with ${nodes.length} results instead of 1: '${xpath}'`
+  );
+  return nodes[0];
 }
