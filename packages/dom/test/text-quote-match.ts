@@ -39,8 +39,8 @@ const testCases: {
     expected: RangeInfo[],
   }
 } = {
-  "simple": {
-    html: `<b>lorem ipsum dolor amet yada yada</b>`,
+  'simple': {
+    html: '<b>lorem ipsum dolor amet yada yada</b>',
     selector: {
       type: 'TextQuoteSelector',
       exact: 'dolor am',
@@ -54,6 +54,93 @@ const testCases: {
       },
     ]
   },
+  'across elements': {
+    html: '<b>lorem <i>ipsum dolor</i> amet yada yada</b>',
+    selector: {
+      type: 'TextQuoteSelector',
+      exact: 'dolor am',
+    },
+    expected: [
+      {
+        startContainer: '//i/text()',
+        startOffset: 6,
+        endContainer: '//b/text()[2]',
+        endOffset: 3,
+      },
+    ]
+  },
+  'exact element contents': {
+    html: '<b>lorem <i>ipsum dolor</i> amet yada yada</b>',
+    selector: {
+      type: 'TextQuoteSelector',
+      exact: 'ipsum dolor',
+    },
+    expected: [
+      {
+        startContainer: '//i/text()',
+        startOffset: 0,
+        endContainer: '//b/text()[2]',
+        endOffset: 0,
+      },
+    ]
+  },
+  'text inside <head>': {
+    html: '<head><title>The title</title></head><b>lorem ipsum dolor amet yada yada</b>',
+    selector: {
+      type: 'TextQuoteSelector',
+      exact: 'title',
+    },
+    expected: [
+      {
+        startContainer: '//title/text()',
+        startOffset: 4,
+        endContainer: '//b/text()[1]',
+        endOffset: 0,
+      },
+    ]
+  },
+  'two matches': {
+    html: '<b>lorem ipsum dolor amet yada yada</b>',
+    selector: {
+      type: 'TextQuoteSelector',
+      exact: 'yada',
+    },
+    expected: [
+      {
+        startContainer: '//b/text()',
+        startOffset: 23,
+        endContainer: '//b/text()',
+        endOffset: 27,
+      },
+      {
+        startContainer: '//b/text()',
+        startOffset: 28,
+        endContainer: '//b/text()',
+        endOffset: 32,
+      },
+    ]
+  },
+  'overlapping matches': {
+    html: '<b>bananas</b>',
+    selector: {
+      type: 'TextQuoteSelector',
+      exact: 'ana',
+    },
+    expected: [
+      {
+        startContainer: '//b/text()',
+        startOffset: 1,
+        endContainer: '//b/text()',
+        endOffset: 4,
+      },
+      {
+        startContainer: '//b/text()',
+        startOffset: 3,
+        endContainer: '//b/text()',
+        endOffset: 6,
+      },
+    ]
+  },
 };
 
 describe('createTextQuoteSelectorMatcher', () => {
@@ -61,7 +148,7 @@ describe('createTextQuoteSelectorMatcher', () => {
     it(`works for case: '${name}'`, async () => {
       const doc = domParser.parseFromString(html, 'text/html');
       const matcher = createTextQuoteSelectorMatcher(selector);
-      const matches = await asyncIterableToArray(matcher(doc.body));
+      const matches = await asyncIterableToArray(matcher(doc));
       assert.equal(matches.length, expected.length);
       matches.forEach((match, i) => {
         assert.include(match, hydrateRange(expected[i], doc));
