@@ -41,7 +41,14 @@ clean:
 	@yarn run clean
 
 .PHONY: check
-check: build
+check: lint test
+
+.PHONY: lint
+lint: build
+	@yarn lint
+
+.PHONY: test
+test: build
 	@yarn test
 
 ifeq ($(vsn_tag),)
