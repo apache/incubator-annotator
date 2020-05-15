@@ -21,7 +21,7 @@
     "build:esm": "cross-env BABEL_ENV=esm yarn build:babel -d esm src",
     "build:misc": "lerna exec -- cp ../../LICENSE ../../NOTICE .",
     "clean": "lerna exec -- rimraf LICENSE NOTICE esm lib",
-    "lint": "eslint --fix --quiet .",
+    "lint": "eslint .",
     "prepare": "lerna run prepare",
     "prepublishOnly": "yarn run build",
     "start": "yarn run web:server",
