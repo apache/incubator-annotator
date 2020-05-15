@@ -118,7 +118,7 @@ async function anchor(selector) {
   }
 
   info.innerText = JSON.stringify(selector, null, 2);
-};
+}
 
 async function describeSelection() {
   const selection = document.getSelection();
