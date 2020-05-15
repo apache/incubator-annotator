@@ -19,5 +19,5 @@
  */
 
 module.exports = {
-  require: ['./babel-register.js'],
+  require: ['./babel-register.js', 'global-jsdom/lib/register'],
 };
