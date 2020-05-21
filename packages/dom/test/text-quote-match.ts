@@ -21,14 +21,15 @@
 import { assert } from 'chai';
 import { createTextQuoteSelectorMatcher } from '../src/text-quote/match';
 import { TextQuoteSelector } from '../../selector/src';
+import { DomScope } from '../src/types';
 
 const domParser = new window.DOMParser();
 
 // RangeInfo serialises a Range’s start and end containers as XPaths.
 type RangeInfo = {
-  startContainer: string,
+  startContainerXPath: string,
   startOffset: number,
-  endContainer: string,
+  endContainerXPath: string,
   endOffset: number,
 };
 
@@ -47,9 +48,9 @@ const testCases: {
     },
     expected: [
       {
-        startContainer: '//b/text()',
+        startContainerXPath: '//b/text()',
         startOffset: 12,
-        endContainer: '//b/text()',
+        endContainerXPath: '//b/text()',
         endOffset: 20,
       },
     ]
@@ -62,9 +63,9 @@ const testCases: {
     },
     expected: [
       {
-        startContainer: '//i/text()',
+        startContainerXPath: '//i/text()',
         startOffset: 6,
-        endContainer: '//b/text()[2]',
+        endContainerXPath: '//b/text()[2]',
         endOffset: 3,
       },
     ]
@@ -77,9 +78,9 @@ const testCases: {
     },
     expected: [
       {
-        startContainer: '//i/text()',
+        startContainerXPath: '//i/text()',
         startOffset: 0,
-        endContainer: '//b/text()[2]',
+        endContainerXPath: '//b/text()[2]',
         endOffset: 0,
       },
     ]
@@ -92,9 +93,9 @@ const testCases: {
     },
     expected: [
       {
-        startContainer: '//title/text()',
+        startContainerXPath: '//title/text()',
         startOffset: 4,
-        endContainer: '//b/text()[1]',
+        endContainerXPath: '//b/text()[1]',
         endOffset: 0,
       },
     ]
@@ -107,15 +108,15 @@ const testCases: {
     },
     expected: [
       {
-        startContainer: '//b/text()',
+        startContainerXPath: '//b/text()',
         startOffset: 23,
-        endContainer: '//b/text()',
+        endContainerXPath: '//b/text()',
         endOffset: 27,
       },
       {
-        startContainer: '//b/text()',
+        startContainerXPath: '//b/text()',
         startOffset: 28,
-        endContainer: '//b/text()',
+        endContainerXPath: '//b/text()',
         endOffset: 32,
       },
     ]
@@ -128,15 +129,15 @@ const testCases: {
     },
     expected: [
       {
-        startContainer: '//b/text()',
+        startContainerXPath: '//b/text()',
         startOffset: 1,
-        endContainer: '//b/text()',
+        endContainerXPath: '//b/text()',
         endOffset: 4,
       },
       {
-        startContainer: '//b/text()',
+        startContainerXPath: '//b/text()',
         startOffset: 3,
-        endContainer: '//b/text()',
+        endContainerXPath: '//b/text()',
         endOffset: 6,
       },
     ]
@@ -147,31 +148,31 @@ describe('createTextQuoteSelectorMatcher', () => {
   for (const [name, { html, selector, expected }] of Object.entries(testCases)) {
     it(`works for case: '${name}'`, async () => {
       const doc = domParser.parseFromString(html, 'text/html');
-      const matcher = createTextQuoteSelectorMatcher(selector);
-      const matches = await asyncIterableToArray(matcher(doc));
-      assert.equal(matches.length, expected.length);
-      matches.forEach((match, i) => {
-        assert.include(match, hydrateRange(expected[i], doc));
-      });
+      await testMatcher(doc, doc, selector, expected);
     });
   }
 });
 
-async function asyncIterableToArray<T>(source: AsyncIterable<T>): Promise<T[]> {
-  const values = [];
-  for await (const value of source) {
-    values.push(value);
-  };
-  return values;
-}
-
-// Evaluate the XPath expressions to the corresponding Nodes in the DOM.
-function hydrateRange(rangeInfo: RangeInfo, doc: Document): Partial<Range> {
-  return {
-    ...rangeInfo,
-    startContainer: evaluateXPath(doc, rangeInfo.startContainer),
-    endContainer: evaluateXPath(doc, rangeInfo.endContainer),
-  }
+async function testMatcher(
+  doc: Document,
+  scope: DomScope,
+  selector: TextQuoteSelector,
+  expected: RangeInfo[]
+) {
+  const matcher = createTextQuoteSelectorMatcher(selector);
+  const matches = [];
+  for await (const value of matcher(scope))
+    matches.push(value);
+  assert.equal(matches.length, expected.length);
+  matches.forEach((match, i) => {
+    const expectedRange = expected[i];
+    assert.include(match, {
+      startContainer: evaluateXPath(doc, expectedRange.startContainerXPath),
+      startOffset: expectedRange.startOffset,
+      endContainer: evaluateXPath(doc, expectedRange.endContainerXPath),
+      endOffset: expectedRange.endOffset,
+    });
+  });
 }
 
 function evaluateXPath(doc: Document, xpath: string): Node {
