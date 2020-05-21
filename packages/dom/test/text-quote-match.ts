@@ -55,18 +55,48 @@ const testCases: {
       },
     ]
   },
+  'first characters': {
+    html: '<b>lorem ipsum dolor amet yada yada</b>',
+    selector: {
+      type: 'TextQuoteSelector',
+      exact: 'lorem ipsum',
+    },
+    expected: [
+      {
+        startContainerXPath: '//b/text()',
+        startOffset: 0,
+        endContainerXPath: '//b/text()',
+        endOffset: 11,
+      },
+    ]
+  },
+  'last characters': {
+    html: '<b>lorem ipsum dolor amet yada yada</b>',
+    selector: {
+      type: 'TextQuoteSelector',
+      exact: 'yada yada',
+    },
+    expected: [
+      {
+        startContainerXPath: '//b/text()',
+        startOffset: 23,
+        endContainerXPath: '//b/text()',
+        endOffset: 32,
+      },
+    ]
+  },
   'across elements': {
-    html: '<b>lorem <i>ipsum dolor</i> amet yada yada</b>',
+    html: '<b>lorem <i>ipsum</i> dolor <u>amet</u> yada yada</b>',
     selector: {
       type: 'TextQuoteSelector',
       exact: 'dolor am',
     },
     expected: [
       {
-        startContainerXPath: '//i/text()',
-        startOffset: 6,
-        endContainerXPath: '//b/text()[2]',
-        endOffset: 3,
+        startContainerXPath: '//b/text()[2]',
+        startOffset: 1,
+        endContainerXPath: '//u/text()',
+        endOffset: 2,
       },
     ]
   },
@@ -151,6 +181,115 @@ describe('createTextQuoteSelectorMatcher', () => {
       await testMatcher(doc, doc, selector, expected);
     });
   }
+
+  it('handles adjacent text nodes', async () => {
+    const { html, selector } = testCases['simple'];
+    const doc = domParser.parseFromString(html, 'text/html');
+    const textNode = evaluateXPath(doc, '//b/text()') as Text;
+
+    for (let index = textNode.length - 1; index > 0; index--)
+      textNode.splitText(index);
+    // console.log([...textNode.parentNode.childNodes].map(node => node.textContent))
+    // → 'l',  'o', 'r', 'e', 'm', …
+
+    await testMatcher(doc, doc, selector, [
+      {
+        startContainerXPath: '//b/text()[13]',
+        startOffset: 0,
+        endContainerXPath: '//b/text()[21]',
+        endOffset: 0,
+      },
+    ]);
+  });
+
+  it('handles empty text nodes', async () => {
+    const { html, selector } = testCases['simple'];
+    const doc = domParser.parseFromString(html, 'text/html');
+
+    const textNode = evaluateXPath(doc, '//b/text()') as Text;
+    textNode.splitText(textNode.length);
+    textNode.splitText(20);
+    textNode.splitText(20);
+    textNode.splitText(17);
+    textNode.splitText(17);
+    textNode.splitText(12);
+    textNode.splitText(12);
+    textNode.splitText(0);
+    // console.log([...textNode.parentNode.childNodes].map(node => node.textContent))
+    // → '', 'lorem ipsum ', '', 'dolor', '', ' am', '', 'et yada yada', ''
+
+    await testMatcher(doc, doc, selector, [
+      {
+        startContainerXPath: '//b/text()[4]', // "dolor"
+        startOffset: 0,
+        endContainerXPath: '//b/text()[8]', // "et yada yada"
+        endOffset: 0,
+      },
+    ]);
+  });
+
+  it('works with parent of text as scope', async () => {
+    const { html, selector, expected } = testCases['simple'];
+    const doc = domParser.parseFromString(html, 'text/html');
+
+    await testMatcher(doc, evaluateXPath(doc, '//b'), selector, expected);
+  });
+
+  it('works with parent of text as scope, when matching its first characters', async () => {
+    const { html, selector, expected } = testCases['first characters'];
+    const doc = domParser.parseFromString(html, 'text/html');
+
+    await testMatcher(doc, evaluateXPath(doc, '//b'), selector, expected);
+  });
+
+  it('works with parent of text as scope, when matching its first characters, with an empty text node', async () => {
+    const { html, selector } = testCases['first characters'];
+    const doc = domParser.parseFromString(html, 'text/html');
+
+    const textNode = evaluateXPath(doc, '//b/text()') as Text;
+    textNode.splitText(0);
+
+    await testMatcher(doc, evaluateXPath(doc, '//b'), selector, [
+      {
+        startContainerXPath: '//b/text()[2]',
+        startOffset: 0,
+        endContainerXPath: '//b/text()[2]',
+        endOffset: 11,
+      },
+    ]);
+  });
+
+  it('works when scope is a Range within one text node', async () => {
+    const { html, selector, expected } = testCases['simple'];
+    const doc = domParser.parseFromString(html, 'text/html');
+
+    // Use the substring ‘ipsum dolor amet’ as scope.
+    const scope = document.createRange();
+    scope.setStart(evaluateXPath(doc, '//b/text()'), 6);
+    scope.setEnd(evaluateXPath(doc, '//b/text()'), 22);
+    await testMatcher(doc, scope, selector, expected);
+  });
+
+  it('works when scope is a Range with both ends inside text nodes', async () => {
+    const { html, selector, expected } = testCases['across elements'];
+    const doc = domParser.parseFromString(html, 'text/html');
+
+    // Use the substring ‘sum dolor am’ as scope.
+    const scope = document.createRange();
+    scope.setStart(evaluateXPath(doc, '//i/text()'), 2);
+    scope.setEnd(evaluateXPath(doc, '//u/text()'), 2);
+    await testMatcher(doc, scope, selector, expected);
+  });
+
+  it('works when scope is a Range with both ends inside elements', async () => {
+    const { html, selector, expected } = testCases['across elements'];
+    const doc = domParser.parseFromString(html, 'text/html');
+
+    const scope = document.createRange();
+    scope.setStart(evaluateXPath(doc, '//b'), 1); // before the <i>
+    scope.setEnd(evaluateXPath(doc, '//b'), 4); // before the " yada yada"
+    await testMatcher(doc, scope, selector, expected);
+  });
 });
 
 async function testMatcher(
