@@ -36,7 +36,16 @@ export function createTextQuoteSelectorMatcher(selector: TextQuoteSelector): Dom
     const suffix = selector.suffix || '';
     const pattern = prefix + exact + suffix;
 
-    const iter = document.createNodeIterator(root, NodeFilter.SHOW_TEXT);
+    const iter = document.createNodeIterator(
+      root,
+      NodeFilter.SHOW_TEXT,
+      {
+        acceptNode: node =>
+          range.intersectsNode(node)
+            ? NodeFilter.FILTER_ACCEPT
+            : NodeFilter.FILTER_REJECT
+      },
+    );
 
     let fromIndex = 0;
     let referenceNodeIndex = 0;
