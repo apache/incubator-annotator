@@ -305,12 +305,18 @@ async function testMatcher(
   assert.equal(matches.length, expected.length);
   matches.forEach((match, i) => {
     const expectedRange = expected[i];
-    assert.include(match, {
-      startContainer: evaluateXPath(doc, expectedRange.startContainerXPath),
-      startOffset: expectedRange.startOffset,
-      endContainer: evaluateXPath(doc, expectedRange.endContainerXPath),
-      endOffset: expectedRange.endOffset,
-    });
+    const expectedStartContainer = evaluateXPath(doc, expectedRange.startContainerXPath);
+    const expectedEndContainer = evaluateXPath(doc, expectedRange.endContainerXPath);
+    assert(match.startContainer === expectedStartContainer,
+      `unexpected start container: ${prettyNodeName(match.startContainer)}; `
+      + `expected ${prettyNodeName(expectedStartContainer)}`
+    );
+    assert.equal(match.startOffset, expectedRange.startOffset);
+    assert(match.endContainer === evaluateXPath(doc, expectedRange.endContainerXPath),
+      `unexpected end container: ${prettyNodeName(match.endContainer)}; `
+      + `expected ${prettyNodeName(expectedEndContainer)}`
+    );
+    assert.equal(match.endOffset, expectedRange.endOffset);
   });
 }
 
@@ -321,4 +327,16 @@ function evaluateXPath(doc: Document, xpath: string): Node {
     `Test suite contains XPath with ${nodes.length} results instead of 1: '${xpath}'`
   );
   return nodes[0];
+}
+
+function prettyNodeName(node: Node) {
+  switch (node.nodeType) {
+    case Node.TEXT_NODE:
+      const text = (node as Text).nodeValue;
+      return `#text "${text.length > 50 ? text.substring(0, 50) + '…' : text}"`;
+    case Node.ELEMENT_NODE:
+      return `<${(node as Element).tagName.toLowerCase()}>`;
+    default:
+      return node.nodeName.toLowerCase();
+  }
 }
