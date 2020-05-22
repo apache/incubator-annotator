@@ -3976,11 +3976,6 @@ doctrine@^3.0.0:
   dependencies:
     esutils "^2.0.2"
 
-dom-node-iterator@^3.5.3:
-  version "3.5.3"
-  resolved "https://registry.yarnpkg.com/dom-node-iterator/-/dom-node-iterator-3.5.3.tgz#32b68aa440962f1734487029f544a3db704637b7"
-  integrity sha1-MraKpECWLxc0SHAp9USj23BGN7c=
-
 dom-seek@^5.1.0:
   version "5.1.1"
   resolved "https://registry.yarnpkg.com/dom-seek/-/dom-seek-5.1.1.tgz#4e35bee763b6ba082f372345823ec9665d1fbf26"

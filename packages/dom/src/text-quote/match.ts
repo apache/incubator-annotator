@@ -18,7 +18,6 @@
  * under the License.
  */
 
-import createNodeIterator from 'dom-node-iterator';
 import seek from 'dom-seek';
 
 import { TextQuoteSelector } from '../../../selector/src';
@@ -37,7 +36,7 @@ export function createTextQuoteSelectorMatcher(selector: TextQuoteSelector): Dom
     const suffix = selector.suffix || '';
     const pattern = prefix + exact + suffix;
 
-    const iter = createNodeIterator(root, NodeFilter.SHOW_TEXT);
+    const iter = document.createNodeIterator(root, NodeFilter.SHOW_TEXT);
 
     let fromIndex = 0;
     let referenceNodeIndex = 0;

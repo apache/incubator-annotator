@@ -18,7 +18,6 @@
  * under the License.
  */
 
-import createNodeIterator from 'dom-node-iterator';
 import seek from 'dom-seek';
 
 import { TextQuoteSelector } from '../../../selector/src';
@@ -32,7 +31,7 @@ function firstTextNodeInRange(range: Range): Text {
   if (isTextNode(startContainer)) return startContainer;
 
   const root = range.commonAncestorContainer;
-  const iter = createNodeIterator(root, NodeFilter.SHOW_TEXT);
+  const iter = document.createNodeIterator(root, NodeFilter.SHOW_TEXT);
   return iter.nextNode() as Text;
 }
 
@@ -62,7 +61,7 @@ async function calculateContextForDisambiguation(
 
   const matcher = createTextQuoteSelectorMatcher(selector);
 
-  const iter = createNodeIterator(root, NodeFilter.SHOW_TEXT);
+  const iter = document.createNodeIterator(root, NodeFilter.SHOW_TEXT);
 
   const startNode = firstTextNodeInRange(range);
   const startIndex =
@@ -74,7 +73,7 @@ async function calculateContextForDisambiguation(
   const affixLengthPairs: Array<[number, number]> = [];
 
   for await (const match of matcher(scopeAsRange)) {
-    const matchIter = createNodeIterator(root, NodeFilter.SHOW_TEXT);
+    const matchIter = document.createNodeIterator(root, NodeFilter.SHOW_TEXT);
 
     const matchStartNode = firstTextNodeInRange(match);
     const matchStartIndex =
