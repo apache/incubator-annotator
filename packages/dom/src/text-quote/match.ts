@@ -40,10 +40,12 @@ export function createTextQuoteSelectorMatcher(selector: TextQuoteSelector): Dom
       root,
       NodeFilter.SHOW_TEXT,
       {
-        acceptNode: node =>
-          range.intersectsNode(node)
+        acceptNode(node: Text) {
+          // Only reveal nodes within the range; and skip any empty text nodes.
+          return range.intersectsNode(node) && node.length > 0
             ? NodeFilter.FILTER_ACCEPT
             : NodeFilter.FILTER_REJECT
+        },
       },
     );
 
@@ -66,33 +68,11 @@ export function createTextQuoteSelectorMatcher(selector: TextQuoteSelector): Dom
       // Seek to the start of the match.
       referenceNodeIndex += seek(iter, matchStartIndex - referenceNodeIndex);
 
-      // Peek forward and skip over any empty nodes.
-      if (iter.nextNode()) {
-        while ((iter.referenceNode.nodeValue as String).length === 0) {
-          iter.nextNode();
-        }
-
-        // The iterator now points to the end of the reference node.
-        // Move the iterator back to the start of the reference node.
-        iter.previousNode();
-      }
-
       // Record the start container and offset.
       match.setStart(iter.referenceNode, matchStartIndex - referenceNodeIndex);
 
       // Seek to the end of the match.
       referenceNodeIndex += seek(iter, matchEndIndex - referenceNodeIndex);
-
-      // Peek forward and skip over any empty nodes.
-      if (iter.nextNode()) {
-        while ((iter.referenceNode.nodeValue as String).length === 0) {
-          iter.nextNode();
-        }
-
-        // The iterator now points to the end of the reference node.
-        // Move the iterator back to the start of the reference node.
-        iter.previousNode();
-      }
 
       // Record the end container and offset.
       match.setEnd(iter.referenceNode, matchEndIndex - referenceNodeIndex);
