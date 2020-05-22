@@ -58,18 +58,15 @@ export function createTextQuoteSelectorMatcher(selector: TextQuoteSelector): Dom
       // Seek to the start of the match.
       referenceNodeIndex += seek(iter, matchStartIndex - referenceNodeIndex);
 
-      // Normalize the reference to the start of the match.
-      if (!iter.pointerBeforeReferenceNode) {
-        // Peek forward and skip over any empty nodes.
-        if (iter.nextNode()) {
-          while ((iter.referenceNode.nodeValue as String).length === 0) {
-            iter.nextNode();
-          }
-
-          // The iterator now points to the end of the reference node.
-          // Move the iterator back to the start of the reference node.
-          iter.previousNode();
+      // Peek forward and skip over any empty nodes.
+      if (iter.nextNode()) {
+        while ((iter.referenceNode.nodeValue as String).length === 0) {
+          iter.nextNode();
         }
+
+        // The iterator now points to the end of the reference node.
+        // Move the iterator back to the start of the reference node.
+        iter.previousNode();
       }
 
       // Record the start container and offset.
@@ -78,21 +75,15 @@ export function createTextQuoteSelectorMatcher(selector: TextQuoteSelector): Dom
       // Seek to the end of the match.
       referenceNodeIndex += seek(iter, matchEndIndex - referenceNodeIndex);
 
-      // Normalize the reference to the end of the match.
-      if (!iter.pointerBeforeReferenceNode) {
-        // Peek forward and skip over any empty nodes.
-        if (iter.nextNode()) {
-          while ((iter.referenceNode.nodeValue as String).length === 0) {
-            iter.nextNode();
-          }
-
-          // The iterator now points to the end of the reference node.
-          // Move the iterator back to the start of the reference node.
-          iter.previousNode();
+      // Peek forward and skip over any empty nodes.
+      if (iter.nextNode()) {
+        while ((iter.referenceNode.nodeValue as String).length === 0) {
+          iter.nextNode();
         }
 
-        // Maybe seek backwards to the start of the node.
-        referenceNodeIndex += seek(iter, iter.referenceNode);
+        // The iterator now points to the end of the reference node.
+        // Move the iterator back to the start of the reference node.
+        iter.previousNode();
       }
 
       // Record the end container and offset.

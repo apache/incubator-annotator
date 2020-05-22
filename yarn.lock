@@ -2243,11 +2243,6 @@ ajv@^6.12.0:
     json-schema-traverse "^0.4.1"
     uri-js "^4.2.2"
 
-ancestors@0.0.3:
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/ancestors/-/ancestors-0.0.3.tgz#124eb944447d68b302057047d15d077a9da5179d"
-  integrity sha1-Ek65RER9aLMCBXBH0V0Hep2lF50=
-
 ansi-colors@3.2.3:
   version "3.2.3"
   resolved "https://registry.yarnpkg.com/ansi-colors/-/ansi-colors-3.2.3.tgz#57d35b8686e851e2cc04c403f1c00203976a1813"
@@ -3986,13 +3981,10 @@ dom-node-iterator@^3.5.3:
   resolved "https://registry.yarnpkg.com/dom-node-iterator/-/dom-node-iterator-3.5.3.tgz#32b68aa440962f1734487029f544a3db704637b7"
   integrity sha1-MraKpECWLxc0SHAp9USj23BGN7c=
 
-dom-seek@^4.0.3:
-  version "4.0.3"
-  resolved "https://registry.yarnpkg.com/dom-seek/-/dom-seek-4.0.3.tgz#f14dddf04b3fb062d901c7b00b0c142a06e0a94b"
-  integrity sha1-8U3d8Es/sGLZAcewCwwUKgbgqUs=
-  dependencies:
-    ancestors "0.0.3"
-    index-of "^0.2.0"
+dom-seek@^5.1.0:
+  version "5.1.1"
+  resolved "https://registry.yarnpkg.com/dom-seek/-/dom-seek-5.1.1.tgz#4e35bee763b6ba082f372345823ec9665d1fbf26"
+  integrity sha512-1strSwd201Gfhfkfsk77SX9xyJGzu12gqUo5Q0W3Njtj2QxcfQTwCDOynZ6npZ4ASUFRQq0asjYDRlFxYPKwTA==
 
 domain-browser@^1.1.1:
   version "1.2.0"
@@ -5693,11 +5685,6 @@ indent-string@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/indent-string/-/indent-string-4.0.0.tgz#624f8f4497d619b2d9768531d58f4122854d7251"
   integrity sha512-EdDDZu4A2OyIK7Lr/2zG+w5jmbuk1DVBnEwREQvBzspBJkCEbRa8GxU1lghYcaGJCnRWibjDXlq779X1/y5xwg==
-
-index-of@^0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/index-of/-/index-of-0.2.0.tgz#38c1e2367ea55dffad3b6eb592ec1cc3090d7d65"
-  integrity sha1-OMHiNn6lXf+tO261kuwcwwkNfWU=
 
 indexes-of@^1.0.1:
   version "1.0.1"
