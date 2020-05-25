@@ -87,66 +87,46 @@ async function calculateContextForDisambiguation(
       continue;
     }
 
-    // Determine how many prefix characters are shared.
-    const prefixLength = overlapRight(
-      text.substring(0, matchStartIndex),
+    // Count how many characters before & after them the false match and target have in common.
+    const sufficientPrefixLength = charactersNeededToBeUnique(
       text.substring(0, startIndex),
+      text.substring(0, matchStartIndex),
+      true,
     );
-
-    // Determine how many suffix characters are shared.
-    const suffixLength = overlap(
-      text.substring(matchEndIndex),
+    const sufficientSuffixLength = charactersNeededToBeUnique(
       text.substring(endIndex),
+      text.substring(matchEndIndex),
+      false,
     );
-
-    // Record the affix lengths that would have precluded this match.
-    affixLengthPairs.push([prefixLength + 1, suffixLength + 1]);
+    affixLengthPairs.push([sufficientPrefixLength, sufficientSuffixLength]);
   }
 
-  // Construct and return an unambiguous selector.
-  let prefix, suffix;
-  if (affixLengthPairs.length) {
-    const [prefixLength, suffixLength] = minimalSolution(affixLengthPairs);
-
-    if (prefixLength > 0 && startIndex > 0) {
-      prefix = text.substring(startIndex - prefixLength, startIndex);
-    }
-
-    if (suffixLength > 0 && endIndex < text.length) {
-      suffix = text.substring(endIndex, endIndex + suffixLength);
-    }
-  }
-
+  // Find the prefix and suffix that would invalidate all mismatches, using the minimal characters
+  // for prefix and suffix combined.
+  const [prefixLength, suffixLength] = minimalSolution(affixLengthPairs);
+  const prefix = text.substring(startIndex - prefixLength, startIndex);
+  const suffix = text.substring(endIndex, endIndex + suffixLength);
   return { prefix, suffix };
 }
 
-function overlap(text1: string, text2: string) {
-  let count = 0;
-
-  while (count < text1.length && count < text2.length) {
-    const c1 = text1[count];
-    const c2 = text2[count];
-    if (c1 !== c2) break;
-    count++;
-  }
-
-  return count;
-}
-
-function overlapRight(text1: string, text2: string) {
-  let count = 0;
-
-  while (count < text1.length && count < text2.length) {
-    const c1 = text1[text1.length - 1 - count];
-    const c2 = text2[text2.length - 1 - count];
-    if (c1 !== c2) break;
-    count++;
-  }
-
-  return count;
+function charactersNeededToBeUnique(target: string, impostor: string, reverse: boolean = false) {
+  // Count how many characters the two strings have in common.
+  let overlap = 0;
+  while (reverse
+    ? target[target.length - 1 - overlap] === impostor[impostor.length - 1 - overlap]
+    : target[overlap] === impostor[overlap]
+  )
+    overlap++;
+  if (overlap === target.length)
+    return Infinity; // (no substring of target can make it distinguishable from its impostor)
+  else
+    return overlap + 1;
 }
 
 function minimalSolution(requirements: Array<[number, number]>): [number, number] {
+  // Ensure we try solutions with an empty prefix or suffix.
+  requirements.push([0, 0]);
+
   // Build all the pairs and order them by their sums.
   const pairs = requirements.flatMap(l => requirements.map<[number, number]>(r => [l[0], r[1]]));
   pairs.sort((a, b) => a[0] + a[1] - (b[0] + b[1]));
