@@ -20,12 +20,21 @@
 
 import { assert } from 'chai';
 import { describeTextQuote } from '../src/text-quote/describe';
+import testCases from './text-quote-describe-cases';
 import testMatchCases from './text-quote-match-cases';
 import { hydrateRange } from './utils';
 
 const domParser = new window.DOMParser();
 
 describe('describeTextQuote', () => {
+  for (const [name, { html, range, expected }] of Object.entries(testCases)) {
+    it(`works for case: ${name}`, async () => {
+      const doc = domParser.parseFromString(html, 'text/html');
+      const result = await describeTextQuote(hydrateRange(range, doc), doc);
+      assert.deepEqual(result, expected);
+    })
+  }
+
   describe('inverts test cases of text quote matcher', () => {
     const applicableTestCases = Object.entries(testMatchCases)
       .filter(([_, { expected }]) => expected.length > 0);
