@@ -172,6 +172,130 @@ const testCases: {
       },
     ]
   },
+  'no matches': {
+    html: '<b>lorem ipsum dolor amet yada yada</b>',
+    selector: {
+      type: 'TextQuoteSelector',
+      exact: 'holy grail',
+    },
+    expected: []
+  },
+  'with prefix': {
+    html: '<b>lorem ipsum dolor amet yada yada</b>',
+    selector: {
+      type: 'TextQuoteSelector',
+      exact: 'yada',
+      prefix: 't ',
+    },
+    expected: [
+      {
+        startContainerXPath: '//b/text()',
+        startOffset: 23,
+        endContainerXPath: '//b/text()',
+        endOffset: 27,
+      },
+    ]
+  },
+  'with suffix': {
+    html: '<b>lorem ipsum dolor amet yada yada</b>',
+    selector: {
+      type: 'TextQuoteSelector',
+      exact: 'o',
+      suffix: 'l',
+    },
+    expected: [
+      {
+        startContainerXPath: '//b/text()',
+        startOffset: 13,
+        endContainerXPath: '//b/text()',
+        endOffset: 14,
+      },
+    ]
+  },
+  'with prefix and suffix': {
+    html: '<b>lorem ipsum dolor amet yada yada</b>',
+    selector: {
+      type: 'TextQuoteSelector',
+      exact: 'o',
+      prefix: 'l',
+      suffix: 're',
+    },
+    expected: [
+      {
+        startContainerXPath: '//b/text()',
+        startOffset: 1,
+        endContainerXPath: '//b/text()',
+        endOffset: 2,
+      },
+    ]
+  },
+  'with prefix and suffix, two matches': {
+    html: '<b>lorem ipsum dolor amet yada yada</b>',
+    selector: {
+      type: 'TextQuoteSelector',
+      exact: 'o',
+      prefix: 'l',
+      suffix: 'r',
+    },
+    expected: [
+      {
+        startContainerXPath: '//b/text()',
+        startOffset: 1,
+        endContainerXPath: '//b/text()',
+        endOffset: 2,
+      },
+      {
+        startContainerXPath: '//b/text()',
+        startOffset: 15,
+        endContainerXPath: '//b/text()',
+        endOffset: 16,
+      },
+    ]
+  },
+  'with prefix, no matches': {
+    html: '<b>lorem ipsum dolor amet yada yada</b>',
+    selector: {
+      type: 'TextQuoteSelector',
+      exact: 'dolor',
+      prefix: 'oopsum ',
+    },
+    expected: []
+  },
+  'with suffix, no matches': {
+    html: '<b>lorem ipsum dolor amet yada yada</b>',
+    selector: {
+      type: 'TextQuoteSelector',
+      exact: 'dolor',
+      suffix: ' amot',
+    },
+    expected: []
+  },
+  'with suffix, no matches due to whitespace': {
+    html: '<b>lorem ipsum dolor amet yada yada</b>',
+    selector: {
+      type: 'TextQuoteSelector',
+      exact: 'dolor',
+      suffix: 'a',
+    },
+    expected: []
+  },
+  'with empty prefix and suffix': {
+    html: '<b>lorem ipsum dolor amet yada yada</b>',
+    selector: {
+      type: 'TextQuoteSelector',
+      exact: 'dolor am',
+      prefix: '',
+      suffix: '',
+    },
+    expected: [
+      {
+        startContainerXPath: '//b/text()',
+        startOffset: 12,
+        endContainerXPath: '//b/text()',
+        endOffset: 20,
+      },
+    ]
+  },
 };
 
 describe('createTextQuoteSelectorMatcher', () => {
