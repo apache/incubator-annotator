@@ -16,3 +16,10 @@ export function evaluateXPath(doc: Document, xpath: string): Node {
   );
   return nodes[0];
 }
+
+export function hydrateRange(rangeInfo: RangeInfo, doc: Document): Range {
+  const range = doc.createRange();
+  range.setStart(evaluateXPath(doc, rangeInfo.startContainerXPath), rangeInfo.startOffset);
+  range.setEnd(evaluateXPath(doc, rangeInfo.endContainerXPath), rangeInfo.endOffset);
+  return range;
+}
