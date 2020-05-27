@@ -28,6 +28,15 @@ export async function describeTextQuote(
   range: Range,
   scope: DomScope = ownerDocument(range).documentElement,
 ): Promise<TextQuoteSelector> {
+  range = range.cloneRange();
+
+  // Take the part of the range that falls within the scope.
+  const scopeAsRange = rangeFromScope(scope);
+  if (!scopeAsRange.isPointInRange(range.startContainer, range.startOffset))
+    range.setStart(scopeAsRange.startContainer, scopeAsRange.startOffset);
+  if (!scopeAsRange.isPointInRange(range.endContainer, range.endOffset))
+    range.setEnd(scopeAsRange.endContainer, scopeAsRange.endOffset);
+
   const exact = range.toString();
 
   const result: TextQuoteSelector = { type: 'TextQuoteSelector', exact };
@@ -94,10 +103,8 @@ function calculateContextForDisambiguation(
 function charactersNeededToBeUnique(target: string, impostor: string, reverse: boolean = false) {
   // Count how many characters the two strings have in common.
   let overlap = 0;
-  while (reverse
-    ? target[target.length - 1 - overlap] === impostor[impostor.length - 1 - overlap]
-    : target[overlap] === impostor[overlap]
-  )
+  const charAt = (s: string, i: number) => reverse ? s[s.length - 1 - i] : s[overlap];
+  while (overlap < target.length && charAt(target, overlap) === charAt(impostor, overlap))
     overlap++;
   if (overlap === target.length)
     return Infinity; // (no substring of target can make it distinguishable from its impostor)
@@ -140,10 +147,11 @@ function getRangeTextPosition(range: Range, scope: DomScope): number {
       },
     },
   );
+  const scopeOffset = isTextNode(scopeAsRange.startContainer) ? scopeAsRange.startOffset : 0;
   if (isTextNode(range.startContainer))
-    return seek(iter, range.startContainer) + range.startOffset;
+    return seek(iter, range.startContainer) + range.startOffset - scopeOffset;
   else
-    return seek(iter, firstTextNodeInRange(range));
+    return seek(iter, firstTextNodeInRange(range)) - scopeOffset;
 }
 
 function firstTextNodeInRange(range: Range): Text {

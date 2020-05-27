@@ -143,6 +143,34 @@ describe('createTextQuoteSelectorMatcher', () => {
     scope.setEnd(evaluateXPath(doc, '//b'), 4); // before the " yada yada"
     await testMatcher(doc, scope, selector, expected);
   });
+
+  it('ignores quote when scope is an empty range', async () => {
+    const { html, selector } = testCases['simple'];
+    const doc = domParser.parseFromString(html, 'text/html');
+
+    const scope = document.createRange();
+    await testMatcher(doc, scope, selector, []);
+  });
+
+  it('ignores quote extending just beyond scope', async () => {
+    const { html, selector } = testCases['simple'];
+    const doc = domParser.parseFromString(html, 'text/html');
+
+    const scope = document.createRange();
+    scope.setStart(evaluateXPath(doc, '//b/text()'), 0);
+    scope.setEnd(evaluateXPath(doc, '//b/text()'), 19);
+    await testMatcher(doc, scope, selector, []);
+  });
+
+  it('ignores quote starting just before scope', async () => {
+    const { html, selector } = testCases['simple'];
+    const doc = domParser.parseFromString(html, 'text/html');
+
+    const scope = document.createRange();
+    scope.setStart(evaluateXPath(doc, '//b/text()'), 13);
+    scope.setEnd(evaluateXPath(doc, '//b/text()'), 32);
+    await testMatcher(doc, scope, selector, []);
+  });
 });
 
 async function testMatcher(

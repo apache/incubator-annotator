@@ -98,11 +98,21 @@ const testCases: {
       suffix: ' ',
     },
   },
-
-  // TODO test for:
-  // empty scope
-  // custom scope
-  // element edges, across elements, etc.
+  'across elements': {
+    html: '<b>To annotate or <i>not</i> to <u>anno</u>tate</b>',
+    range: {
+      startContainerXPath: '//u/text()',
+      startOffset: 0,
+      endContainerXPath: '//b/text()[3]',
+      endOffset: 2,
+    },
+    expected: {
+      type: 'TextQuoteSelector',
+      exact: 'annota',
+      prefix: 'to ',
+      suffix: '',
+    },
+  },
 };
 
 export default testCases;

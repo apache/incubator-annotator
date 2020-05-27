@@ -22,7 +22,7 @@ import { assert } from 'chai';
 import { describeTextQuote } from '../src/text-quote/describe';
 import testCases from './text-quote-describe-cases';
 import testMatchCases from './text-quote-match-cases';
-import { hydrateRange } from './utils';
+import { hydrateRange, evaluateXPath } from './utils';
 
 const domParser = new window.DOMParser();
 
@@ -34,6 +34,43 @@ describe('describeTextQuote', () => {
       assert.deepEqual(result, expected);
     })
   }
+
+  it('works with custom scope', async () => {
+    const { html, range } = testCases['minimal prefix'];
+    const doc = domParser.parseFromString(html, 'text/html');
+    const scope = document.createRange();
+    scope.setStart(evaluateXPath(doc, '//b/text()'), 15);
+    scope.setEnd(evaluateXPath(doc, '//b/text()'), 30); // "not to annotate"
+    const result = await describeTextQuote(hydrateRange(range, doc), scope);
+    assert.deepEqual(result, {
+      type: 'TextQuoteSelector',
+      exact: 'anno',
+      prefix: '', // no prefix needed in this scope.
+      suffix: '',
+    });
+  });
+
+  it('strips part of the range outside the scope', async () => {
+    const { html, range } = testCases['simple'];
+    const doc = domParser.parseFromString(html, 'text/html');
+    const scope = document.createRange();
+    scope.setStart(evaluateXPath(doc, '//b/text()'), 6);
+    scope.setEnd(evaluateXPath(doc, '//b/text()'), 17); // "ipsum dolor"
+    const result = await describeTextQuote(hydrateRange(range, doc), scope);
+    assert.deepEqual(result, {
+      type: 'TextQuoteSelector',
+      exact: 'dolor',
+      prefix: '',
+      suffix: '',
+    });
+  });
+
+  it('works if the range equals the scope', async () => {
+    const { html, range, expected } = testCases['simple'];
+    const doc = domParser.parseFromString(html, 'text/html');
+    const result = await describeTextQuote(hydrateRange(range, doc), hydrateRange(range, doc));
+    assert.deepEqual(result, expected);
+  });
 
   describe('inverts test cases of text quote matcher', () => {
     const applicableTestCases = Object.entries(testMatchCases)
