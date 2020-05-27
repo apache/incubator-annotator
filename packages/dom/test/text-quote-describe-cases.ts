@@ -83,9 +83,23 @@ const testCases: {
       suffix: '',
     },
   },
+  'empty quote': {
+    html: '<b>To annotate or not to annotate</b>',
+    range: {
+      startContainerXPath: '//b/text()',
+      startOffset: 11,
+      endContainerXPath: '//b/text()',
+      endOffset: 11,
+    },
+    expected: {
+      type: 'TextQuoteSelector',
+      exact: '',
+      prefix: 'e',
+      suffix: ' ',
+    },
+  },
 
   // TODO test for:
-  // emtpy range
   // empty scope
   // custom scope
   // element edges, across elements, etc.

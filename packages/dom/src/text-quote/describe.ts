@@ -52,7 +52,7 @@ function calculateContextForDisambiguation(
   // Find all matches of the text in the scope.
   const stringMatches: number[] = [];
   let fromIndex = 0;
-  while (fromIndex < scopeText.length) {
+  while (fromIndex <= scopeText.length) {
     const matchIndex = scopeText.indexOf(exactText, fromIndex);
     if (matchIndex === -1) break;
     stringMatches.push(matchIndex);

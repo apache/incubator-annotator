@@ -264,6 +264,72 @@ const testCases: {
       },
     ],
   },
+  'empty quote': {
+    html: '<b>lorem</b>',
+    selector: {
+      type: 'TextQuoteSelector',
+      exact: '',
+    },
+    // A five character string contains six spots to find an empty string
+    expected: Array(6).fill(null).map((_, i) => ({
+      startContainerXPath: '//b/text()',
+      startOffset: i,
+      endContainerXPath: '//b/text()',
+      endOffset: i,
+    }))
+  },
+  'empty quote, with prefix': {
+    html: '<b>lorem ipsum dolor amet yada yada</b>',
+    selector: {
+      type: 'TextQuoteSelector',
+      exact: '',
+      prefix: 'dolor',
+    },
+    expected: [{
+      startContainerXPath: '//b/text()',
+      startOffset: 17,
+      endContainerXPath: '//b/text()',
+      endOffset: 17,
+    }]
+  },
+  'empty quote, with suffix': {
+    html: '<b>lorem ipsum dolor amet yada yada</b>',
+    selector: {
+      type: 'TextQuoteSelector',
+      exact: '',
+      suffix: 'i',
+    },
+    expected: [{
+      startContainerXPath: '//b/text()',
+      startOffset: 6,
+      endContainerXPath: '//b/text()',
+      endOffset: 6,
+    }]
+  },
+  'empty quote, with prefix and suffix': {
+    html: '<b>lorem ipsum dolor amet yada yada</b>',
+    selector: {
+      type: 'TextQuoteSelector',
+      exact: '',
+      prefix: 'lorem ',
+      suffix: 'ipsum',
+    },
+    expected: [{
+      startContainerXPath: '//b/text()',
+      startOffset: 6,
+      endContainerXPath: '//b/text()',
+      endOffset: 6,
+    }]
+  },
+  'empty quote, no matches': {
+    html: '<b>lorem ipsum dolor amet yada yada</b>',
+    selector: {
+      type: 'TextQuoteSelector',
+      exact: '',
+      prefix: 'X',
+    },
+    expected: [],
+  }
 };
 
 export default testCases;

@@ -54,7 +54,7 @@ export function createTextQuoteSelectorMatcher(selector: TextQuoteSelector): Dom
       : 0;
 
     let fromIndex = 0;
-    while (fromIndex < scopeText.length) {
+    while (fromIndex <= scopeText.length) {
       // Find the quote with its prefix and suffix in the string.
       const patternStartIndex = scopeText.indexOf(searchPattern, fromIndex);
       if (patternStartIndex === -1) return;
