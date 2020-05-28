@@ -25,9 +25,9 @@
     "prepare": "lerna run prepare",
     "prepublishOnly": "yarn run build",
     "start": "yarn run web:server",
-    "test": "cross-env BABEL_ENV=test nyc mocha packages/*/test/**/*.[jt]s",
+    "test": "cross-env BABEL_ENV=test nyc mocha packages/*/test/**/*.test.[jt]s",
     "typecheck": "tsc && tsc -p tsconfig.tests.json",
-    "validate": "cross-env BABEL_ENV=test mocha test/**/*.[jt]s",
+    "validate": "cross-env BABEL_ENV=test mocha test/**/*.test.[jt]s",
     "web:build": "webpack  --config=web/webpack.config.js --mode development",
     "web:server": "webpack-dev-server --config=web/webpack.config.js --hot --mode development"
   },
