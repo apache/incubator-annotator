@@ -127,13 +127,7 @@ async function describeSelection() {
   const range = selection.getRangeAt(0);
   if (range.collapsed) return;
 
-  const scope = document.createRange();
-  scope.selectNodeContents(source);
-
-  if (!scope.isPointInRange(range.startContainer, range.startOffset)) return;
-  if (!scope.isPointInRange(range.endContainer, range.endOffset)) return;
-
-  return describeTextQuote(range, scope);
+  return describeTextQuote(range, source);
 }
 
 async function onSelectionChange() {
