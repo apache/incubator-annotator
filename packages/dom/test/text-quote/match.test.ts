@@ -19,10 +19,10 @@
  */
 
 import { assert } from 'chai';
-import { createTextQuoteSelectorMatcher } from '../src/text-quote/match';
-import { TextQuoteSelector } from '../../selector/src/types';
-import { DomScope } from '../src/types';
-import testCases from './text-quote-match-cases';
+import { createTextQuoteSelectorMatcher } from '../../src/text-quote/match';
+import { TextQuoteSelector } from '../../../selector/src/types';
+import { DomScope } from '../../src/types';
+import testCases from './match-cases';
 import { evaluateXPath, RangeInfo } from './utils';
 
 const domParser = new window.DOMParser();

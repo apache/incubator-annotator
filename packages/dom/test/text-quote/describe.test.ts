@@ -19,9 +19,9 @@
  */
 
 import { assert } from 'chai';
-import { describeTextQuote } from '../src/text-quote/describe';
-import testCases from './text-quote-describe-cases';
-import testMatchCases from './text-quote-match-cases';
+import { describeTextQuote } from '../../src/text-quote/describe';
+import testCases from './describe-cases';
+import testMatchCases from './match-cases';
 import { hydrateRange, evaluateXPath } from './utils';
 
 const domParser = new window.DOMParser();

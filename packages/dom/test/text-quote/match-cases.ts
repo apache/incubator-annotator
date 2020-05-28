@@ -1,4 +1,4 @@
-import { TextQuoteSelector } from "../../selector/src";
+import { TextQuoteSelector } from "../../../selector/src";
 import { RangeInfo } from "./utils";
 
 const testCases: {

@@ -18,10 +18,10 @@
  * under the License.
  */
 
-import { ownerDocument } from './scope';
+import { ownerDocument } from '../scope';
 import { product } from './cartesian';
-import { RangeSelector, Selector } from '../../selector/src/types';
-import { DomMatcher, DomScope } from './types';
+import { RangeSelector, Selector } from '../../../selector/src/types';
+import { DomMatcher, DomScope } from '../types';
 
 export function makeCreateRangeSelectorMatcher(
   createMatcher: <T extends Selector>(selector: T) => DomMatcher
