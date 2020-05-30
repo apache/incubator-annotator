@@ -64,6 +64,7 @@ dist:
 	@rm -rf apache-annotator-$(annotator_vsn)-incubating
 	@git clone \
         --config advice.detachedHead=false \
+        --config versionsort.suffix=-rc \
         --depth 1 \
         --quiet \
         file://"$(shell git rev-parse --show-toplevel)" \
