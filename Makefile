@@ -63,7 +63,6 @@ else
 dist:
 	@rm -rf apache-annotator-$(annotator_vsn)-incubating
 	@git clone \
-        --branch v$(vsn_tag) \
         --config advice.detachedHead=false \
         --depth 1 \
         --quiet \
