@@ -19,6 +19,6 @@
  */
 
 export * from './css';
-export * from './range';
+export * from './range/index';
 export * from './text-quote/index';
 export * from './highlight-range';

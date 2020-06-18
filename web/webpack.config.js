@@ -30,7 +30,7 @@ module.exports = {
     demo: ['./demo/index.html', './demo/index.js'],
     test: [
       './test/index.html',
-      'mocha-loader!multi-entry-loader?include=./packages/*/test/**/*.[jt]s!',
+      'mocha-loader!multi-entry-loader?include=./packages/*/test/**/*.test.[jt]s!',
     ],
   },
   resolve: {

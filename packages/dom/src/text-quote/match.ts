@@ -18,7 +18,6 @@
  * under the License.
  */
 
-import createNodeIterator from 'dom-node-iterator';
 import seek from 'dom-seek';
 
 import { TextQuoteSelector } from '../../../selector/src';
@@ -28,86 +27,62 @@ import { ownerDocument, rangeFromScope } from '../scope';
 export function createTextQuoteSelectorMatcher(selector: TextQuoteSelector): DomMatcher {
   return async function* matchAll(scope: DomScope) {
     const document = ownerDocument(scope);
-    const range = rangeFromScope(scope);
-    const root = range.commonAncestorContainer;
-    const text = range.toString();
+    const scopeAsRange = rangeFromScope(scope);
+    const scopeText = scopeAsRange.toString();
 
     const exact = selector.exact;
     const prefix = selector.prefix || '';
     const suffix = selector.suffix || '';
-    const pattern = prefix + exact + suffix;
+    const searchPattern = prefix + exact + suffix;
 
-    const iter = createNodeIterator(root, NodeFilter.SHOW_TEXT);
+    const iter = document.createNodeIterator(
+      scopeAsRange.commonAncestorContainer,
+      NodeFilter.SHOW_TEXT,
+      {
+        acceptNode(node: Text) {
+          // Only reveal nodes within the range; and skip any empty text nodes.
+          return scopeAsRange.intersectsNode(node) && node.length > 0
+            ? NodeFilter.FILTER_ACCEPT
+            : NodeFilter.FILTER_REJECT
+        },
+      },
+    );
+
+    // The index of the first character of iter.referenceNode inside the text.
+    let referenceNodeIndex = isTextNode(scopeAsRange.startContainer)
+      ? -scopeAsRange.startOffset
+      : 0;
 
     let fromIndex = 0;
-    let referenceNodeIndex = 0;
-
-    if (isTextNode(range.startContainer)) {
-      referenceNodeIndex -= range.startOffset;
-    }
-
-    while (fromIndex < text.length) {
-      const patternStartIndex = text.indexOf(pattern, fromIndex);
+    while (fromIndex <= scopeText.length) {
+      // Find the quote with its prefix and suffix in the string.
+      const patternStartIndex = scopeText.indexOf(searchPattern, fromIndex);
       if (patternStartIndex === -1) return;
 
-      const match = document.createRange();
-
+      // Correct for the prefix and suffix lengths.
       const matchStartIndex = patternStartIndex + prefix.length;
       const matchEndIndex = matchStartIndex + exact.length;
 
-      // Seek to the start of the match.
+      // Create a range to represent this exact quote in the dom.
+      const match = document.createRange();
+
+      // Seek to the start of the match, make the range start there.
       referenceNodeIndex += seek(iter, matchStartIndex - referenceNodeIndex);
-
-      // Normalize the reference to the start of the match.
-      if (!iter.pointerBeforeReferenceNode) {
-        // Peek forward and skip over any empty nodes.
-        if (iter.nextNode()) {
-          while ((iter.referenceNode.nodeValue as String).length === 0) {
-            iter.nextNode();
-          }
-
-          // The iterator now points to the end of the reference node.
-          // Move the iterator back to the start of the reference node.
-          iter.previousNode();
-        }
-      }
-
-      // Record the start container and offset.
       match.setStart(iter.referenceNode, matchStartIndex - referenceNodeIndex);
 
-      // Seek to the end of the match.
+      // Seek to the end of the match, make the range end there.
       referenceNodeIndex += seek(iter, matchEndIndex - referenceNodeIndex);
-
-      // Normalize the reference to the end of the match.
-      if (!iter.pointerBeforeReferenceNode) {
-        // Peek forward and skip over any empty nodes.
-        if (iter.nextNode()) {
-          while ((iter.referenceNode.nodeValue as String).length === 0) {
-            iter.nextNode();
-          }
-
-          // The iterator now points to the end of the reference node.
-          // Move the iterator back to the start of the reference node.
-          iter.previousNode();
-        }
-
-        // Maybe seek backwards to the start of the node.
-        referenceNodeIndex += seek(iter, iter.referenceNode);
-      }
-
-      // Record the end container and offset.
       match.setEnd(iter.referenceNode, matchEndIndex - referenceNodeIndex);
 
       // Yield the match.
       yield match;
 
-      // Advance the search forward.
+      // Advance the search forward to detect multiple occurrences.
       fromIndex = matchStartIndex + 1;
-      referenceNodeIndex += seek(iter, fromIndex - referenceNodeIndex);
     }
   };
 }
 
 function isTextNode(node: Node): node is Text {
-  return node.nodeType === Node.TEXT_NODE
+  return node.nodeType === Node.TEXT_NODE;
 }

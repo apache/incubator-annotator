@@ -18,136 +18,104 @@
  * under the License.
  */
 
-import createNodeIterator from 'dom-node-iterator';
 import seek from 'dom-seek';
 
 import { TextQuoteSelector } from '../../../selector/src';
 import { DomScope } from '../types';
 import { ownerDocument, rangeFromScope } from '../scope';
-import { createTextQuoteSelectorMatcher } from './match';
-
-function firstTextNodeInRange(range: Range): Text {
-  const { startContainer } = range;
-
-  if (isTextNode(startContainer)) return startContainer;
-
-  const root = range.commonAncestorContainer;
-  const iter = createNodeIterator(root, NodeFilter.SHOW_TEXT);
-  return iter.nextNode() as Text;
-}
 
 export async function describeTextQuote(
   range: Range,
   scope: DomScope = ownerDocument(range).documentElement,
 ): Promise<TextQuoteSelector> {
+  range = range.cloneRange();
+
+  // Take the part of the range that falls within the scope.
+  const scopeAsRange = rangeFromScope(scope);
+  if (!scopeAsRange.isPointInRange(range.startContainer, range.startOffset))
+    range.setStart(scopeAsRange.startContainer, scopeAsRange.startOffset);
+  if (!scopeAsRange.isPointInRange(range.endContainer, range.endOffset))
+    range.setEnd(scopeAsRange.endContainer, scopeAsRange.endOffset);
+
   const exact = range.toString();
 
   const result: TextQuoteSelector = { type: 'TextQuoteSelector', exact };
 
-  const { prefix, suffix } = await calculateContextForDisambiguation(range, result, scope);
+  const { prefix, suffix } = calculateContextForDisambiguation(range, result, scope);
   result.prefix = prefix;
   result.suffix = suffix;
 
   return result
 }
 
-async function calculateContextForDisambiguation(
+function calculateContextForDisambiguation(
   range: Range,
   selector: TextQuoteSelector,
   scope: DomScope,
-): Promise<{ prefix?: string, suffix?: string }> {
-  const scopeAsRange = rangeFromScope(scope);
-  const root = scopeAsRange.commonAncestorContainer;
-  const text = scopeAsRange.toString();
+): { prefix?: string, suffix?: string } {
+  const exactText = selector.exact;
+  const scopeText = rangeFromScope(scope).toString();
+  const targetStartIndex = getRangeTextPosition(range, scope);
+  const targetEndIndex = targetStartIndex + exactText.length;
 
-  const matcher = createTextQuoteSelectorMatcher(selector);
+  // Find all matches of the text in the scope.
+  const stringMatches: number[] = [];
+  let fromIndex = 0;
+  while (fromIndex <= scopeText.length) {
+    const matchIndex = scopeText.indexOf(exactText, fromIndex);
+    if (matchIndex === -1) break;
+    stringMatches.push(matchIndex);
+    fromIndex = matchIndex + 1;
+  }
 
-  const iter = createNodeIterator(root, NodeFilter.SHOW_TEXT);
-
-  const startNode = firstTextNodeInRange(range);
-  const startIndex =
-    isTextNode(range.startContainer)
-      ? seek(iter, startNode) + range.startOffset
-      : seek(iter, startNode);
-  const endIndex = startIndex + selector.exact.length;
-
+  // Count for each undesired match the required prefix and suffix lengths, such that either of them
+  // would have invalidated the match.
   const affixLengthPairs: Array<[number, number]> = [];
+  for (const matchStartIndex of stringMatches) {
+    const matchEndIndex = matchStartIndex + exactText.length
 
-  for await (const match of matcher(scopeAsRange)) {
-    const matchIter = createNodeIterator(root, NodeFilter.SHOW_TEXT);
-
-    const matchStartNode = firstTextNodeInRange(match);
-    const matchStartIndex =
-      isTextNode(match.startContainer)
-        ? seek(matchIter, matchStartNode) + match.startOffset
-        : seek(matchIter, matchStartNode);
-    const matchEndIndex = matchStartIndex + match.toString().length;
-
-    // If the match is the same as the input range, continue.
-    if (matchStartIndex === startIndex || matchEndIndex === endIndex) {
+    // Skip the found match if it is the actual target.
+    if (matchStartIndex === targetStartIndex)
       continue;
-    }
 
-    // Determine how many prefix characters are shared.
-    const prefixLength = overlapRight(
-      text.substring(0, matchStartIndex),
-      text.substring(0, startIndex),
+    // Count how many characters before & after them the false match and target have in common.
+    const sufficientPrefixLength = charactersNeededToBeUnique(
+      scopeText.substring(0, targetStartIndex),
+      scopeText.substring(0, matchStartIndex),
+      true,
     );
-
-    // Determine how many suffix characters are shared.
-    const suffixLength = overlap(
-      text.substring(matchEndIndex),
-      text.substring(endIndex),
+    const sufficientSuffixLength = charactersNeededToBeUnique(
+      scopeText.substring(targetEndIndex),
+      scopeText.substring(matchEndIndex),
+      false,
     );
-
-    // Record the affix lengths that would have precluded this match.
-    affixLengthPairs.push([prefixLength + 1, suffixLength + 1]);
+    affixLengthPairs.push([sufficientPrefixLength, sufficientSuffixLength]);
   }
 
-  // Construct and return an unambiguous selector.
-  let prefix, suffix;
-  if (affixLengthPairs.length) {
-    const [prefixLength, suffixLength] = minimalSolution(affixLengthPairs);
-
-    if (prefixLength > 0 && startIndex > 0) {
-      prefix = text.substring(startIndex - prefixLength, startIndex);
-    }
-
-    if (suffixLength > 0 && endIndex < text.length) {
-      suffix = text.substring(endIndex, endIndex + suffixLength);
-    }
-  }
-
+  // Find the prefix and suffix that would invalidate all mismatches, using the minimal characters
+  // for prefix and suffix combined.
+  const [prefixLength, suffixLength] = minimalSolution(affixLengthPairs);
+  const prefix = scopeText.substring(targetStartIndex - prefixLength, targetStartIndex);
+  const suffix = scopeText.substring(targetEndIndex, targetEndIndex + suffixLength);
   return { prefix, suffix };
 }
 
-function overlap(text1: string, text2: string) {
-  let count = 0;
-
-  while (count < text1.length && count < text2.length) {
-    const c1 = text1[count];
-    const c2 = text2[count];
-    if (c1 !== c2) break;
-    count++;
-  }
-
-  return count;
-}
-
-function overlapRight(text1: string, text2: string) {
-  let count = 0;
-
-  while (count < text1.length && count < text2.length) {
-    const c1 = text1[text1.length - 1 - count];
-    const c2 = text2[text2.length - 1 - count];
-    if (c1 !== c2) break;
-    count++;
-  }
-
-  return count;
+function charactersNeededToBeUnique(target: string, impostor: string, reverse: boolean = false) {
+  // Count how many characters the two strings have in common.
+  let overlap = 0;
+  const charAt = (s: string, i: number) => reverse ? s[s.length - 1 - i] : s[overlap];
+  while (overlap < target.length && charAt(target, overlap) === charAt(impostor, overlap))
+    overlap++;
+  if (overlap === target.length)
+    return Infinity; // (no substring of target can make it distinguishable from its impostor)
+  else
+    return overlap + 1;
 }
 
 function minimalSolution(requirements: Array<[number, number]>): [number, number] {
+  // Ensure we try solutions with an empty prefix or suffix.
+  requirements.push([0, 0]);
+
   // Build all the pairs and order them by their sums.
   const pairs = requirements.flatMap(l => requirements.map<[number, number]>(r => [l[0], r[1]]));
   pairs.sort((a, b) => a[0] + a[1] - (b[0] + b[1]));
@@ -164,6 +132,47 @@ function minimalSolution(requirements: Array<[number, number]>): [number, number
   return pairs[pairs.length - 1];
 }
 
+// Get the index of the first character of range within the text of scope.
+function getRangeTextPosition(range: Range, scope: DomScope): number {
+  const scopeAsRange = rangeFromScope(scope);
+  const iter = document.createNodeIterator(
+    scopeAsRange.commonAncestorContainer,
+    NodeFilter.SHOW_TEXT,
+    {
+      acceptNode(node: Text) {
+        // Only reveal nodes within the range
+        return scopeAsRange.intersectsNode(node)
+          ? NodeFilter.FILTER_ACCEPT
+          : NodeFilter.FILTER_REJECT
+      },
+    },
+  );
+  const scopeOffset = isTextNode(scopeAsRange.startContainer) ? scopeAsRange.startOffset : 0;
+  if (isTextNode(range.startContainer))
+    return seek(iter, range.startContainer) + range.startOffset - scopeOffset;
+  else
+    return seek(iter, firstTextNodeInRange(range)) - scopeOffset;
+}
+
+function firstTextNodeInRange(range: Range): Text {
+  // Find the first text node inside the range.
+  const iter = document.createNodeIterator(
+    range.commonAncestorContainer,
+    NodeFilter.SHOW_TEXT,
+    {
+      acceptNode(node: Text) {
+        // Only reveal nodes within the range; and skip any empty text nodes.
+        return range.intersectsNode(node) && node.length > 0
+          ? NodeFilter.FILTER_ACCEPT
+          : NodeFilter.FILTER_REJECT
+      },
+    },
+  );
+  const node = iter.nextNode() as Text | null;
+  if (node === null) throw new Error('Range contains no text nodes');
+  return node;
+}
+
 function isTextNode(node: Node): node is Text {
-  return node.nodeType === Node.TEXT_NODE
+  return node.nodeType === Node.TEXT_NODE;
 }
