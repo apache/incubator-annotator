@@ -21,8 +21,8 @@
 /* global info, module, source, target */
 
 import {
-  createRangeSelectorCreator,
-  createTextQuoteSelector,
+  makeCreateRangeSelectorMatcher,
+  createTextQuoteSelectorMatcher,
   describeTextQuote,
   highlightRange,
 } from '@annotator/dom';
@@ -91,21 +91,21 @@ function cleanup() {
   target.normalize();
 }
 
-const createSelector = makeRefinable(selector => {
-  const selectorCreator = {
-    TextQuoteSelector: createTextQuoteSelector,
-    RangeSelector: createRangeSelectorCreator(createSelector),
+const createMatcher = makeRefinable(selector => {
+  const innerCreateMatcher = {
+    TextQuoteSelector: createTextQuoteSelectorMatcher,
+    RangeSelector: makeCreateRangeSelectorMatcher(createMatcher),
   }[selector.type];
 
-  if (selectorCreator == null) {
+  if (!innerCreateMatcher) {
     throw new Error(`Unsupported selector type: ${selector.type}`);
   }
 
-  return selectorCreator(selector);
+  return innerCreateMatcher(selector);
 });
 
 async function anchor(selector) {
-  const matchAll = createSelector(selector);
+  const matchAll = createMatcher(selector);
   const ranges = [];
 
   for await (const range of matchAll(target)) {

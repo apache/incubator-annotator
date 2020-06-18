@@ -20,5 +20,5 @@
 
 export * from './css';
 export * from './range';
-export * from './text-quote';
+export * from './text-quote/index';
 export * from './highlight-range';

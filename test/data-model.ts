@@ -21,10 +21,11 @@
 /* global process */
 
 import fs from 'fs';
-import URL from 'url';
+import { URL } from 'url';
 
 import Ajv from 'ajv';
 import META_SCHEMA from 'ajv/lib/refs/json-schema-draft-04.json';
+import { assert } from 'chai';
 import fetch from 'node-fetch';
 import resolve from 'resolve';
 
@@ -44,11 +45,11 @@ process.argv.forEach((val, index) => {
   }
 });
 
-function readSchema(schemaPath, base = 'web-annotation-tests/') {
+function readSchema(schemaPath: string, base: string = 'web-annotation-tests/'): any {
   const resolverOptions = { extensions: ['.json', '.test'] };
   const resolvedPath = resolve.sync(`${base}${schemaPath}`, resolverOptions);
   const schemaUnparsed = fs.readFileSync(resolvedPath);
-  return JSON.parse(schemaUnparsed);
+  return JSON.parse(schemaUnparsed.toString());
 }
 
 const DEFINITIONS = [
@@ -75,13 +76,13 @@ describe('Test JSON against Schemas', () => {
       this.skip();
     } else {
       // load the data from the file or URL
-      let url_parsed = URL.parse(url);
-      if (url_parsed.path !== url_parsed.href) {
+      let url_parsed = new URL(url);
+      if (url_parsed.pathname !== url_parsed.href) {
         const data_response = await fetch(url_parsed.href);
         data = await data_response.json();
       } else {
         // assume we have a local file and use that
-        data = JSON.parse(fs.readFileSync(url_parsed.path, 'utf8'));
+        data = JSON.parse(fs.readFileSync(url_parsed.pathname, 'utf8'));
       }
       if (data === '') {
         this.skip();
@@ -89,7 +90,7 @@ describe('Test JSON against Schemas', () => {
     }
   });
 
-  MUSTS.assertions.forEach(schemaPath => {
+  MUSTS.assertions.forEach((schemaPath: string) => {
     const schema = readSchema(schemaPath);
     it(schema.title, () => {
       let valid = ajv.validate(schema, data);

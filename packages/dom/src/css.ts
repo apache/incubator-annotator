@@ -18,23 +18,10 @@
  * under the License.
  */
 
-export function ownerDocument(scope) {
-  if ('commonAncestorContainer' in scope) {
-    return scope.commonAncestorContainer.ownerDocument;
-  }
+import { CssSelector, Matcher } from "../../selector/src";
 
-  return scope.ownerDocument;
-}
-
-export function rangeFromScope(scope) {
-  if ('commonAncestorContainer' in scope) {
-    return scope;
-  }
-
-  const document = scope.ownerDocument;
-  const range = document.createRange();
-
-  range.selectNodeContents(scope);
-
-  return range;
+export function createCssSelectorMatcher(selector: CssSelector): Matcher<Document, Element> {
+  return async function* matchAll(scope: Document) {
+    yield* scope.querySelectorAll(selector.value);
+  };
 }

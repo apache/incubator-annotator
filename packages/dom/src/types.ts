@@ -18,8 +18,8 @@
  * under the License.
  */
 
-export function createCssSelector(selector) {
-  return async function* matchAll(scope) {
-    yield* scope.querySelectorAll(selector.value);
-  };
-}
+import { Matcher } from '../../selector/src';
+
+export type DomScope = Node | Range
+
+export type DomMatcher = Matcher<DomScope, Range>

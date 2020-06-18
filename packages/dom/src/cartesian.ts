@@ -20,7 +20,7 @@
 
 import cartesianArrays from 'cartesian';
 
-export async function* product(...iterables) {
+export async function* product<T>(...iterables: AsyncIterable<T>[]): AsyncGenerator<Array<T>, void, undefined> {
   // We listen to all iterators in parallel, while logging all the values they
   // produce. Whenever an iterator produces a value, we produce and yield all
   // combinations of that value with the logged values from other iterators.
@@ -28,28 +28,36 @@ export async function* product(...iterables) {
 
   const iterators = iterables.map(iterable => iterable[Symbol.asyncIterator]());
   // Initialise an empty log for each iterable.
-  const logs = iterables.map(() => []);
+  const logs: T[][] = iterables.map(() => []);
 
-  const nextValuePromises = iterators.map((iterator, iterableNr) =>
+  type NumberedResultPromise = Promise<{
+    nextResult: IteratorResult<T>,
+    iterableNr: number
+  }>;
+
+  function notNull(p: NumberedResultPromise | null): p is NumberedResultPromise {
+    return p !== null
+  }
+
+  const nextValuePromises: Array<NumberedResultPromise | null> = iterators.map((iterator, iterableNr) =>
     iterator
       .next()
-      .then(async ({ value, done }) => ({ value: await value, done }))
       .then(
         // Label the result with iterableNr, to know which iterable produced
         // this value after Promise.race below.
-        ({ value, done }) => ({ value, done, iterableNr }),
+        nextResult => ({ nextResult, iterableNr }),
       ),
   );
 
   // Keep listening as long as any of the iterables is not yet exhausted.
-  while (nextValuePromises.some(p => p !== null)) {
+  while (nextValuePromises.some(notNull)) {
     // Wait until any of the active iterators has produced a new value.
-    const { value, done, iterableNr } = await Promise.race(
-      nextValuePromises.filter(p => p !== null),
+    const { nextResult, iterableNr } = await Promise.race(
+      nextValuePromises.filter(notNull),
     );
 
     // If this iterable was exhausted, stop listening to it and move on.
-    if (done) {
+    if (nextResult.done === true) {
       nextValuePromises[iterableNr] = null;
       continue;
     }
@@ -57,17 +65,16 @@ export async function* product(...iterables) {
     // Produce all combinations of the received value with the logged values
     // from the other iterables.
     const arrays = [...logs];
-    arrays[iterableNr] = [value];
-    const combinations = cartesianArrays(arrays);
+    arrays[iterableNr] = [nextResult.value];
+    const combinations: T[][] = cartesianArrays(arrays);
 
     // Append the received value to the right log.
-    logs[iterableNr] = [...logs[iterableNr], value];
+    logs[iterableNr] = [...logs[iterableNr], nextResult.value];
 
     // Start listening for the next value of this iterable.
     nextValuePromises[iterableNr] = iterators[iterableNr]
       .next()
-      .then(async ({ value, done }) => ({ value: await value, done }))
-      .then(({ value, done }) => ({ value, done, iterableNr }));
+      .then(nextResult => ({ nextResult, iterableNr }));
 
     // Yield each of the produced combinations separately.
     yield* combinations;

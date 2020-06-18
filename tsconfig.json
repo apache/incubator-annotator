@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "strict": true,
+        "noEmit": true,
+        "target": "ES2017",
+        "lib": [
+            "ES2020",
+            "DOM",
+            "DOM.Iterable"
+        ],
+        "moduleResolution": "Node",
+        "typeRoots": [
+            "./@types"
+        ]
+    },
+    "include": [
+        "packages/*/src/index.ts"
+    ]
+}

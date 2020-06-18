@@ -28,14 +28,16 @@
 //   unusable afterwards
 // - tagName: the element used to wrap text nodes. Defaults to 'mark'.
 // - attributes: an Object defining any attributes to be set on the wrapper elements.
-export function highlightRange(range, tagName = 'mark', attributes = {}) {
-  if (range.collapsed) return;
-
+export function highlightRange(
+  range: Range,
+  tagName: string = 'mark',
+  attributes: Record<string, string> = {}
+): () => void {
   // First put all nodes in an array (splits start and end nodes if needed)
   const nodes = textNodesInRange(range);
 
   // Highlight each node
-  const highlightElements = [];
+  const highlightElements: HTMLElement[] = [];
   for (const node of nodes) {
     const highlightElement = wrapNodeInHighlight(node, tagName, attributes);
     highlightElements.push(highlightElement);
@@ -52,10 +54,13 @@ export function highlightRange(range, tagName = 'mark', attributes = {}) {
 }
 
 // Return an array of the text nodes in the range. Split the start and end nodes if required.
-function textNodesInRange(range) {
+function textNodesInRange(range: Range): Text[] {
+  // If the range is empty, avoid creating and returning an empty text node.
+  if (range.collapsed) return [];
+
   // If the start or end node is a text node and only partly in the range, split it.
   if (
-    range.startContainer.nodeType === Node.TEXT_NODE &&
+    isTextNode(range.startContainer) &&
     range.startOffset > 0
   ) {
     const endOffset = range.endOffset; // (this may get lost when the splitting the node)
@@ -67,20 +72,23 @@ function textNodesInRange(range) {
     range.setStart(createdNode, 0);
   }
   if (
-    range.endContainer.nodeType === Node.TEXT_NODE &&
+    isTextNode(range.endContainer) &&
     range.endOffset < range.endContainer.length
   ) {
     range.endContainer.splitText(range.endOffset);
   }
 
   // Collect the text nodes.
-  const walker = range.startContainer.ownerDocument.createTreeWalker(
+  const document = range.startContainer.ownerDocument || range.startContainer as Document;
+  const walker = document.createTreeWalker(
     range.commonAncestorContainer,
     NodeFilter.SHOW_TEXT,
-    node =>
-      range.intersectsNode(node)
-        ? NodeFilter.FILTER_ACCEPT
-        : NodeFilter.FILTER_REJECT,
+    {
+      acceptNode: node =>
+        range.intersectsNode(node)
+          ? NodeFilter.FILTER_ACCEPT
+          : NodeFilter.FILTER_REJECT
+    },
   );
   walker.currentNode = range.startContainer;
 
@@ -98,33 +106,34 @@ function textNodesInRange(range) {
   //   }
   // }
 
-  const nodes = [];
-  if (walker.currentNode.nodeType === Node.TEXT_NODE)
+  const nodes: Text[] = [];
+  if (isTextNode(walker.currentNode))
     nodes.push(walker.currentNode);
   while (walker.nextNode() && range.comparePoint(walker.currentNode, 0) !== 1)
-    nodes.push(walker.currentNode);
+    nodes.push(walker.currentNode as Text);
   return nodes;
 }
 
 // Replace [node] with <tagName ...attributes>[node]</tagName>
-function wrapNodeInHighlight(node, tagName, attributes) {
-  const highlightElement = node.ownerDocument.createElement(tagName);
+function wrapNodeInHighlight(node: ChildNode, tagName: string, attributes: Record<string, string>): HTMLElement {
+  const document = node.ownerDocument as Document;
+  const highlightElement = document.createElement(tagName);
   Object.keys(attributes).forEach(key => {
     highlightElement.setAttribute(key, attributes[key]);
   });
-  const tempRange = node.ownerDocument.createRange();
+  const tempRange = document.createRange();
   tempRange.selectNode(node);
   tempRange.surroundContents(highlightElement);
   return highlightElement;
 }
 
 // Remove a highlight element created with wrapNodeInHighlight.
-function removeHighlight(highlightElement) {
+function removeHighlight(highlightElement: HTMLElement) {
   // If it has somehow been removed already, there is nothing to be done.
   if (!highlightElement.parentNode) return;
   if (highlightElement.childNodes.length === 1) {
     highlightElement.parentNode.replaceChild(
-      highlightElement.firstChild,
+      highlightElement.firstChild as ChildNode,
       highlightElement,
     );
   } else {
@@ -137,4 +146,8 @@ function removeHighlight(highlightElement) {
     }
     highlightElement.remove();
   }
+}
+
+function isTextNode(node: Node): node is Text {
+  return node.nodeType === Node.TEXT_NODE
 }
