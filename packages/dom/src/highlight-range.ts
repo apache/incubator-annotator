@@ -46,8 +46,8 @@ export function highlightRange(
   // Return a function that cleans up the highlightElements.
   function removeHighlights() {
     // Remove each of the created highlightElements.
-    for (const highlightIdx in highlightElements) {
-      removeHighlight(highlightElements[highlightIdx]);
+    for (const highlightElement of highlightElements) {
+      removeHighlight(highlightElement);
     }
   }
   return removeHighlights;
@@ -133,10 +133,7 @@ function removeHighlight(highlightElement: HTMLElement) {
   // If it has somehow been removed already, there is nothing to be done.
   if (!highlightElement.parentNode) return;
   if (highlightElement.childNodes.length === 1) {
-    highlightElement.parentNode.replaceChild(
-      highlightElement.firstChild as ChildNode,
-      highlightElement,
-    );
+    highlightElement.replaceWith(highlightElement.firstChild as Node);
   } else {
     // If the highlight somehow contains multiple nodes now, move them all.
     while (highlightElement.firstChild) {
