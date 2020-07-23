@@ -10,7 +10,6 @@
     ],
     "moduleResolution": "node",
     "noEmit": true,
-    "resolveJsonModule": true,
     "paths": {
       "@annotator/*": ["packages/*/src"]
     },

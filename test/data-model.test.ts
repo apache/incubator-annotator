@@ -24,7 +24,6 @@ import fs from 'fs';
 import { URL } from 'url';
 
 import Ajv from 'ajv';
-import META_SCHEMA from 'ajv/lib/refs/json-schema-draft-04.json';
 import { assert } from 'chai';
 import fetch from 'node-fetch';
 import resolve from 'resolve';
@@ -45,11 +44,10 @@ process.argv.forEach((val, index) => {
   }
 });
 
-function readSchema(schemaPath: string, base: string = 'web-annotation-tests/'): any {
-  const resolverOptions = { extensions: ['.json', '.test'] };
-  const resolvedPath = resolve.sync(`${base}${schemaPath}`, resolverOptions);
-  const schemaUnparsed = fs.readFileSync(resolvedPath);
-  return JSON.parse(schemaUnparsed.toString());
+function requireJSON(name: string): Record<string, unknown> {
+  const resolvedPath = resolve.sync(name);
+  const data = fs.readFileSync(resolvedPath).toString();
+  return JSON.parse(data) as Record<string, unknown>;
 }
 
 const DEFINITIONS = [
@@ -60,40 +58,48 @@ const DEFINITIONS = [
   'id',
   'otherProperties',
   'specificResource',
-].map(name => readSchema(`definitions/${name}`));
+].map(name => requireJSON(`web-annotation-tests/definitions/${name}.json`));
 
-const MUSTS = readSchema('annotations/annotationMusts');
+const MUSTS = requireJSON(
+  'web-annotation-tests/annotations/annotationMusts.test',
+);
 
-const ajv = new Ajv({ schemaId: 'auto' });
+const META_SCHEMA = requireJSON('ajv/lib/refs/json-schema-draft-04.json');
+
+const ajv = new Ajv({ schemaId: 'auto', meta: false });
 ajv.addMetaSchema(META_SCHEMA);
 DEFINITIONS.forEach(schema => ajv.addSchema(schema));
 
 describe('Test JSON against Schemas', () => {
-  let data = '';
+  let data: Record<string, unknown>;
 
   before(async function() {
     if (!found_url) {
       this.skip();
     } else {
       // load the data from the file or URL
-      let url_parsed = new URL(url);
+      const url_parsed = new URL(url);
       if (url_parsed.pathname !== url_parsed.href) {
         const data_response = await fetch(url_parsed.href);
-        data = await data_response.json();
+        data = (await data_response.json()) as Record<string, unknown>;
       } else {
         // assume we have a local file and use that
-        data = JSON.parse(fs.readFileSync(url_parsed.pathname, 'utf8'));
+        data = JSON.parse(
+          fs.readFileSync(url_parsed.pathname, 'utf8'),
+        ) as Record<string, unknown>;
       }
-      if (data === '') {
+
+      if (!data) {
         this.skip();
       }
     }
   });
 
-  MUSTS.assertions.forEach((schemaPath: string) => {
-    const schema = readSchema(schemaPath);
-    it(schema.title, () => {
-      let valid = ajv.validate(schema, data);
+  const assertions = MUSTS.assertions as [string];
+  assertions.forEach((schemaPath: string) => {
+    const schema = requireJSON(`web-annotation-tests/${schemaPath}`);
+    it(schema.title as string, () => {
+      const valid = ajv.validate(schema, data);
       assert.isOk(valid, ajv.errorsText());
     });
   });

@@ -127,10 +127,7 @@ module.exports = {
         'import/no-internal-modules': [
           'error',
           {
-            allow: [
-              'ajv/lib/refs/json-schema-draft-04.json',
-              path.resolve(__dirname, './packages/*/src/**'),
-            ],
+            allow: [path.resolve(__dirname, './packages/*/src/**')],
           },
         ],
         'import/no-relative-parent-imports': 'off',
