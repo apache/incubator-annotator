@@ -123,9 +123,6 @@ module.exports = {
       globals: {
         assert: true,
       },
-      parserOptions: {
-        project: ['./tsconfig.tests.json'],
-      },
       rules: {
         'import/no-internal-modules': [
           'error',

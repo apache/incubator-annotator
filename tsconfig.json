@@ -1,23 +1,30 @@
 {
-    "compilerOptions": {
-        "baseUrl": ".",
-        "strict": true,
-        "noEmit": true,
-        "target": "ES2017",
-        "lib": [
-            "ES2020",
-            "DOM",
-            "DOM.Iterable"
-        ],
-        "moduleResolution": "Node",
-        "paths": {
-          "@annotator/*": ["packages/*/src"]
-        },
-        "typeRoots": [
-            "./@types"
-        ]
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": ".",
+    "isolatedModules": true,
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "es2020",
+    ],
+    "moduleResolution": "node",
+    "noEmit": true,
+    "resolveJsonModule": true,
+    "paths": {
+      "@annotator/*": ["packages/*/src"]
     },
-    "include": [
-        "packages/*/src/index.ts"
+    "strict": true,
+    "target": "es2017",
+    "typeRoots": [
+      "@types",
+      "node_modules/@types"
     ]
+  },
+  "include": [
+    "@types",
+    "packages/*/src",
+    "packages/*/test",
+    "test"
+  ]
 }
