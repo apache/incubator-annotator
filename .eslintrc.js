@@ -24,9 +24,9 @@ const babel = require('@babel/core');
 
 // Use the root babel.config.js for module resolution.
 // Relevant issue: tleunen/eslint-import-resolver-babel-module#89
-const babelOptions = babel.loadOptions({ cwd: __dirname });
-const babelModuleResolver = babelOptions.plugins.find(
-  ({ key }) => key === 'module-resolver',
+const babelConfig = babel.loadPartialConfig({ cwd: __dirname });
+const babelModuleResolver = babelConfig.options.plugins.find(
+  item => item.file.request === 'module-resolver',
 );
 
 module.exports = {
