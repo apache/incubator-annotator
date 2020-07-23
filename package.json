@@ -28,7 +28,7 @@
     "test": "cross-env BABEL_ENV=test nyc mocha packages/*/test/**/*.test.[jt]s",
     "typecheck": "tsc",
     "validate": "cross-env BABEL_ENV=test mocha test/**/*.test.[jt]s",
-    "web:build": "webpack  --config=web/webpack.config.js --mode development",
+    "web:build": "webpack --config=web/webpack.config.js --mode development",
     "web:server": "webpack-dev-server --config=web/webpack.config.js --hot --mode development"
   },
   "devDependencies": {
