@@ -31,40 +31,9 @@ const babelModuleResolver = babelConfig.options.plugins.find(
 
 module.exports = {
   root: true,
-  env: {
-    es6: true,
-    'shared-node-browser': true,
-  },
-  extends: ['eslint:recommended', 'plugin:import/recommended', 'prettier'],
-  globals: {
-    globalThis: true,
-  },
-  parser: 'babel-eslint',
-  parserOptions: {
-    ecmaVersion: 2020,
-    sourceType: 'module',
-  },
-  plugins: ['import', 'prettier'],
+  extends: ['eslint:recommended', 'prettier'],
+  plugins: ['prettier'],
   rules: {
-    'import/extensions': ['error', 'always', { ignorePackages: true }],
-    'import/first': 'error',
-    'import/newline-after-import': 'error',
-    'import/no-default-export': 'error',
-    'import/no-internal-modules': 'error',
-    'import/no-relative-parent-imports': 'error',
-    'import/order': ['error', { 'newlines-between': 'always' }],
-    'import/unambiguous': 'error',
-    'no-restricted-syntax': [
-      'error',
-      'BindExpression',
-      'ClassProperty',
-      'Decorator',
-      'DoExpression',
-      'ExportDefaultSpecifier',
-      'ExportNamespaceSpecifier',
-      'TypeAnnotation',
-      'JSXElement',
-    ],
     'prettier/prettier': [
       'error',
       {
@@ -72,11 +41,6 @@ module.exports = {
         trailingComma: 'all',
       },
     ],
-  },
-  settings: {
-    'import/resolver': {
-      'babel-module': babelModuleResolver.options,
-    },
   },
   overrides: [
     {
@@ -88,11 +52,8 @@ module.exports = {
         'nyc.config.js',
       ],
       env: {
+        es2017: true,
         node: true,
-      },
-      parser: 'espree',
-      parserOptions: {
-        sourceType: 'script',
       },
       plugins: ['node'],
       rules: {
@@ -101,18 +62,68 @@ module.exports = {
       },
     },
     {
-      files: ['web/demo/**/*.js'],
+      files: ['**/*.ts'],
       env: {
-        browser: true,
+        es2020: true,
+        'shared-node-browser': true,
+      },
+      extends: [
+        'plugin:@typescript-eslint/recommended',
+        'plugin:@typescript-eslint/recommended-requiring-type-checking',
+        'plugin:import/recommended',
+        'plugin:import/typescript',
+      ],
+      parserOptions: {
+        ecmaVersion: 2020,
+        project: ['./tsconfig.json'],
+        tsconfigRootDir: __dirname,
+      },
+      plugins: ['@typescript-eslint', 'import'],
+      rules: {
+        '@typescript-eslint/explicit-function-return-type': 'off',
+        '@typescript-eslint/no-unused-vars': [
+          'error',
+          { argsIgnorePattern: '^_' },
+        ],
+
+        'import/extensions': [
+          'error',
+          'ignorePackages',
+          {
+            ts: 'never',
+          },
+        ],
+        'import/first': 'error',
+        'import/newline-after-import': 'error',
+        'import/no-default-export': 'error',
+        'import/no-internal-modules': 'error',
+        'import/no-relative-parent-imports': 'error',
+        'import/order': ['error', { 'newlines-between': 'always' }],
+        'import/unambiguous': 'error',
+      },
+      settings: {
+        'import/resolver': {
+          'babel-module': babelModuleResolver.options,
+        },
       },
     },
     {
-      files: ['packages/*/test/**/*.js', 'test/**/*.js'],
+      files: ['**/@types/**/*.d.ts'],
+      rules: {
+        'import/no-default-export': 'off',
+        'import/unambiguous': 'off',
+      },
+    },
+    {
+      files: ['packages/*/test/**/*.ts', 'test/**/*.ts'],
       env: {
         mocha: true,
       },
       globals: {
         assert: true,
+      },
+      parserOptions: {
+        project: ['./tsconfig.tests.json'],
       },
       rules: {
         'import/no-internal-modules': [
@@ -128,9 +139,19 @@ module.exports = {
       },
     },
     {
-      files: ['packages/dom/{src,test}/**/*.js'],
+      files: ['packages/dom/**/*.js'],
       env: {
         browser: true,
+      },
+    },
+    {
+      files: ['web/demo/**/*.js'],
+      env: {
+        browser: true,
+        es2020: true,
+      },
+      parserOptions: {
+        sourceType: 'module',
       },
     },
   ],
