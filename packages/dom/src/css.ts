@@ -18,7 +18,7 @@
  * under the License.
  */
 
-import { CssSelector, Matcher } from "../../selector/src";
+import { CssSelector, Matcher } from '@annotator/selector';
 
 export function createCssSelectorMatcher(selector: CssSelector): Matcher<Document, Element> {
   return async function* matchAll(scope: Document) {

@@ -18,9 +18,10 @@
  * under the License.
  */
 
+import { RangeSelector, Selector } from '@annotator/selector';
+
 import { ownerDocument } from '../scope';
 import { product } from './cartesian';
-import { RangeSelector, Selector } from '../../../selector/src/types';
 import { DomMatcher, DomScope } from '../types';
 
 export function makeCreateRangeSelectorMatcher(

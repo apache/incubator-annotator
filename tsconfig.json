@@ -1,5 +1,6 @@
 {
     "compilerOptions": {
+        "baseUrl": ".",
         "strict": true,
         "noEmit": true,
         "target": "ES2017",
@@ -9,6 +10,9 @@
             "DOM.Iterable"
         ],
         "moduleResolution": "Node",
+        "paths": {
+          "@annotator/*": ["packages/*/src"]
+        },
         "typeRoots": [
             "./@types"
         ]
