@@ -40,7 +40,7 @@ describe('describeTextQuote', () => {
   it('works with custom scope', async () => {
     const { html, range } = testCases['minimal prefix'];
     const doc = domParser.parseFromString(html, 'text/html');
-    const scope = document.createRange();
+    const scope = doc.createRange();
     scope.setStart(evaluateXPath(doc, '//b/text()'), 15);
     scope.setEnd(evaluateXPath(doc, '//b/text()'), 30); // "not to annotate"
     const result = await describeTextQuote(hydrateRange(range, doc), scope);
@@ -55,7 +55,7 @@ describe('describeTextQuote', () => {
   it('strips part of the range outside the scope', async () => {
     const { html, range } = testCases['simple'];
     const doc = domParser.parseFromString(html, 'text/html');
-    const scope = document.createRange();
+    const scope = doc.createRange();
     scope.setStart(evaluateXPath(doc, '//b/text()'), 6);
     scope.setEnd(evaluateXPath(doc, '//b/text()'), 17); // "ipsum dolor"
     const result = await describeTextQuote(hydrateRange(range, doc), scope);
