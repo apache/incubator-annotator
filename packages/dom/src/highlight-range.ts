@@ -55,9 +55,6 @@ export function highlightRange(
 
 // Return an array of the text nodes in the range. Split the start and end nodes if required.
 function textNodesInRange(range: Range): Text[] {
-  // If the range is empty, avoid creating and returning an empty text node.
-  if (range.collapsed) return [];
-
   // If the start or end node is a text node and only partly in the range, split it.
   if (isTextNode(range.startContainer) && range.startOffset > 0) {
     const endOffset = range.endOffset; // (this may get lost when the splitting the node)
