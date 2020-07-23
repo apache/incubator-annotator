@@ -4,3 +4,4 @@
 /packages/*/esm/*
 /packages/*/lib/*
 /packages/*/node_modules/*
+/web/dist
