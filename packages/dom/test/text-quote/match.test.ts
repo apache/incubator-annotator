@@ -204,9 +204,10 @@ async function testMatcher(
 
 function prettyNodeName(node: Node) {
   switch (node.nodeType) {
-    case Node.TEXT_NODE:
+    case Node.TEXT_NODE: {
       const text = (node as Text).nodeValue || '';
       return `#text "${text.length > 50 ? text.substring(0, 50) + '…' : text}"`;
+    }
     case Node.ELEMENT_NODE:
       return `<${(node as Element).tagName.toLowerCase()}>`;
     default:
