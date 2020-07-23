@@ -34,7 +34,7 @@ export function evaluateXPath(doc: Document, xpath: string): Node {
   assert.equal(nodes.length, 1,
     `Test suite contains XPath with ${nodes.length} results instead of 1: '${xpath}'`
   );
-  return nodes[0];
+  return nodes[0] as Node;
 }
 
 export function hydrateRange(rangeInfo: RangeInfo, doc: Document): Range {
