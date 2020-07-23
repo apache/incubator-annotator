@@ -25,21 +25,23 @@ export * from './types';
 export function makeRefinable<
   // Any subtype of Selector can be made refinable; but note we limit the value
   // of refinedBy because it must also be accepted by matcherCreator.
-  TSelector extends (Selector & { refinedBy: TSelector }),
+  TSelector extends Selector & { refinedBy: TSelector },
   TScope,
   // To enable refinement, the implementation’s Match object must be usable as a
   // Scope object itself.
-  TMatch extends TScope,
+  TMatch extends TScope
 >(
   matcherCreator: (selector: TSelector) => Matcher<TScope, TMatch>,
 ): (selector: TSelector) => Matcher<TScope, TMatch> {
   return function createMatcherWithRefinement(
-    sourceSelector: TSelector
+    sourceSelector: TSelector,
   ): Matcher<TScope, TMatch> {
     const matcher = matcherCreator(sourceSelector);
 
     if (sourceSelector.refinedBy) {
-      const refiningSelector = createMatcherWithRefinement(sourceSelector.refinedBy);
+      const refiningSelector = createMatcherWithRefinement(
+        sourceSelector.refinedBy,
+      );
 
       return async function* matchAll(scope) {
         for await (const match of matcher(scope)) {

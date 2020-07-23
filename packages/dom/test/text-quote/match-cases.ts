@@ -24,12 +24,12 @@ import { RangeInfo } from './utils';
 
 const testCases: {
   [name: string]: {
-    html: string,
-    selector: TextQuoteSelector,
-    expected: RangeInfo[],
-  }
+    html: string;
+    selector: TextQuoteSelector;
+    expected: RangeInfo[];
+  };
 } = {
-  'simple': {
+  simple: {
     html: '<b>lorem ipsum dolor amet yada yada</b>',
     selector: {
       type: 'TextQuoteSelector',
@@ -105,7 +105,8 @@ const testCases: {
     ],
   },
   'text inside <head>': {
-    html: '<head><title>The title</title></head><b>lorem ipsum dolor amet yada yada</b>',
+    html:
+      '<head><title>The title</title></head><b>lorem ipsum dolor amet yada yada</b>',
     selector: {
       type: 'TextQuoteSelector',
       exact: 'title',
@@ -292,12 +293,14 @@ const testCases: {
       exact: '',
     },
     // A five character string contains six spots to find an empty string
-    expected: Array(6).fill(null).map((_, i) => ({
-      startContainerXPath: '//b/text()',
-      startOffset: i,
-      endContainerXPath: '//b/text()',
-      endOffset: i,
-    }))
+    expected: Array(6)
+      .fill(null)
+      .map((_, i) => ({
+        startContainerXPath: '//b/text()',
+        startOffset: i,
+        endContainerXPath: '//b/text()',
+        endOffset: i,
+      })),
   },
   'empty quote, with prefix': {
     html: '<b>lorem ipsum dolor amet yada yada</b>',
@@ -306,12 +309,14 @@ const testCases: {
       exact: '',
       prefix: 'dolor',
     },
-    expected: [{
-      startContainerXPath: '//b/text()',
-      startOffset: 17,
-      endContainerXPath: '//b/text()',
-      endOffset: 17,
-    }]
+    expected: [
+      {
+        startContainerXPath: '//b/text()',
+        startOffset: 17,
+        endContainerXPath: '//b/text()',
+        endOffset: 17,
+      },
+    ],
   },
   'empty quote, with suffix': {
     html: '<b>lorem ipsum dolor amet yada yada</b>',
@@ -320,12 +325,14 @@ const testCases: {
       exact: '',
       suffix: 'i',
     },
-    expected: [{
-      startContainerXPath: '//b/text()',
-      startOffset: 6,
-      endContainerXPath: '//b/text()',
-      endOffset: 6,
-    }]
+    expected: [
+      {
+        startContainerXPath: '//b/text()',
+        startOffset: 6,
+        endContainerXPath: '//b/text()',
+        endOffset: 6,
+      },
+    ],
   },
   'empty quote, with prefix and suffix': {
     html: '<b>lorem ipsum dolor amet yada yada</b>',
@@ -335,12 +342,14 @@ const testCases: {
       prefix: 'lorem ',
       suffix: 'ipsum',
     },
-    expected: [{
-      startContainerXPath: '//b/text()',
-      startOffset: 6,
-      endContainerXPath: '//b/text()',
-      endOffset: 6,
-    }]
+    expected: [
+      {
+        startContainerXPath: '//b/text()',
+        startOffset: 6,
+        endContainerXPath: '//b/text()',
+        endOffset: 6,
+      },
+    ],
   },
   'empty quote, no matches': {
     html: '<b>lorem ipsum dolor amet yada yada</b>',
@@ -350,7 +359,7 @@ const testCases: {
       prefix: 'X',
     },
     expected: [],
-  }
+  },
 };
 
 export default testCases;

@@ -55,9 +55,6 @@ module.exports = api => {
       ...(DEV ? [['module-resolver', resolverOptions]] : []),
       ...(TEST ? ['istanbul'] : []),
     ],
-    presets: [
-      ['@babel/env', envOptions],
-      '@babel/preset-typescript',
-    ],
+    presets: [['@babel/env', envOptions], '@babel/preset-typescript'],
   };
 };

@@ -24,7 +24,9 @@ import seek from 'dom-seek';
 import { DomScope, DomMatcher } from '../types';
 import { ownerDocument, rangeFromScope } from '../scope';
 
-export function createTextQuoteSelectorMatcher(selector: TextQuoteSelector): DomMatcher {
+export function createTextQuoteSelectorMatcher(
+  selector: TextQuoteSelector,
+): DomMatcher {
   return async function* matchAll(scope: DomScope) {
     const document = ownerDocument(scope);
     const scopeAsRange = rangeFromScope(scope);
@@ -43,7 +45,7 @@ export function createTextQuoteSelectorMatcher(selector: TextQuoteSelector): Dom
           // Only reveal nodes within the range; and skip any empty text nodes.
           return scopeAsRange.intersectsNode(node) && node.length > 0
             ? NodeFilter.FILTER_ACCEPT
-            : NodeFilter.FILTER_REJECT
+            : NodeFilter.FILTER_REJECT;
         },
       },
     );

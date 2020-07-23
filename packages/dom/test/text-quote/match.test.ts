@@ -23,13 +23,16 @@ import { TextQuoteSelector } from '@annotator/selector';
 
 import { createTextQuoteSelectorMatcher } from '../../src/text-quote/match';
 import { DomScope } from '../../src/types';
+
 import testCases from './match-cases';
 import { evaluateXPath, RangeInfo } from './utils';
 
 const domParser = new window.DOMParser();
 
 describe('createTextQuoteSelectorMatcher', () => {
-  for (const [name, { html, selector, expected }] of Object.entries(testCases)) {
+  for (const [name, { html, selector, expected }] of Object.entries(
+    testCases,
+  )) {
     it(`works for case: '${name}'`, async () => {
       const doc = domParser.parseFromString(html, 'text/html');
       await testMatcher(doc, doc, selector, expected);
@@ -182,21 +185,29 @@ async function testMatcher(
 ) {
   const matcher = createTextQuoteSelectorMatcher(selector);
   const matches = [];
-  for await (const value of matcher(scope))
-    matches.push(value);
+  for await (const value of matcher(scope)) matches.push(value);
   assert.equal(matches.length, expected.length);
   matches.forEach((match, i) => {
     const expectedRange = expected[i];
-    const expectedStartContainer = evaluateXPath(doc, expectedRange.startContainerXPath);
-    const expectedEndContainer = evaluateXPath(doc, expectedRange.endContainerXPath);
-    assert(match.startContainer === expectedStartContainer,
-      `unexpected start container: ${prettyNodeName(match.startContainer)}; `
-      + `expected ${prettyNodeName(expectedStartContainer)}`
+    const expectedStartContainer = evaluateXPath(
+      doc,
+      expectedRange.startContainerXPath,
+    );
+    const expectedEndContainer = evaluateXPath(
+      doc,
+      expectedRange.endContainerXPath,
+    );
+    assert(
+      match.startContainer === expectedStartContainer,
+      `unexpected start container: ${prettyNodeName(match.startContainer)}; ` +
+        `expected ${prettyNodeName(expectedStartContainer)}`,
     );
     assert.equal(match.startOffset, expectedRange.startOffset);
-    assert(match.endContainer === evaluateXPath(doc, expectedRange.endContainerXPath),
-      `unexpected end container: ${prettyNodeName(match.endContainer)}; `
-      + `expected ${prettyNodeName(expectedEndContainer)}`
+    assert(
+      match.endContainer ===
+        evaluateXPath(doc, expectedRange.endContainerXPath),
+      `unexpected end container: ${prettyNodeName(match.endContainer)}; ` +
+        `expected ${prettyNodeName(expectedEndContainer)}`,
     );
     assert.equal(match.endOffset, expectedRange.endOffset);
   });

@@ -24,12 +24,12 @@ import { RangeInfo } from './utils';
 
 const testCases: {
   [name: string]: {
-    html: string,
-    range: RangeInfo,
-    expected: TextQuoteSelector,
-  }
+    html: string;
+    range: RangeInfo;
+    expected: TextQuoteSelector;
+  };
 } = {
-  'simple': {
+  simple: {
     html: '<b>lorem ipsum dolor amet yada yada</b>',
     range: {
       startContainerXPath: '//b/text()',

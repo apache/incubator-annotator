@@ -19,7 +19,9 @@
  */
 
 import { assert } from 'chai';
+
 import { describeTextQuote } from '../../src/text-quote/describe';
+
 import testCases from './describe-cases';
 import testMatchCases from './match-cases';
 import { hydrateRange, evaluateXPath } from './utils';
@@ -32,7 +34,7 @@ describe('describeTextQuote', () => {
       const doc = domParser.parseFromString(html, 'text/html');
       const result = await describeTextQuote(hydrateRange(range, doc), doc);
       assert.deepEqual(result, expected);
-    })
+    });
   }
 
   it('works with custom scope', async () => {
@@ -68,13 +70,17 @@ describe('describeTextQuote', () => {
   it('works if the range equals the scope', async () => {
     const { html, range, expected } = testCases['simple'];
     const doc = domParser.parseFromString(html, 'text/html');
-    const result = await describeTextQuote(hydrateRange(range, doc), hydrateRange(range, doc));
+    const result = await describeTextQuote(
+      hydrateRange(range, doc),
+      hydrateRange(range, doc),
+    );
     assert.deepEqual(result, expected);
   });
 
   describe('inverts test cases of text quote matcher', () => {
-    const applicableTestCases = Object.entries(testMatchCases)
-      .filter(([_, { expected }]) => expected.length > 0);
+    const applicableTestCases = Object.entries(testMatchCases).filter(
+      ([_, { expected }]) => expected.length > 0,
+    );
 
     for (const [name, { html, selector, expected }] of applicableTestCases) {
       it(`case: '${name}'`, async () => {
@@ -85,9 +91,21 @@ describe('describeTextQuote', () => {
           assert.equal(result.exact, selector.exact);
           // Our result may have a different combination of prefix/suffix; only check for obvious inconsistency.
           if (selector.prefix && result.prefix)
-            assert(selector.prefix.endsWith(result.prefix.substring(result.prefix.length - selector.prefix.length)), 'Inconsistent prefixes');
+            assert(
+              selector.prefix.endsWith(
+                result.prefix.substring(
+                  result.prefix.length - selector.prefix.length,
+                ),
+              ),
+              'Inconsistent prefixes',
+            );
           if (selector.suffix && result.suffix)
-            assert(selector.suffix.startsWith(result.suffix.substring(0, selector.suffix.length)), 'Inconsistent suffixes');
+            assert(
+              selector.suffix.startsWith(
+                result.suffix.substring(0, selector.suffix.length),
+              ),
+              'Inconsistent suffixes',
+            );
         }
       });
     }

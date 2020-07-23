@@ -21,11 +21,12 @@
 import { RangeSelector, Selector } from '@annotator/selector';
 
 import { ownerDocument } from '../scope';
-import { product } from './cartesian';
 import { DomMatcher, DomScope } from '../types';
 
+import { product } from './cartesian';
+
 export function makeCreateRangeSelectorMatcher(
-  createMatcher: <T extends Selector>(selector: T) => DomMatcher
+  createMatcher: <T extends Selector>(selector: T) => DomMatcher,
 ): (selector: RangeSelector) => DomMatcher {
   return function createRangeSelectorMatcher(selector: RangeSelector) {
     const startMatcher = createMatcher(selector.startSelector);
@@ -39,7 +40,7 @@ export function makeCreateRangeSelectorMatcher(
 
       const pairs = product(startMatches, endMatches);
 
-      for await (let [start, end] of pairs) {
+      for await (const [start, end] of pairs) {
         const result = document.createRange();
 
         result.setStart(start.endContainer, start.endOffset);

@@ -30,8 +30,8 @@
 // - attributes: an Object defining any attributes to be set on the wrapper elements.
 export function highlightRange(
   range: Range,
-  tagName: string = 'mark',
-  attributes: Record<string, string> = {}
+  tagName = 'mark',
+  attributes: Record<string, string> = {},
 ): () => void {
   // First put all nodes in an array (splits start and end nodes if needed)
   const nodes = textNodesInRange(range);
@@ -59,10 +59,7 @@ function textNodesInRange(range: Range): Text[] {
   if (range.collapsed) return [];
 
   // If the start or end node is a text node and only partly in the range, split it.
-  if (
-    isTextNode(range.startContainer) &&
-    range.startOffset > 0
-  ) {
+  if (isTextNode(range.startContainer) && range.startOffset > 0) {
     const endOffset = range.endOffset; // (this may get lost when the splitting the node)
     const createdNode = range.startContainer.splitText(range.startOffset);
     if (range.endContainer === range.startContainer) {
@@ -79,7 +76,8 @@ function textNodesInRange(range: Range): Text[] {
   }
 
   // Collect the text nodes.
-  const document = range.startContainer.ownerDocument || range.startContainer as Document;
+  const document =
+    range.startContainer.ownerDocument || (range.startContainer as Document);
   const walker = document.createTreeWalker(
     range.commonAncestorContainer,
     NodeFilter.SHOW_TEXT,
@@ -87,7 +85,7 @@ function textNodesInRange(range: Range): Text[] {
       acceptNode: node =>
         range.intersectsNode(node)
           ? NodeFilter.FILTER_ACCEPT
-          : NodeFilter.FILTER_REJECT
+          : NodeFilter.FILTER_REJECT,
     },
   );
   walker.currentNode = range.startContainer;
@@ -107,15 +105,18 @@ function textNodesInRange(range: Range): Text[] {
   // }
 
   const nodes: Text[] = [];
-  if (isTextNode(walker.currentNode))
-    nodes.push(walker.currentNode);
+  if (isTextNode(walker.currentNode)) nodes.push(walker.currentNode);
   while (walker.nextNode() && range.comparePoint(walker.currentNode, 0) !== 1)
     nodes.push(walker.currentNode as Text);
   return nodes;
 }
 
 // Replace [node] with <tagName ...attributes>[node]</tagName>
-function wrapNodeInHighlight(node: ChildNode, tagName: string, attributes: Record<string, string>): HTMLElement {
+function wrapNodeInHighlight(
+  node: ChildNode,
+  tagName: string,
+  attributes: Record<string, string>,
+): HTMLElement {
   const document = node.ownerDocument as Document;
   const highlightElement = document.createElement(tagName);
   Object.keys(attributes).forEach(key => {
@@ -149,5 +150,5 @@ function removeHighlight(highlightElement: HTMLElement) {
 }
 
 function isTextNode(node: Node): node is Text {
-  return node.nodeType === Node.TEXT_NODE
+  return node.nodeType === Node.TEXT_NODE;
 }

@@ -20,6 +20,6 @@
 
 import { Matcher } from '@annotator/selector';
 
-export type DomScope = Node | Range
+export type DomScope = Node | Range;
 
-export type DomMatcher = Matcher<DomScope, Range>
+export type DomMatcher = Matcher<DomScope, Range>;

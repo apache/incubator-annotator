@@ -20,7 +20,9 @@
 
 import cartesianArrays from 'cartesian';
 
-export async function* product<T>(...iterables: AsyncIterable<T>[]): AsyncGenerator<Array<T>, void, undefined> {
+export async function* product<T>(
+  ...iterables: AsyncIterable<T>[]
+): AsyncGenerator<Array<T>, void, undefined> {
   // We listen to all iterators in parallel, while logging all the values they
   // produce. Whenever an iterator produces a value, we produce and yield all
   // combinations of that value with the logged values from other iterators.
@@ -31,18 +33,19 @@ export async function* product<T>(...iterables: AsyncIterable<T>[]): AsyncGenera
   const logs: T[][] = iterables.map(() => []);
 
   type NumberedResultPromise = Promise<{
-    nextResult: IteratorResult<T>,
-    iterableNr: number
+    nextResult: IteratorResult<T>;
+    iterableNr: number;
   }>;
 
-  function notNull(p: NumberedResultPromise | null): p is NumberedResultPromise {
-    return p !== null
+  function notNull(
+    p: NumberedResultPromise | null,
+  ): p is NumberedResultPromise {
+    return p !== null;
   }
 
-  const nextValuePromises: Array<NumberedResultPromise | null> = iterators.map((iterator, iterableNr) =>
-    iterator
-      .next()
-      .then(
+  const nextValuePromises: Array<NumberedResultPromise | null> = iterators.map(
+    (iterator, iterableNr) =>
+      iterator.next().then(
         // Label the result with iterableNr, to know which iterable produced
         // this value after Promise.race below.
         nextResult => ({ nextResult, iterableNr }),

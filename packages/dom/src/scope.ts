@@ -21,10 +21,8 @@
 import { DomScope } from './types';
 
 export function ownerDocument(scope: DomScope): Document {
-  const node = isRange(scope)
-    ? scope.commonAncestorContainer
-    : scope;
-  return node.ownerDocument || node as Document;
+  const node = isRange(scope) ? scope.commonAncestorContainer : scope;
+  return node.ownerDocument || (node as Document);
 }
 
 export function rangeFromScope(scope: DomScope): Range {

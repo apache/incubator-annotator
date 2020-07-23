@@ -19,6 +19,7 @@
  */
 
 import { assert } from 'chai';
+
 import { product } from '../../src/range/cartesian';
 
 async function* gen1() {
@@ -51,7 +52,7 @@ describe('cartesian', () => {
       ];
 
       const result: number[][] = [];
-      for await (let value of cart) {
+      for await (const value of cart) {
         result.push(value);
       }
 
