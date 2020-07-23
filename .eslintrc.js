@@ -50,6 +50,7 @@ module.exports = {
         'babel.config.js',
         'husky.config.js',
         'nyc.config.js',
+        'web/webpack.config.js',
       ],
       env: {
         es2017: true,
