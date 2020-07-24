@@ -25,7 +25,7 @@ import { createTextQuoteSelectorMatcher } from '../../src/text-quote/match';
 import { DomScope } from '../../src/types';
 
 import testCases from './match-cases';
-import { evaluateXPath, RangeInfo } from './utils';
+import { evaluateXPath, RangeInfo } from '../utils';
 
 const domParser = new window.DOMParser();
 
@@ -121,7 +121,7 @@ describe('createTextQuoteSelectorMatcher', () => {
     const doc = domParser.parseFromString(html, 'text/html');
 
     // Use the substring ‘ipsum dolor amet’ as scope.
-    const scope = document.createRange();
+    const scope = doc.createRange();
     scope.setStart(evaluateXPath(doc, '//b/text()'), 6);
     scope.setEnd(evaluateXPath(doc, '//b/text()'), 22);
     await testMatcher(doc, scope, selector, expected);
@@ -132,7 +132,7 @@ describe('createTextQuoteSelectorMatcher', () => {
     const doc = domParser.parseFromString(html, 'text/html');
 
     // Use the substring ‘sum dolor am’ as scope.
-    const scope = document.createRange();
+    const scope = doc.createRange();
     scope.setStart(evaluateXPath(doc, '//i/text()'), 2);
     scope.setEnd(evaluateXPath(doc, '//u/text()'), 2);
     await testMatcher(doc, scope, selector, expected);
@@ -142,7 +142,7 @@ describe('createTextQuoteSelectorMatcher', () => {
     const { html, selector, expected } = testCases['across elements'];
     const doc = domParser.parseFromString(html, 'text/html');
 
-    const scope = document.createRange();
+    const scope = doc.createRange();
     scope.setStart(evaluateXPath(doc, '//b'), 1); // before the <i>
     scope.setEnd(evaluateXPath(doc, '//b'), 4); // before the " yada yada"
     await testMatcher(doc, scope, selector, expected);
@@ -152,7 +152,7 @@ describe('createTextQuoteSelectorMatcher', () => {
     const { html, selector } = testCases['simple'];
     const doc = domParser.parseFromString(html, 'text/html');
 
-    const scope = document.createRange();
+    const scope = doc.createRange();
     await testMatcher(doc, scope, selector, []);
   });
 
@@ -160,7 +160,7 @@ describe('createTextQuoteSelectorMatcher', () => {
     const { html, selector } = testCases['simple'];
     const doc = domParser.parseFromString(html, 'text/html');
 
-    const scope = document.createRange();
+    const scope = doc.createRange();
     scope.setStart(evaluateXPath(doc, '//b/text()'), 0);
     scope.setEnd(evaluateXPath(doc, '//b/text()'), 19);
     await testMatcher(doc, scope, selector, []);
@@ -170,7 +170,7 @@ describe('createTextQuoteSelectorMatcher', () => {
     const { html, selector } = testCases['simple'];
     const doc = domParser.parseFromString(html, 'text/html');
 
-    const scope = document.createRange();
+    const scope = doc.createRange();
     scope.setStart(evaluateXPath(doc, '//b/text()'), 13);
     scope.setEnd(evaluateXPath(doc, '//b/text()'), 32);
     await testMatcher(doc, scope, selector, []);

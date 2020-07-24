@@ -20,7 +20,7 @@
 
 import { TextQuoteSelector } from '@annotator/selector';
 
-import { RangeInfo } from './utils';
+import { RangeInfo } from '../utils';
 
 const testCases: {
   [name: string]: {
