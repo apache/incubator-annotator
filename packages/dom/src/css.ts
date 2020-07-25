@@ -18,7 +18,7 @@
  * under the License.
  */
 
-import { CssSelector, Matcher } from '@annotator/selector';
+import type { CssSelector, Matcher } from '@annotator/selector';
 
 export function createCssSelectorMatcher(
   selector: CssSelector,

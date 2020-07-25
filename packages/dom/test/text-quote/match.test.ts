@@ -19,7 +19,7 @@
  */
 
 import { assert } from 'chai';
-import { TextQuoteSelector } from '@annotator/selector';
+import type { TextQuoteSelector } from '@annotator/selector';
 
 import { createTextQuoteSelectorMatcher } from '../../src/text-quote/match';
 import { DomScope } from '../../src/types';

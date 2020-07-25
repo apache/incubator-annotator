@@ -18,7 +18,7 @@
  * under the License.
  */
 
-import { TextQuoteSelector } from '@annotator/selector';
+import type { TextQuoteSelector } from '@annotator/selector';
 
 import { RangeInfo } from '../utils';
 

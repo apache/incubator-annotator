@@ -19,7 +19,7 @@
  */
 
 import seek from 'dom-seek';
-import { TextQuoteSelector } from '@annotator/selector';
+import type { TextQuoteSelector } from '@annotator/selector';
 
 import { DomScope } from '../types';
 import { ownerDocument, rangeFromScope } from '../scope';

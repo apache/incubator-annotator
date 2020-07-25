@@ -18,7 +18,7 @@
  * under the License.
  */
 
-import { Matcher } from '@annotator/selector';
+import type { Matcher } from '@annotator/selector';
 
 export type DomScope = Node | Range;
 

@@ -18,7 +18,7 @@
  * under the License.
  */
 
-import { RangeSelector, Selector } from '@annotator/selector';
+import type { RangeSelector, Selector } from '@annotator/selector';
 
 import { ownerDocument } from '../scope';
 import { DomMatcher, DomScope } from '../types';
