@@ -22,7 +22,7 @@ import type { TextQuoteSelector } from '@annotator/selector';
 
 import { RangeInfo } from '../utils';
 
-const testCases: {
+export const testCases: {
   [name: string]: {
     html: string;
     selector: TextQuoteSelector;
@@ -361,5 +361,3 @@ const testCases: {
     expected: [],
   },
 };
-
-export default testCases;

@@ -25,7 +25,7 @@ import { createTextQuoteSelectorMatcher } from '../../src/text-quote/match';
 import { DomScope } from '../../src/types';
 import { evaluateXPath, RangeInfo } from '../utils';
 
-import testCases from './match-cases';
+import { testCases } from './match-cases';
 
 const domParser = new window.DOMParser();
 

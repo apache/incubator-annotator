@@ -22,7 +22,7 @@ import type { TextQuoteSelector } from '@annotator/selector';
 
 import { RangeInfo } from '../utils';
 
-const testCases: {
+export const testCases: {
   [name: string]: {
     html: string;
     range: RangeInfo;
@@ -135,5 +135,3 @@ const testCases: {
     },
   },
 };
-
-export default testCases;
