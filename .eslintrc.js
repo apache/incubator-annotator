@@ -31,9 +31,23 @@ const babelModuleResolver = babelConfig.options.plugins.find(
 
 module.exports = {
   root: true,
-  extends: ['eslint:recommended', 'prettier'],
-  plugins: ['prettier'],
+  extends: ['eslint:recommended', 'plugin:import/recommended', 'prettier'],
+  plugins: ['import', 'prettier'],
   rules: {
+    'import/extensions': [
+      'error',
+      'ignorePackages',
+      {
+        ts: 'never',
+      },
+    ],
+    'import/first': 'error',
+    'import/newline-after-import': 'error',
+    'import/no-default-export': 'error',
+    'import/no-internal-modules': 'error',
+    'import/no-relative-parent-imports': 'error',
+    'import/order': ['error', { 'newlines-between': 'always' }],
+    'import/unambiguous': 'error',
     'prettier/prettier': [
       'error',
       {
@@ -41,6 +55,11 @@ module.exports = {
         trailingComma: 'all',
       },
     ],
+  },
+  settings: {
+    'import/resolver': {
+      'babel-module': babelModuleResolver.options,
+    },
   },
   overrides: [
     {
@@ -59,6 +78,8 @@ module.exports = {
       plugins: ['node'],
       rules: {
         'no-console': 'off',
+        'import/no-default-export': 'off',
+        'import/unambiguous': 'off',
         'node/no-unsupported-features': 'error',
       },
     },
@@ -71,41 +92,21 @@ module.exports = {
       extends: [
         'plugin:@typescript-eslint/recommended',
         'plugin:@typescript-eslint/recommended-requiring-type-checking',
-        'plugin:import/recommended',
         'plugin:import/typescript',
+        'prettier/@typescript-eslint',
       ],
       parserOptions: {
         ecmaVersion: 2020,
         project: ['./tsconfig.json'],
         tsconfigRootDir: __dirname,
       },
-      plugins: ['@typescript-eslint', 'import'],
+      plugins: ['@typescript-eslint'],
       rules: {
         '@typescript-eslint/explicit-function-return-type': 'off',
         '@typescript-eslint/no-unused-vars': [
           'error',
           { argsIgnorePattern: '^_' },
         ],
-
-        'import/extensions': [
-          'error',
-          'ignorePackages',
-          {
-            ts: 'never',
-          },
-        ],
-        'import/first': 'error',
-        'import/newline-after-import': 'error',
-        'import/no-default-export': 'error',
-        'import/no-internal-modules': 'error',
-        'import/no-relative-parent-imports': 'error',
-        'import/order': ['error', { 'newlines-between': 'always' }],
-        'import/unambiguous': 'error',
-      },
-      settings: {
-        'import/resolver': {
-          'babel-module': babelModuleResolver.options,
-        },
       },
     },
     {
