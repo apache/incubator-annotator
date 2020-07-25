@@ -91,7 +91,7 @@ function cleanup() {
   target.normalize();
 }
 
-const createMatcher = makeRefinable(selector => {
+const createMatcher = makeRefinable((selector) => {
   const innerCreateMatcher = {
     TextQuoteSelector: createTextQuoteSelectorMatcher,
     RangeSelector: makeCreateRangeSelectorMatcher(createMatcher),

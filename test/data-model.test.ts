@@ -58,7 +58,7 @@ const DEFINITIONS = [
   'id',
   'otherProperties',
   'specificResource',
-].map(name => requireJSON(`web-annotation-tests/definitions/${name}.json`));
+].map((name) => requireJSON(`web-annotation-tests/definitions/${name}.json`));
 
 const MUSTS = requireJSON(
   'web-annotation-tests/annotations/annotationMusts.test',
@@ -68,12 +68,12 @@ const META_SCHEMA = requireJSON('ajv/lib/refs/json-schema-draft-04.json');
 
 const ajv = new Ajv({ schemaId: 'auto', meta: false });
 ajv.addMetaSchema(META_SCHEMA);
-DEFINITIONS.forEach(schema => ajv.addSchema(schema));
+DEFINITIONS.forEach((schema) => ajv.addSchema(schema));
 
 describe('Test JSON against Schemas', () => {
   let data: Record<string, unknown>;
 
-  before(async function() {
+  before(async function () {
     if (!found_url) {
       this.skip();
     } else {

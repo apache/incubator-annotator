@@ -28,7 +28,9 @@ export async function* product<T>(
   // combinations of that value with the logged values from other iterators.
   // Every combination is thus made exactly once, and as soon as it is known.
 
-  const iterators = iterables.map(iterable => iterable[Symbol.asyncIterator]());
+  const iterators = iterables.map((iterable) =>
+    iterable[Symbol.asyncIterator](),
+  );
   // Initialise an empty log for each iterable.
   const logs: T[][] = iterables.map(() => []);
 
@@ -48,7 +50,7 @@ export async function* product<T>(
       iterator.next().then(
         // Label the result with iterableNr, to know which iterable produced
         // this value after Promise.race below.
-        nextResult => ({ nextResult, iterableNr }),
+        (nextResult) => ({ nextResult, iterableNr }),
       ),
   );
 
@@ -77,7 +79,7 @@ export async function* product<T>(
     // Start listening for the next value of this iterable.
     nextValuePromises[iterableNr] = iterators[iterableNr]
       .next()
-      .then(nextResult => ({ nextResult, iterableNr }));
+      .then((nextResult) => ({ nextResult, iterableNr }));
 
     // Yield each of the produced combinations separately.
     yield* combinations;

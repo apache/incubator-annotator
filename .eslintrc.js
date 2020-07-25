@@ -26,7 +26,7 @@ const babel = require('@babel/core');
 // Relevant issue: tleunen/eslint-import-resolver-babel-module#89
 const babelConfig = babel.loadPartialConfig({ cwd: __dirname });
 const babelModuleResolver = babelConfig.options.plugins.find(
-  item => item.file.request === 'module-resolver',
+  (item) => item.file.request === 'module-resolver',
 );
 
 module.exports = {

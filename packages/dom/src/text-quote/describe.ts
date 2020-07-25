@@ -135,8 +135,8 @@ function minimalSolution(
   requirements.push([0, 0]);
 
   // Build all the pairs and order them by their sums.
-  const pairs = requirements.flatMap(l =>
-    requirements.map<[number, number]>(r => [l[0], r[1]]),
+  const pairs = requirements.flatMap((l) =>
+    requirements.map<[number, number]>((r) => [l[0], r[1]]),
   );
   pairs.sort((a, b) => a[0] + a[1] - (b[0] + b[1]));
 

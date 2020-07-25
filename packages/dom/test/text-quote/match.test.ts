@@ -23,9 +23,9 @@ import { TextQuoteSelector } from '@annotator/selector';
 
 import { createTextQuoteSelectorMatcher } from '../../src/text-quote/match';
 import { DomScope } from '../../src/types';
+import { evaluateXPath, RangeInfo } from '../utils';
 
 import testCases from './match-cases';
-import { evaluateXPath, RangeInfo } from '../utils';
 
 const domParser = new window.DOMParser();
 

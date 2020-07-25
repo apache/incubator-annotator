@@ -79,7 +79,7 @@ function textNodesInRange(range: Range): Text[] {
     range.commonAncestorContainer,
     NodeFilter.SHOW_TEXT,
     {
-      acceptNode: node =>
+      acceptNode: (node) =>
         range.intersectsNode(node)
           ? NodeFilter.FILTER_ACCEPT
           : NodeFilter.FILTER_REJECT,
@@ -116,7 +116,7 @@ function wrapNodeInHighlight(
 ): HTMLElement {
   const document = node.ownerDocument as Document;
   const highlightElement = document.createElement(tagName);
-  Object.keys(attributes).forEach(key => {
+  Object.keys(attributes).forEach((key) => {
     highlightElement.setAttribute(key, attributes[key]);
   });
   const tempRange = document.createRange();

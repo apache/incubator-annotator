@@ -21,10 +21,10 @@
 import { assert } from 'chai';
 
 import { describeTextQuote } from '../../src/text-quote/describe';
+import { hydrateRange, evaluateXPath } from '../utils';
 
 import testCases from './describe-cases';
 import testMatchCases from './match-cases';
-import { hydrateRange, evaluateXPath } from '../utils';
 
 const domParser = new window.DOMParser();
 

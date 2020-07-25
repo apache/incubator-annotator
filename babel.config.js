@@ -18,7 +18,7 @@
  * under the License.
  */
 
-module.exports = api => {
+module.exports = (api) => {
   const ENV = api.env();
   const DEV = ENV === 'development';
   const TEST = ENV === 'test';
