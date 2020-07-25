@@ -32,6 +32,14 @@ module.exports = (api) => {
     targets: 'defaults',
   };
 
+  // Options for the @babel/typescript preset.
+  const typescriptOptions = {
+    // Opt in to a Babel 8 default.
+    allowDeclareFields: true,
+    // Be explicit about type-only imports.
+    onlyRemoveTypeImports: true,
+  };
+
   // Options for the module-resolver plugin.
   // Used for resolving source files during development.
   let resolverOptions = {
@@ -55,6 +63,9 @@ module.exports = (api) => {
       ...(DEV ? [['module-resolver', resolverOptions]] : []),
       ...(TEST ? ['istanbul'] : []),
     ],
-    presets: [['@babel/env', envOptions], '@babel/preset-typescript'],
+    presets: [
+      ['@babel/env', envOptions],
+      ['@babel/typescript', typescriptOptions],
+    ],
   };
 };
