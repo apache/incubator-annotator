@@ -56,7 +56,7 @@ describe('cartesian', () => {
         result.push(value);
       }
 
-      assert.sameDeepMembers(expected, result, 'yields the expected items');
+      assert.sameDeepMembers(result, expected, 'yields the expected items');
     });
   });
 });
