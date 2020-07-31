@@ -19,5 +19,7 @@
  */
 
 module.exports = {
+  extension: ['.ts'],
   require: ['./babel-register.js', 'global-jsdom/lib/register'],
+  timeout: 5000,
 };
