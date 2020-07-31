@@ -50,8 +50,8 @@ module.exports = (api) => {
 
   // Options for the @babel/transform-runtime plugin.
   const runtimeOptions = {
-    // Use core-js version 3.
-    corejs: 3,
+    // Use corejs version 3 with shipped proposals.
+    corejs: { proposals: true, version: 3 },
     // Use helpers formatted for the target environment.
     useESModules: !CJS && !TEST,
   };
