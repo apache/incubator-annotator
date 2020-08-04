@@ -1,7 +1,8 @@
 !.eslintrc.js
 !.mocharc.js
+!/packages/*/src/types
+**/*.d.ts
 /coverage
-/packages/*/esm/*
-/packages/*/lib/*
-/packages/*/node_modules/*
+/packages/*/esm
+/packages/*/lib
 /web/dist
