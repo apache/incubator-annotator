@@ -10,6 +10,7 @@ lerna.json
 node_modules
 package.json
 repolinter.json
+tsconfig.base.json
 tsconfig.json
 yarn.lock
 CODE_OF_CONDUCT.md
