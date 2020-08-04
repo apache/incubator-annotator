@@ -8,7 +8,7 @@
     "downlevelIteration": true,
     "emitDeclarationOnly": true,
     "isolatedModules": true,
-    "lib": ["esnext"],
+    "lib": ["es2020"],
     "moduleResolution": "node",
     "strict": true,
     "target": "es2017"
