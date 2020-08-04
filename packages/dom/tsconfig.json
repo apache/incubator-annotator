@@ -2,5 +2,10 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "lib": ["dom", "dom.iterable", "esnext"]
-  }
+  },
+  "references": [
+    {
+      "path": "../selector/tsconfig.json"
+    }
+  ]
 }
