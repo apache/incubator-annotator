@@ -1,6 +1,9 @@
+*.d.ts
+*.d.ts.map
 .nyc_output
 coverage
 node_modules
+tsconfig.tsbuildinfo
 /web/dist
 /packages/*/LICENSE
 /packages/*/NOTICE

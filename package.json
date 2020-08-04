@@ -15,11 +15,12 @@
     ]
   },
   "scripts": {
-    "build": "yarn run build:cjs && yarn run build:esm && yarn run build:misc",
+    "build": "yarn run build:cjs && yarn run build:esm && yarn run build:misc && yarn run build:types",
     "build:babel": "lerna exec --parallel -- babel --extensions '.js,.ts' --root-mode upward",
     "build:cjs": "cross-env BABEL_ENV=cjs yarn build:babel -d lib src",
     "build:esm": "cross-env BABEL_ENV=esm yarn build:babel -d esm src",
     "build:misc": "lerna exec -- cp ../../LICENSE ../../NOTICE .",
+    "build:types": "tsc --build",
     "clean": "lerna exec -- rimraf LICENSE NOTICE esm lib",
     "lint": "eslint .",
     "prepare": "lerna run prepare",

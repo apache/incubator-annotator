@@ -9,8 +9,9 @@
   },
   "license": "Apache-2.0",
   "author": "Apache Software Foundation",
-  "main": "lib/index.js",
-  "module": "esm/index.js",
+  "main": "./lib/index.js",
+  "module": "./esm/index.js",
+  "types": "./src/index.d.ts",
   "dependencies": {
     "@babel/runtime-corejs3": "^7.8.7",
     "core-js": "^3.6.4"

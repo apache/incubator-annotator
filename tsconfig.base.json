@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": "./",
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "downlevelIteration": true,
+    "emitDeclarationOnly": true,
+    "isolatedModules": true,
+    "lib": ["esnext"],
+    "moduleResolution": "node",
+    "strict": true,
+    "target": "es2017"
+  }
+}
