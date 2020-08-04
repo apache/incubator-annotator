@@ -4,8 +4,8 @@
 coverage
 node_modules
 tsconfig.tsbuildinfo
-/web/dist
 /packages/*/LICENSE
 /packages/*/NOTICE
 /packages/*/esm
 /packages/*/lib
+/web/dist
