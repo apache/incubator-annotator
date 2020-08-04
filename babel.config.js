@@ -26,6 +26,9 @@ module.exports = (api) => {
 
   // Options for the @babel/env preset.
   const envOptions = {
+    // Use minimal syntax fixes where possible
+    // Note: This setting may become the default in Babel 8.
+    bugfixes: true,
     // Transform module syntax if necessary.
     modules: CJS || TEST ? 'commonjs' : false,
     // Set target environment to default browsers.
