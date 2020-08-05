@@ -61,10 +61,10 @@ module.exports = (api) => {
 
   return {
     plugins: [
-      'preserve-comment-header',
       ['@babel/transform-runtime', runtimeOptions],
-      ...(DEV ? [['module-resolver', resolverOptions]] : []),
       ...(TEST ? ['istanbul'] : []),
+      ...(DEV ? [['module-resolver', resolverOptions]] : []),
+      'preserve-comment-header',
     ],
     presets: [
       ['@babel/env', envOptions],
