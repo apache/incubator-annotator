@@ -43,11 +43,29 @@ module.exports = (api) => {
     onlyRemoveTypeImports: true,
   };
 
+  const addImportExtensionOptions = {
+    extension: DEV || TEST ? 'ts' : 'js',
+  };
+
   // Options for the module-resolver plugin.
   // Used for resolving source files during development.
-  let resolverOptions = {
+  const resolverOptions = {
     alias: {
-      '^@annotator/(.+)$': '@annotator/\\1/src/index.ts',
+      ...(DEV || TEST
+        ? {
+            '^@annotator/(.+)$': '@annotator/\\1/src/index.ts',
+          }
+        : null),
+      // TODO: Remove after babel/babel#8462 ships.
+      '^@babel/runtime-corejs3/core-js/(.+)$':
+        '@babel/runtime-corejs3/core-js/\\1.js',
+      '^@babel/runtime-corejs3/core-js-stable/(.+)$':
+        '@babel/runtime-corejs3/core-js-stable/\\1.js',
+      '^@babel/runtime-corejs3/helpers/(.+)$':
+        '@babel/runtime-corejs3/helpers/\\1.js',
+      '^@babel/runtime-corejs3/regenerator$':
+        '@babel/runtime-corejs3/regenerator/index.js',
+      extensions: ['.js', '.ts'],
     },
   };
 
@@ -56,14 +74,16 @@ module.exports = (api) => {
     // Use corejs version 3.
     corejs: { version: 3 },
     // Use helpers formatted for the target environment.
-    useESModules: !CJS && !TEST,
+    // TODO: Re-enable after babel/babel#8462 ships.
+    // useESModules: !CJS && !TEST,
   };
 
   return {
     plugins: [
       ['@babel/transform-runtime', runtimeOptions],
       ...(TEST ? ['istanbul'] : []),
-      ...(DEV ? [['module-resolver', resolverOptions]] : []),
+      ['add-import-extension', addImportExtensionOptions],
+      ['module-resolver', resolverOptions],
       'preserve-comment-header',
     ],
     presets: [
