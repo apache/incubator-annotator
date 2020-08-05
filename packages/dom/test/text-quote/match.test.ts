@@ -22,7 +22,7 @@ import { assert } from 'chai';
 import type { TextQuoteSelector } from '@annotator/selector';
 
 import { createTextQuoteSelectorMatcher } from '../../src/text-quote/match';
-import { DomScope } from '../../src/types';
+import type { DomScope } from '../../src/types';
 import { evaluateXPath, RangeInfo } from '../utils';
 
 import { testCases } from './match-cases';

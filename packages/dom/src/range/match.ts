@@ -21,7 +21,7 @@
 import type { RangeSelector, Selector } from '@annotator/selector';
 
 import { ownerDocument } from '../scope';
-import { DomMatcher, DomScope } from '../types';
+import type { DomMatcher, DomScope } from '../types';
 
 import { product } from './cartesian';
 

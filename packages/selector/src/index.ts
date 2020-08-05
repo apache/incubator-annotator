@@ -18,9 +18,9 @@
  * under the License.
  */
 
-import { Selector, Matcher } from './types';
+import type { Selector, Matcher } from './types';
 
-export * from './types';
+export type { Selector, Matcher };
 
 export function makeRefinable<
   // Any subtype of Selector can be made refinable; but note we limit the value

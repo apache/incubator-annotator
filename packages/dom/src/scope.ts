@@ -18,7 +18,7 @@
  * under the License.
  */
 
-import { DomScope } from './types';
+import type { DomScope } from './types';
 
 export function ownerDocument(scope: DomScope): Document {
   const node = isRange(scope) ? scope.commonAncestorContainer : scope;

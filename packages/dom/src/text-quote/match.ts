@@ -21,7 +21,7 @@
 import type { TextQuoteSelector } from '@annotator/selector';
 import seek from 'dom-seek';
 
-import { DomScope, DomMatcher } from '../types';
+import type { DomScope, DomMatcher } from '../types';
 import { ownerDocument, rangeFromScope } from '../scope';
 
 export function createTextQuoteSelectorMatcher(
