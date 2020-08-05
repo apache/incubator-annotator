@@ -22,7 +22,7 @@
     "@annotator/selector": "^0.1.0"
   },
   "engines": {
-    "node": ">=10.0.0"
+    "node": "^10 || ^11 || ^12 || >=13.7"
   },
   "publishConfig": {
     "access": "public"
