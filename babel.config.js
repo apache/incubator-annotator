@@ -44,7 +44,7 @@ module.exports = (api) => {
   };
 
   const addImportExtensionOptions = {
-    extension: DEV || TEST ? 'ts' : 'js',
+    extension: DEV || TEST ? 'ts' : CJS ? 'js' : 'mjs',
   };
 
   // Options for the module-resolver plugin.

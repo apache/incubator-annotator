@@ -9,13 +9,12 @@
   },
   "license": "Apache-2.0",
   "author": "Apache Software Foundation",
-  "type": "module",
   "exports": {
-    "import": "./esm/index.js",
+    "import": "./lib/index.mjs",
     "require": "./lib/index.js"
   },
   "main": "./lib/index.js",
-  "module": "./esm/index.js",
+  "module": "./lib/index.mjs",
   "types": "./src/types.d.ts",
   "dependencies": {
     "@babel/runtime-corejs3": "^7.8.7",
