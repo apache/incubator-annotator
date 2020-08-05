@@ -9,6 +9,11 @@
   },
   "license": "Apache-2.0",
   "author": "Apache Software Foundation",
+  "type": "module",
+  "exports": {
+    "import": "./esm/index.js",
+    "require": "./lib/index.js"
+  },
   "main": "./lib/index.js",
   "module": "./esm/index.js",
   "types": "./src/index.d.ts",
