@@ -1,14 +1,11 @@
 {
   "extends": "../../tsconfig.base.json",
-  "include": ["./src/**/*"],
+  "include": ["src"],
   "compilerOptions": {
-    "rootDir": "./src",
-    "declarationDir": "./lib",
-    "lib": ["dom", "dom.iterable", "esnext"]
+    "outDir": "lib",
+    "rootDir": "src"
   },
   "references": [
-    {
-      "path": "../selector/tsconfig.json"
-    }
+    { "path": "../selector" }
   ]
 }

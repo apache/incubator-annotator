@@ -7,7 +7,11 @@
     "downlevelIteration": true,
     "emitDeclarationOnly": true,
     "isolatedModules": true,
-    "lib": ["es2020"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "es2020"
+    ],
     "moduleResolution": "node",
     "strict": true,
     "target": "es2017"

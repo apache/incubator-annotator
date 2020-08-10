@@ -1,17 +1,14 @@
 {
   "extends": "./tsconfig.base.json",
-  "include": ["./test"],
-  "compilerOptions": {
-    "composite": false,
-    "emitDeclarationOnly": false,
-    "noEmit": true
-  },
+  "include": [
+    "test/**/*",
+    "packages/*/test/**/*",
+  ],
   "references": [
-    {
-      "path": "./packages/dom/tsconfig.json"
-    },
-    {
-      "path": "./packages/selector/tsconfig.json"
-    }
-  ]
+    { "path": "packages/dom" },
+    { "path": "packages/selector" }
+  ],
+  "compilerOptions": {
+    "lib": ["dom", "dom.iterable", "es2018"]
+  }
 }
