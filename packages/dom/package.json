@@ -15,7 +15,7 @@
   },
   "main": "./lib/index.js",
   "module": "./lib/index.mjs",
-  "types": "./src/types.d.ts",
+  "types": "./lib/index.d.ts",
   "dependencies": {
     "@babel/runtime-corejs3": "^7.8.7",
     "cartesian": "^1.0.1",
