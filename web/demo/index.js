@@ -120,22 +120,12 @@ async function anchor(selector) {
   info.innerText = JSON.stringify(selector, null, 2);
 }
 
-async function describeSelection() {
-  const selection = document.getSelection();
-  if (selection.type !== 'Range') return;
-
-  const range = selection.getRangeAt(0);
-  if (range.collapsed) return;
-
-  return describeTextQuote(range, source);
-}
-
 async function onSelectionChange() {
-  const selector = await describeSelection();
-  if (selector) {
-    cleanup();
-    anchor(selector);
-  }
+  cleanup();
+  const selection = document.getSelection();
+  const range = selection.getRangeAt(0);
+  const selector = await describeTextQuote(range, source);
+  anchor(selector);
 }
 
 function onSelectorExampleClick(event) {
