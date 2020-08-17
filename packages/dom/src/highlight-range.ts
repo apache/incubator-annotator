@@ -21,7 +21,7 @@
 // Wrap each text node in a given DOM Range with a <mark> or other element.
 // Breaks start and/or end node if needed.
 // Returns a function that cleans up the created highlight (not a perfect undo: split text nodes are
-// not merged again).
+// not merged again; if desired, you could run range.commonAncestorContainer.normalize() afterwards).
 //
 // Parameters:
 // - range: a DOM Range object. Note that as highlighting modifies the DOM, the range may be
