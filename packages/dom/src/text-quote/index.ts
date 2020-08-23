@@ -20,3 +20,5 @@
 
 export * from './describe';
 export * from './match';
+
+export type { TextQuoteSelector } from './selector';

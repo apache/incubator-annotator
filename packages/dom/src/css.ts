@@ -18,12 +18,15 @@
  * under the License.
  */
 
-import type { CssSelector, Matcher } from '@annotator/selector';
+export interface CssSelector {
+  type: 'CssSelector';
+  value: string;
+}
 
 export function createCssSelectorMatcher(
   selector: CssSelector,
-): Matcher<Document, Element> {
-  return async function* matchAll(scope: Document) {
+): (scope: ParentNode) => AsyncIterable<Element> {
+  return async function* matchAll(scope) {
     yield* scope.querySelectorAll(selector.value);
   };
 }

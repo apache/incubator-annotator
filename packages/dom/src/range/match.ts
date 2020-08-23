@@ -18,22 +18,26 @@
  * under the License.
  */
 
-import type { RangeSelector, Selector } from '@annotator/selector';
-
-import { ownerDocument } from '../scope';
-import type { DomMatcher, DomScope } from '../types';
-
 import { product } from './cartesian';
 
-export function makeCreateRangeSelectorMatcher(
-  createMatcher: <T extends Selector>(selector: T) => DomMatcher,
-): (selector: RangeSelector) => DomMatcher {
-  return function createRangeSelectorMatcher(selector: RangeSelector) {
+export interface RangeSelector<T> {
+  type: 'RangeSelector';
+  startSelector: T;
+  endSelector: T;
+}
+
+export function makeCreateRangeSelectorMatcher<T>(
+  createMatcher: (selector: T) => (scope: Range) => AsyncIterable<Range>,
+): (selector: RangeSelector<T>) => (scope: Range) => AsyncIterable<Range> {
+  return function createRangeSelectorMatcher(selector) {
     const startMatcher = createMatcher(selector.startSelector);
     const endMatcher = createMatcher(selector.endSelector);
 
-    return async function* matchAll(scope: DomScope) {
-      const document = ownerDocument(scope);
+    return async function* matchAll(scope: Range) {
+      const { commonAncestorContainer } = scope;
+      const document =
+        commonAncestorContainer.ownerDocument ??
+        (commonAncestorContainer as Document);
 
       const startMatches = startMatcher(scope);
       const endMatches = endMatcher(scope);

@@ -19,10 +19,9 @@
  */
 
 import { assert } from 'chai';
-import type { TextQuoteSelector } from '@annotator/selector';
 
+import type { TextQuoteSelector } from '../../src';
 import { createTextQuoteSelectorMatcher } from '../../src/text-quote/match';
-import type { DomScope } from '../../src/types';
 import { evaluateXPath, RangeInfo } from '../utils';
 
 import { testCases } from './match-cases';
@@ -35,13 +34,21 @@ describe('createTextQuoteSelectorMatcher', () => {
   )) {
     it(`works for case: '${name}'`, async () => {
       const doc = domParser.parseFromString(html, 'text/html');
-      await testMatcher(doc, doc, selector, expected);
+
+      const scope = doc.createRange();
+      scope.selectNodeContents(doc);
+
+      await testMatcher(doc, scope, selector, expected);
     });
   }
 
   it('handles adjacent text nodes', async () => {
     const { html, selector } = testCases['simple'];
     const doc = domParser.parseFromString(html, 'text/html');
+
+    const scope = doc.createRange();
+    scope.selectNodeContents(doc);
+
     const textNode = evaluateXPath(doc, '//b/text()') as Text;
 
     for (let index = textNode.length - 1; index > 0; index--)
@@ -49,7 +56,7 @@ describe('createTextQuoteSelectorMatcher', () => {
     // console.log([...textNode.parentNode.childNodes].map(node => node.textContent))
     // → 'l',  'o', 'r', 'e', 'm', …
 
-    await testMatcher(doc, doc, selector, [
+    await testMatcher(doc, scope, selector, [
       {
         startContainerXPath: '//b/text()[13]',
         startOffset: 0,
@@ -63,6 +70,9 @@ describe('createTextQuoteSelectorMatcher', () => {
     const { html, selector } = testCases['simple'];
     const doc = domParser.parseFromString(html, 'text/html');
 
+    const scope = doc.createRange();
+    scope.selectNodeContents(doc);
+
     const textNode = evaluateXPath(doc, '//b/text()') as Text;
     textNode.splitText(textNode.length);
     textNode.splitText(20);
@@ -75,7 +85,7 @@ describe('createTextQuoteSelectorMatcher', () => {
     // console.log([...textNode.parentNode.childNodes].map(node => node.textContent))
     // → '', 'lorem ipsum ', '', 'dolor', '', ' am', '', 'et yada yada', ''
 
-    await testMatcher(doc, doc, selector, [
+    await testMatcher(doc, scope, selector, [
       {
         startContainerXPath: '//b/text()[4]', // "dolor"
         startOffset: 0,
@@ -89,24 +99,33 @@ describe('createTextQuoteSelectorMatcher', () => {
     const { html, selector, expected } = testCases['simple'];
     const doc = domParser.parseFromString(html, 'text/html');
 
-    await testMatcher(doc, evaluateXPath(doc, '//b'), selector, expected);
+    const scope = doc.createRange();
+    scope.selectNodeContents(evaluateXPath(doc, '//b'));
+
+    await testMatcher(doc, scope, selector, expected);
   });
 
   it('works with parent of text as scope, when matching its first characters', async () => {
     const { html, selector, expected } = testCases['first characters'];
     const doc = domParser.parseFromString(html, 'text/html');
 
-    await testMatcher(doc, evaluateXPath(doc, '//b'), selector, expected);
+    const scope = doc.createRange();
+    scope.selectNodeContents(evaluateXPath(doc, '//b'));
+
+    await testMatcher(doc, scope, selector, expected);
   });
 
   it('works with parent of text as scope, when matching its first characters, with an empty text node', async () => {
     const { html, selector } = testCases['first characters'];
     const doc = domParser.parseFromString(html, 'text/html');
 
+    const scope = doc.createRange();
+    scope.selectNodeContents(evaluateXPath(doc, '//b'));
+
     const textNode = evaluateXPath(doc, '//b/text()') as Text;
     textNode.splitText(0);
 
-    await testMatcher(doc, evaluateXPath(doc, '//b'), selector, [
+    await testMatcher(doc, scope, selector, [
       {
         startContainerXPath: '//b/text()[2]',
         startOffset: 0,
@@ -179,7 +198,7 @@ describe('createTextQuoteSelectorMatcher', () => {
 
 async function testMatcher(
   doc: Document,
-  scope: DomScope,
+  scope: Range,
   selector: TextQuoteSelector,
   expected: RangeInfo[],
 ) {

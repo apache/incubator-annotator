@@ -18,8 +18,7 @@
  * under the License.
  */
 
-import type { TextQuoteSelector } from '@annotator/selector';
-
+import type { TextQuoteSelector } from '../../src';
 import { RangeInfo } from '../utils';
 
 export const testCases: {

@@ -26,7 +26,7 @@ import {
   describeTextQuote,
   highlightRange,
 } from '@annotator/dom';
-import { makeRefinable } from '@annotator/selector';
+import { withRecursiveRefinement } from '@annotator/selector';
 
 const EXAMPLE_SELECTORS = [
   {
@@ -91,7 +91,7 @@ function cleanup() {
   target.normalize();
 }
 
-const createMatcher = makeRefinable((selector) => {
+const createMatcher = withRecursiveRefinement((selector) => {
   const innerCreateMatcher = {
     TextQuoteSelector: createTextQuoteSelectorMatcher,
     RangeSelector: makeCreateRangeSelectorMatcher(createMatcher),
@@ -105,10 +105,13 @@ const createMatcher = makeRefinable((selector) => {
 });
 
 async function anchor(selector) {
+  const scope = document.createRange();
+  scope.selectNodeContents(target);
+
   const matchAll = createMatcher(selector);
   const ranges = [];
 
-  for await (const range of matchAll(target)) {
+  for await (const range of matchAll(scope)) {
     ranges.push(range);
   }
 
