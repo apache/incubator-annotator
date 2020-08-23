@@ -105,10 +105,13 @@ const createMatcher = makeRefinable((selector) => {
 });
 
 async function anchor(selector) {
+  const scope = document.createRange();
+  scope.selectNodeContents(target);
+
   const matchAll = createMatcher(selector);
   const ranges = [];
 
-  for await (const range of matchAll(target)) {
+  for await (const range of matchAll(scope)) {
     ranges.push(range);
   }
 

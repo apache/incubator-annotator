@@ -18,8 +18,8 @@
  * under the License.
  */
 
-import type { Matcher } from '@annotator/selector';
-
-export type DomScope = Node | Range;
-
-export type DomMatcher = Matcher<DomScope, Range>;
+export interface TextQuoteSelector {
+  exact: string;
+  prefix?: string;
+  suffix?: string;
+}

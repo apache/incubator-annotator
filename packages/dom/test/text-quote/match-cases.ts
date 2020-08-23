@@ -18,8 +18,7 @@
  * under the License.
  */
 
-import type { TextQuoteSelector } from '@annotator/selector';
-
+import type { TextQuoteSelector } from '../../src';
 import { RangeInfo } from '../utils';
 
 export const testCases: {
@@ -32,7 +31,6 @@ export const testCases: {
   simple: {
     html: '<b>lorem ipsum dolor amet yada yada</b>',
     selector: {
-      type: 'TextQuoteSelector',
       exact: 'dolor am',
     },
     expected: [
@@ -47,7 +45,6 @@ export const testCases: {
   'first characters': {
     html: '<b>lorem ipsum dolor amet yada yada</b>',
     selector: {
-      type: 'TextQuoteSelector',
       exact: 'lorem ipsum',
     },
     expected: [
@@ -62,7 +59,6 @@ export const testCases: {
   'last characters': {
     html: '<b>lorem ipsum dolor amet yada yada</b>',
     selector: {
-      type: 'TextQuoteSelector',
       exact: 'yada yada',
     },
     expected: [
@@ -77,7 +73,6 @@ export const testCases: {
   'across elements': {
     html: '<b>lorem <i>ipsum</i> dolor <u>amet</u> yada yada</b>',
     selector: {
-      type: 'TextQuoteSelector',
       exact: 'dolor am',
     },
     expected: [
@@ -92,7 +87,6 @@ export const testCases: {
   'exact element contents': {
     html: '<b>lorem <i>ipsum dolor</i> amet yada yada</b>',
     selector: {
-      type: 'TextQuoteSelector',
       exact: 'ipsum dolor',
     },
     expected: [
@@ -108,7 +102,6 @@ export const testCases: {
     html:
       '<head><title>The title</title></head><b>lorem ipsum dolor amet yada yada</b>',
     selector: {
-      type: 'TextQuoteSelector',
       exact: 'title',
     },
     expected: [
@@ -123,7 +116,6 @@ export const testCases: {
   'two matches': {
     html: '<b>lorem ipsum dolor amet yada yada</b>',
     selector: {
-      type: 'TextQuoteSelector',
       exact: 'yada',
     },
     expected: [
@@ -144,7 +136,6 @@ export const testCases: {
   'overlapping matches': {
     html: '<b>bananas</b>',
     selector: {
-      type: 'TextQuoteSelector',
       exact: 'ana',
     },
     expected: [
@@ -165,7 +156,6 @@ export const testCases: {
   'no matches': {
     html: '<b>lorem ipsum dolor amet yada yada</b>',
     selector: {
-      type: 'TextQuoteSelector',
       exact: 'holy grail',
     },
     expected: [],
@@ -173,7 +163,6 @@ export const testCases: {
   'with prefix': {
     html: '<b>lorem ipsum dolor amet yada yada</b>',
     selector: {
-      type: 'TextQuoteSelector',
       exact: 'yada',
       prefix: 't ',
     },
@@ -189,7 +178,6 @@ export const testCases: {
   'with suffix': {
     html: '<b>lorem ipsum dolor amet yada yada</b>',
     selector: {
-      type: 'TextQuoteSelector',
       exact: 'o',
       suffix: 'l',
     },
@@ -205,7 +193,6 @@ export const testCases: {
   'with prefix and suffix': {
     html: '<b>lorem ipsum dolor amet yada yada</b>',
     selector: {
-      type: 'TextQuoteSelector',
       exact: 'o',
       prefix: 'l',
       suffix: 're',
@@ -222,7 +209,6 @@ export const testCases: {
   'with prefix and suffix, two matches': {
     html: '<b>lorem ipsum dolor amet yada yada</b>',
     selector: {
-      type: 'TextQuoteSelector',
       exact: 'o',
       prefix: 'l',
       suffix: 'r',
@@ -245,7 +231,6 @@ export const testCases: {
   'with prefix, no matches': {
     html: '<b>lorem ipsum dolor amet yada yada</b>',
     selector: {
-      type: 'TextQuoteSelector',
       exact: 'dolor',
       prefix: 'oopsum ',
     },
@@ -254,7 +239,6 @@ export const testCases: {
   'with suffix, no matches': {
     html: '<b>lorem ipsum dolor amet yada yada</b>',
     selector: {
-      type: 'TextQuoteSelector',
       exact: 'dolor',
       suffix: ' amot',
     },
@@ -263,7 +247,6 @@ export const testCases: {
   'with suffix, no matches due to whitespace': {
     html: '<b>lorem ipsum dolor amet yada yada</b>',
     selector: {
-      type: 'TextQuoteSelector',
       exact: 'dolor',
       suffix: 'a',
     },
@@ -272,7 +255,6 @@ export const testCases: {
   'with empty prefix and suffix': {
     html: '<b>lorem ipsum dolor amet yada yada</b>',
     selector: {
-      type: 'TextQuoteSelector',
       exact: 'dolor am',
       prefix: '',
       suffix: '',
@@ -289,7 +271,6 @@ export const testCases: {
   'empty quote': {
     html: '<b>lorem</b>',
     selector: {
-      type: 'TextQuoteSelector',
       exact: '',
     },
     // A five character string contains six spots to find an empty string
@@ -305,7 +286,6 @@ export const testCases: {
   'empty quote, with prefix': {
     html: '<b>lorem ipsum dolor amet yada yada</b>',
     selector: {
-      type: 'TextQuoteSelector',
       exact: '',
       prefix: 'dolor',
     },
@@ -321,7 +301,6 @@ export const testCases: {
   'empty quote, with suffix': {
     html: '<b>lorem ipsum dolor amet yada yada</b>',
     selector: {
-      type: 'TextQuoteSelector',
       exact: '',
       suffix: 'i',
     },
@@ -337,7 +316,6 @@ export const testCases: {
   'empty quote, with prefix and suffix': {
     html: '<b>lorem ipsum dolor amet yada yada</b>',
     selector: {
-      type: 'TextQuoteSelector',
       exact: '',
       prefix: 'lorem ',
       suffix: 'ipsum',
@@ -354,7 +332,6 @@ export const testCases: {
   'empty quote, no matches': {
     html: '<b>lorem ipsum dolor amet yada yada</b>',
     selector: {
-      type: 'TextQuoteSelector',
       exact: '',
       prefix: 'X',
     },

@@ -18,8 +18,7 @@
  * under the License.
  */
 
-import type { TextQuoteSelector } from '@annotator/selector';
-
+import type { TextQuoteSelector } from '../../src';
 import { RangeInfo } from '../utils';
 
 export const testCases: {
@@ -38,7 +37,6 @@ export const testCases: {
       endOffset: 20,
     },
     expected: {
-      type: 'TextQuoteSelector',
       exact: 'dolor am',
       prefix: '',
       suffix: '',
@@ -53,7 +51,6 @@ export const testCases: {
       endOffset: 26,
     },
     expected: {
-      type: 'TextQuoteSelector',
       exact: 'anno',
       prefix: 'to ',
       suffix: '',
@@ -68,7 +65,6 @@ export const testCases: {
       endOffset: 11,
     },
     expected: {
-      type: 'TextQuoteSelector',
       exact: 'tate',
       prefix: '',
       suffix: ' ',
@@ -83,7 +79,6 @@ export const testCases: {
       endOffset: 2,
     },
     expected: {
-      type: 'TextQuoteSelector',
       exact: 'to',
       prefix: '',
       suffix: ' annotate ',
@@ -98,7 +93,6 @@ export const testCases: {
       endOffset: 30,
     },
     expected: {
-      type: 'TextQuoteSelector',
       exact: 'tate',
       prefix: 'to anno',
       suffix: '',
@@ -113,7 +107,6 @@ export const testCases: {
       endOffset: 11,
     },
     expected: {
-      type: 'TextQuoteSelector',
       exact: '',
       prefix: 'e',
       suffix: ' ',
@@ -128,7 +121,6 @@ export const testCases: {
       endOffset: 2,
     },
     expected: {
-      type: 'TextQuoteSelector',
       exact: 'annota',
       prefix: 'to ',
       suffix: '',

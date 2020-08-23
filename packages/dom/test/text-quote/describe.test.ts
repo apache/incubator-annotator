@@ -32,7 +32,9 @@ describe('describeTextQuote', () => {
   for (const [name, { html, range, expected }] of Object.entries(testCases)) {
     it(`works for case: ${name}`, async () => {
       const doc = domParser.parseFromString(html, 'text/html');
-      const result = await describeTextQuote(hydrateRange(range, doc), doc);
+      const scope = doc.createRange();
+      scope.selectNodeContents(doc);
+      const result = await describeTextQuote(hydrateRange(range, doc), scope);
       assert.deepEqual(result, expected);
     });
   }
@@ -45,7 +47,6 @@ describe('describeTextQuote', () => {
     scope.setEnd(evaluateXPath(doc, '//b/text()'), 30); // "not to annotate"
     const result = await describeTextQuote(hydrateRange(range, doc), scope);
     assert.deepEqual(result, {
-      type: 'TextQuoteSelector',
       exact: 'anno',
       prefix: '', // no prefix needed in this scope.
       suffix: '',
@@ -60,7 +61,6 @@ describe('describeTextQuote', () => {
     scope.setEnd(evaluateXPath(doc, '//b/text()'), 17); // "ipsum dolor"
     const result = await describeTextQuote(hydrateRange(range, doc), scope);
     assert.deepEqual(result, {
-      type: 'TextQuoteSelector',
       exact: 'dolor',
       prefix: '',
       suffix: '',
@@ -85,9 +85,11 @@ describe('describeTextQuote', () => {
     for (const [name, { html, selector, expected }] of applicableTestCases) {
       it(`case: '${name}'`, async () => {
         const doc = domParser.parseFromString(html, 'text/html');
+        const scope = doc.createRange();
+        scope.selectNodeContents(doc);
         for (const rangeInfo of expected) {
           const range = hydrateRange(rangeInfo, doc);
-          const result = await describeTextQuote(range, doc);
+          const result = await describeTextQuote(range, scope);
           assert.equal(result.exact, selector.exact);
           // Our result may have a different combination of prefix/suffix; only check for obvious inconsistency.
           if (selector.prefix && result.prefix)
