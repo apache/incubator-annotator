@@ -22,8 +22,22 @@ import type { CssSelector, Matcher } from '@annotator/selector';
 
 export function createCssSelectorMatcher(
   selector: CssSelector,
-): Matcher<Document, Element> {
-  return async function* matchAll(scope: Document) {
-    yield* scope.querySelectorAll(selector.value);
+): Matcher<Range, Range> {
+  return async function* matchAll(scope) {
+    const { commonAncestorContainer } = scope;
+    const { ownerDocument } = commonAncestorContainer;
+    const document = ownerDocument ?? (commonAncestorContainer as Document);
+
+    for (const element of document.querySelectorAll(selector.value)) {
+      const range = document.createRange();
+      range.selectNode(element);
+
+      if (
+        scope.isPointInRange(range.startContainer, range.startOffset) &&
+        scope.isPointInRange(range.endContainer, range.endOffset)
+      ) {
+        yield range;
+      }
+    }
   };
 }

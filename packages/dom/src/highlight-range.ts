@@ -73,8 +73,9 @@ function textNodesInRange(range: Range): Text[] {
   }
 
   // Collect the text nodes.
-  const document =
-    range.startContainer.ownerDocument || (range.startContainer as Document);
+  const { commonAncestorContainer } = range;
+  const { ownerDocument } = commonAncestorContainer;
+  const document = ownerDocument ?? (commonAncestorContainer as Document);
   const walker = document.createTreeWalker(
     range.commonAncestorContainer,
     NodeFilter.SHOW_TEXT,

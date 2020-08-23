@@ -18,19 +18,18 @@
  * under the License.
  */
 
-import type { TextQuoteSelector } from '@annotator/selector';
+import type { Matcher, TextQuoteSelector } from '@annotator/selector';
 import seek from 'dom-seek';
-
-import type { DomScope, DomMatcher } from '../types';
-import { ownerDocument, rangeFromScope } from '../scope';
 
 export function createTextQuoteSelectorMatcher(
   selector: TextQuoteSelector,
-): DomMatcher {
-  return async function* matchAll(scope: DomScope) {
-    const document = ownerDocument(scope);
-    const scopeAsRange = rangeFromScope(scope);
-    const scopeText = scopeAsRange.toString();
+): Matcher<Range, Range> {
+  return async function* matchAll(scope) {
+    const { commonAncestorContainer } = scope;
+    const { ownerDocument } = commonAncestorContainer;
+    const document = ownerDocument ?? (commonAncestorContainer as Document);
+
+    const scopeText = scope.toString();
 
     const exact = selector.exact;
     const prefix = selector.prefix || '';
@@ -38,12 +37,12 @@ export function createTextQuoteSelectorMatcher(
     const searchPattern = prefix + exact + suffix;
 
     const iter = document.createNodeIterator(
-      scopeAsRange.commonAncestorContainer,
+      commonAncestorContainer,
       NodeFilter.SHOW_TEXT,
       {
         acceptNode(node: Text) {
           // Only reveal nodes within the range; and skip any empty text nodes.
-          return scopeAsRange.intersectsNode(node) && node.length > 0
+          return scope.intersectsNode(node) && node.length > 0
             ? NodeFilter.FILTER_ACCEPT
             : NodeFilter.FILTER_REJECT;
         },
@@ -51,8 +50,8 @@ export function createTextQuoteSelectorMatcher(
     );
 
     // The index of the first character of iter.referenceNode inside the text.
-    let referenceNodeIndex = isTextNode(scopeAsRange.startContainer)
-      ? -scopeAsRange.startOffset
+    let referenceNodeIndex = isTextNode(scope.startContainer)
+      ? -scope.startOffset
       : 0;
 
     let fromIndex = 0;

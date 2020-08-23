@@ -21,44 +21,31 @@
 import seek from 'dom-seek';
 import type { TextQuoteSelector } from '@annotator/selector';
 
-import type { DomScope } from '../types';
-import { ownerDocument, rangeFromScope } from '../scope';
-
 export async function describeTextQuote(
   range: Range,
-  scope: DomScope = ownerDocument(range).documentElement,
+  scope: Range = range,
 ): Promise<TextQuoteSelector> {
   range = range.cloneRange();
 
   // Take the part of the range that falls within the scope.
-  const scopeAsRange = rangeFromScope(scope);
-  if (!scopeAsRange.isPointInRange(range.startContainer, range.startOffset))
-    range.setStart(scopeAsRange.startContainer, scopeAsRange.startOffset);
-  if (!scopeAsRange.isPointInRange(range.endContainer, range.endOffset))
-    range.setEnd(scopeAsRange.endContainer, scopeAsRange.endOffset);
+  if (!scope.isPointInRange(range.startContainer, range.startOffset))
+    range.setStart(scope.startContainer, scope.startOffset);
+  if (!scope.isPointInRange(range.endContainer, range.endOffset))
+    range.setEnd(scope.endContainer, scope.endOffset);
 
-  const exact = range.toString();
-
-  const result: TextQuoteSelector = { type: 'TextQuoteSelector', exact };
-
-  const { prefix, suffix } = calculateContextForDisambiguation(
-    range,
-    result,
-    scope,
-  );
-  result.prefix = prefix;
-  result.suffix = suffix;
-
-  return result;
+  return {
+    type: 'TextQuoteSelector',
+    exact: range.toString(),
+    ...calculateContextForDisambiguation(range, scope),
+  };
 }
 
 function calculateContextForDisambiguation(
   range: Range,
-  selector: TextQuoteSelector,
-  scope: DomScope,
+  scope: Range,
 ): { prefix?: string; suffix?: string } {
-  const exactText = selector.exact;
-  const scopeText = rangeFromScope(scope).toString();
+  const exactText = range.toString();
+  const scopeText = scope.toString();
   const targetStartIndex = getRangeTextPosition(range, scope);
   const targetEndIndex = targetStartIndex + exactText.length;
 
@@ -153,23 +140,20 @@ function minimalSolution(
 }
 
 // Get the index of the first character of range within the text of scope.
-function getRangeTextPosition(range: Range, scope: DomScope): number {
-  const scopeAsRange = rangeFromScope(scope);
+function getRangeTextPosition(range: Range, scope: Range): number {
   const iter = document.createNodeIterator(
-    scopeAsRange.commonAncestorContainer,
+    scope.commonAncestorContainer,
     NodeFilter.SHOW_TEXT,
     {
       acceptNode(node: Text) {
         // Only reveal nodes within the range
-        return scopeAsRange.intersectsNode(node)
+        return scope.intersectsNode(node)
           ? NodeFilter.FILTER_ACCEPT
           : NodeFilter.FILTER_REJECT;
       },
     },
   );
-  const scopeOffset = isTextNode(scopeAsRange.startContainer)
-    ? scopeAsRange.startOffset
-    : 0;
+  const scopeOffset = isTextNode(scope.startContainer) ? scope.startOffset : 0;
   if (isTextNode(range.startContainer))
     return seek(iter, range.startContainer) + range.startOffset - scopeOffset;
   else return seek(iter, firstTextNodeInRange(range)) - scopeOffset;
