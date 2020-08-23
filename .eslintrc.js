@@ -110,6 +110,7 @@ module.exports = {
           'error',
           { argsIgnorePattern: '^_' },
         ],
+        '@typescript-eslint/require-await': 'off',
       },
     },
     {
