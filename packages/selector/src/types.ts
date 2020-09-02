@@ -20,7 +20,10 @@
 
 export interface Selector {
   refinedBy?: this;
+  type?: SelectorType;
 }
+
+export type SelectorType = string; // not enumerating known options: we allow extensibility.
 
 export interface CssSelector extends Selector {
   type: 'CssSelector';

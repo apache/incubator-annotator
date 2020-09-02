@@ -23,6 +23,33 @@ import type { Matcher, Selector } from './types';
 export type { Matcher, Selector } from './types';
 export type { CssSelector, RangeSelector, TextQuoteSelector } from './types';
 
+export function createTypedMatcherCreator<TSelectorType extends string, TScope, TMatch extends TScope>(
+  typeToMatcher:
+    | Record<TSelectorType, ((selector: Selector) => Matcher<TScope, TMatch>)>
+    | ((type: TSelectorType) => (selector: Selector) => Matcher<TScope, TMatch>),
+): (selector: Selector & { type: TSelectorType }) => Matcher<TScope, TMatch> {
+
+  function createMatcher(selector: Selector & { type: TSelectorType }): Matcher<TScope, TMatch> {
+    const type = selector.type;
+
+    if (type === undefined) {
+      throw new TypeError('Selector does not specify its type');
+    }
+
+    const innerCreateMatcher = (typeof typeToMatcher === 'function')
+      ? typeToMatcher(type)
+      : typeToMatcher[type];
+
+    if (innerCreateMatcher === undefined) {
+      throw new TypeError(`Unsupported selector type: ${type}`);
+    }
+
+    return innerCreateMatcher(selector);
+  }
+
+  return makeRefinable(createMatcher);
+}
+
 export function makeRefinable<
   TSelector extends Selector,
   TScope,

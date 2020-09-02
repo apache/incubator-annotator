@@ -26,7 +26,7 @@ import {
   describeTextQuote,
   highlightRange,
 } from '@annotator/dom';
-import { makeRefinable } from '@annotator/selector';
+import { createTypedMatcherCreator } from '@annotator/selector';
 
 const EXAMPLE_SELECTORS = [
   {
@@ -91,17 +91,9 @@ function cleanup() {
   target.normalize();
 }
 
-const createMatcher = makeRefinable((selector) => {
-  const innerCreateMatcher = {
-    TextQuoteSelector: createTextQuoteSelectorMatcher,
-    RangeSelector: makeCreateRangeSelectorMatcher(createMatcher),
-  }[selector.type];
-
-  if (!innerCreateMatcher) {
-    throw new Error(`Unsupported selector type: ${selector.type}`);
-  }
-
-  return innerCreateMatcher(selector);
+const createMatcher = createTypedMatcherCreator({
+  TextQuoteSelector: createTextQuoteSelectorMatcher,
+  RangeSelector: makeCreateRangeSelectorMatcher(createMatcher), // FIXME This goes wrong. Tough!
 });
 
 async function anchor(selector) {
