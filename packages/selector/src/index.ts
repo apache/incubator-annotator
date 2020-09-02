@@ -24,9 +24,7 @@ export type { Matcher, Selector } from './types';
 export type { CssSelector, RangeSelector, TextQuoteSelector } from './types';
 
 export function makeRefinable<
-  // Any subtype of Selector can be made refinable; but note we limit the value
-  // of refinedBy because it must also be accepted by matcherCreator.
-  TSelector extends Selector & { refinedBy: TSelector },
+  TSelector extends Selector,
   TScope,
   // To enable refinement, the implementation’s Match object must be usable as a
   // Scope object itself.

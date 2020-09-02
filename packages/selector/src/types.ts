@@ -19,7 +19,7 @@
  */
 
 export interface Selector {
-  refinedBy?: Selector;
+  refinedBy?: this;
 }
 
 export interface CssSelector extends Selector {
