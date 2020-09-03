@@ -19,14 +19,22 @@
  */
 
 /* global info, module, source, target */
+// declare const module; // TODO type?
+// declare const info: HTMLElement;
+// declare const source: HTMLElement;
+// declare const target: HTMLElement;
 
 import {
-  makeCreateRangeSelectorMatcher,
   createTextQuoteSelectorMatcher,
   describeTextQuote,
   highlightRange,
 } from '@annotator/dom';
-import { createTypedMatcherCreator } from '@annotator/selector';
+import {
+  composeMatcherCreator,
+  mapSelectorTypes,
+  // supportRangeSelector,
+  supportRefinement,
+} from '@annotator/selector';
 
 const EXAMPLE_SELECTORS = [
   {
@@ -91,10 +99,13 @@ function cleanup() {
   target.normalize();
 }
 
-const createMatcher = createTypedMatcherCreator({
-  TextQuoteSelector: createTextQuoteSelectorMatcher,
-  RangeSelector: makeCreateRangeSelectorMatcher(createMatcher), // FIXME This goes wrong. Tough!
-});
+const createMatcher = composeMatcherCreator(
+  supportRefinement,
+  // supportRangeSelector,
+  mapSelectorTypes({
+    TextQuoteSelector: createTextQuoteSelectorMatcher,
+  }),
+);
 
 async function anchor(selector) {
   const matchAll = createMatcher(selector);

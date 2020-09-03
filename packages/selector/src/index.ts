@@ -18,37 +18,66 @@
  * under the License.
  */
 
-import type { Matcher, Selector } from './types';
+import type { Matcher, Selector, SelectorType, MatcherCreator, Plugin } from './types';
 
 export type { Matcher, Selector } from './types';
 export type { CssSelector, RangeSelector, TextQuoteSelector } from './types';
 
-export function createTypedMatcherCreator<TSelectorType extends string, TScope, TMatch extends TScope>(
-  typeToMatcher:
-    | Record<TSelectorType, ((selector: Selector) => Matcher<TScope, TMatch>)>
-    | ((type: TSelectorType) => (selector: Selector) => Matcher<TScope, TMatch>),
-): (selector: Selector & { type: TSelectorType }) => Matcher<TScope, TMatch> {
+interface TypeToMatcherCreatorMap<TScope, TMatch> {
+  // [K: SelectorType]: MatcherCreator<TScope, TMatch>; // Gives errors further down. TypeScript’s fault?
+  [K: string]: MatcherCreator<TScope, TMatch> | undefined;
+}
 
-  function createMatcher(selector: Selector & { type: TSelectorType }): Matcher<TScope, TMatch> {
-    const type = selector.type;
-
-    if (type === undefined) {
-      throw new TypeError('Selector does not specify its type');
-    }
-
-    const innerCreateMatcher = (typeof typeToMatcher === 'function')
-      ? typeToMatcher(type)
-      : typeToMatcher[type];
-
-    if (innerCreateMatcher === undefined) {
-      throw new TypeError(`Unsupported selector type: ${type}`);
-    }
-
-    return innerCreateMatcher(selector);
+export function composeMatcherCreator<TScope, TMatch extends TScope>(
+  ...plugins: Array<Plugin<TScope, TMatch>>
+): MatcherCreator<TScope, TMatch> {
+  function innerMatcherCreator(selector: Selector): Matcher<TScope, TMatch> {
+    throw new TypeError(`Unhandled selector. Selector type: ${selector.type}`);
   }
 
-  return makeRefinable(createMatcher);
+  function outerMatcherCreator(selector: Selector): Matcher<TScope, TMatch> {
+    return composedMatcherCreator(selector);
+  }
+
+  const composedMatcherCreator = plugins.reduceRight(
+    (
+      matcherCreator: MatcherCreator<TScope, TMatch>,
+      plugin: Plugin<TScope, TMatch>
+    ) => plugin(matcherCreator, outerMatcherCreator),
+    innerMatcherCreator,
+  );
+
+  return outerMatcherCreator;
 }
+
+// A plugin with parameters (i.e. a function that returns a plugin)
+// Invokes the matcher implementation corresponding to the selector’s type.
+export function mapSelectorTypes<TScope, TMatch extends TScope>(
+  typeToMatcherCreator: TypeToMatcherCreatorMap<TScope, TMatch>,
+): Plugin<TScope, TMatch> {
+  return function mapSelectorTypesPlugin(next, recurse): MatcherCreator<TScope, TMatch> {
+    return function(selector: Selector): Matcher<TScope, TMatch> {
+      const type = selector.type;
+      if (type !== undefined) {
+        const matcherCreator = typeToMatcherCreator[type];
+        if (matcherCreator !== undefined)
+          return matcherCreator(selector);
+      }
+      // Not a know selector type; continue down the plugin chain.
+      return next(selector);
+    }
+  }
+}
+
+// A plugin to support the Selector’s refinedBy field .
+// TODO this just says `supportRefinement = makeRefinable`; which is doing recursion wrong.
+export const supportRefinement: Plugin<any, any> =
+  function supportRefinementPlugin<TScope, TMatch extends TScope>(
+    next: MatcherCreator<TScope, TMatch>,
+    recurse: MatcherCreator<TScope, TMatch>,
+  ) {
+    return makeRefinable(next);
+  };
 
 export function makeRefinable<
   TSelector extends Selector,

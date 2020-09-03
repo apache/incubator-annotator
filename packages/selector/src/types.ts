@@ -46,3 +46,20 @@ export interface RangeSelector extends Selector {
 export interface Matcher<TScope, TMatch> {
   (scope: TScope): AsyncGenerator<TMatch, void, void>;
 }
+
+export type MatcherCreator<TScope, TMatch> = (selector: Selector) => Matcher<TScope, TMatch>;
+
+export type Plugin<TScope, TMatch> =
+  (
+    next: MatcherCreator<TScope, TMatch>,
+    recurse: MatcherCreator<TScope, TMatch>,
+  ) => typeof next;
+
+
+// Basic form of a plugin: (two equivalents)
+// const identity: Plugin<any, any> = (next, recurse) => next;
+// const identity: Plugin<any, any> = (next, recurse) => {
+//   return function (selector: Selector): Matcher<any, any> {
+//     return next(selector); // or do something else here.
+//   };
+// };
