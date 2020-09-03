@@ -20,8 +20,7 @@
 
 import type { Matcher, Selector, SelectorType, MatcherCreator, Plugin } from './types';
 
-export type { Matcher, Selector } from './types';
-export type { CssSelector, RangeSelector, TextQuoteSelector } from './types';
+export * from './types';
 
 interface TypeToMatcherCreatorMap<TScope, TMatch> {
   // [K: SelectorType]: MatcherCreator<TScope, TMatch>; // Gives errors further down. TypeScript’s fault?

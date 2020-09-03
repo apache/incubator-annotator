@@ -18,7 +18,7 @@
  * under the License.
  */
 
-import type { RangeSelector, Selector } from '@annotator/selector';
+import type { RangeSelector, Selector, MatcherCreator, Plugin } from '@annotator/selector';
 
 import { ownerDocument } from '../scope';
 import type { DomMatcher, DomScope } from '../types';
@@ -51,3 +51,17 @@ export function makeCreateRangeSelectorMatcher(
     };
   };
 }
+
+export const supportRangeSelector: Plugin<DomScope, Range> = function supportRangeSelectorPlugin(
+  next,
+  recurse,
+) {
+  const createRangeSelectorMatcher = makeCreateRangeSelectorMatcher(recurse);
+  return function (selector: Selector) {
+    if (selector.type === 'RangeSelector') {
+      return createRangeSelectorMatcher(selector as RangeSelector);
+    } else {
+      return next(selector);
+    }
+  };
+};

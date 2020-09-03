@@ -27,12 +27,12 @@
 import {
   createTextQuoteSelectorMatcher,
   describeTextQuote,
+  supportRangeSelector,
   highlightRange,
 } from '@annotator/dom';
 import {
   composeMatcherCreator,
   mapSelectorTypes,
-  // supportRangeSelector,
   supportRefinement,
 } from '@annotator/selector';
 
@@ -100,8 +100,8 @@ function cleanup() {
 }
 
 const createMatcher = composeMatcherCreator(
-  supportRefinement,
-  // supportRangeSelector,
+  supportRefinement, // this plugin must come first: it needs to access the result of the ones below.
+  supportRangeSelector,
   mapSelectorTypes({
     TextQuoteSelector: createTextQuoteSelectorMatcher,
   }),
