@@ -70,31 +70,18 @@ export function mapSelectorTypes<TScope, TMatch extends TScope>(
 }
 
 // A plugin to support the Selector’s refinedBy field .
-// TODO this just says `supportRefinement = makeRefinable`; which is doing recursion wrong.
 export const supportRefinement: Plugin<any, any> =
   function supportRefinementPlugin<TScope, TMatch extends TScope>(
     next: MatcherCreator<TScope, TMatch>,
     recurse: MatcherCreator<TScope, TMatch>,
   ) {
-    return makeRefinable(next);
-  };
-
-export function makeRefinable<
-  TSelector extends Selector,
-  TScope,
-  // To enable refinement, the implementation’s Match object must be usable as a
-  // Scope object itself.
-  TMatch extends TScope
->(
-  matcherCreator: (selector: TSelector) => Matcher<TScope, TMatch>,
-): (selector: TSelector) => Matcher<TScope, TMatch> {
   return function createMatcherWithRefinement(
-    sourceSelector: TSelector,
+    sourceSelector: Selector,
   ): Matcher<TScope, TMatch> {
-    const matcher = matcherCreator(sourceSelector);
+    const matcher = next(sourceSelector);
 
     if (sourceSelector.refinedBy) {
-      const refiningSelector = createMatcherWithRefinement(
+      const refiningSelector = recurse(
         sourceSelector.refinedBy,
       );
 
@@ -103,8 +90,8 @@ export function makeRefinable<
           yield* refiningSelector(match);
         }
       };
+    } else {
+      return matcher;
     }
-
-    return matcher;
   };
 }
