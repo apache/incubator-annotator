@@ -18,46 +18,83 @@
  * under the License.
  */
 
+type Selector = { type: string };
+
+type Matcher<TScope, TMatch> = (scope: TScope) => AsyncIterable<TMatch>;
+type MatcherCreator<TSelector extends Selector, TScope, TMatch> = (
+  selector: TSelector,
+) => Matcher<TScope, TMatch>;
+
+type Plugin<TSelector extends Selector, TScope, TMatch> = (
+  next: MatcherCreator<TSelector, TScope, TMatch>,
+  recurse: MatcherCreator<TSelector, TScope, TMatch>,
+) => MatcherCreator<TSelector, TScope, TMatch>;
+
+export function composeMatcherCreator<
+  TSelector extends Selector,
+  TScope,
+  TMatch extends TScope
+>(
+  ...plugins: Array<Plugin<TSelector, TScope, TMatch>>
+): MatcherCreator<TSelector, TScope, TMatch> {
+  function innerMatcherCreator(selector: TSelector): Matcher<TScope, TMatch> {
+    throw new TypeError(`Unhandled selector. Selector type: ${selector.type}`);
+  }
+
+  function outerMatcherCreator(selector: TSelector): Matcher<TScope, TMatch> {
+    return composedMatcherCreator(selector);
+  }
+
+  const composedMatcherCreator = plugins.reduceRight(
+    (matcherCreator, plugin) => plugin(matcherCreator, outerMatcherCreator),
+    innerMatcherCreator,
+  );
+
+  return outerMatcherCreator;
+}
+
+type MatcherCreatorMap<TSelector extends Selector, TScope, TMatch> = {
+  [K: string]: MatcherCreator<TSelector, TScope, TMatch>;
+};
+
+export function mapSelectorTypes<TSelector extends Selector, TScope, TMatch>(
+  matcherCreators: MatcherCreatorMap<TSelector, TScope, TMatch>,
+): Plugin<TSelector, TScope, TMatch> {
+  return function mapSelectorTypesPlugin(next) {
+    return function (selector) {
+      const matcherCreator = matcherCreators[selector.type];
+
+      if (matcherCreator) {
+        return matcherCreator(selector);
+      }
+
+      return next(selector);
+    };
+  };
+}
+
 export function withRefinement<
-  TSelector,
-  TSelectorScope,
-  TRefinement,
-  TRefinementScope,
+  TSelector extends Selector & { refinedBy?: TSelector },
+  TScope,
   TMatch
 >(
-  createMatcher: (
-    selector: TSelector,
-  ) => (scope: TSelectorScope) => AsyncIterable<TRefinementScope>,
-  createRefiner: (
-    selector: TRefinement,
-  ) => (scope: TRefinementScope) => AsyncIterable<TMatch>,
-): (
-  selector: TSelector & { refinedBy?: TRefinement },
-) => (scope: TSelectorScope) => AsyncIterable<TRefinementScope | TMatch> {
+  next: (selector: TSelector) => (scope: TScope) => AsyncIterable<TScope>,
+  recurse: (selector: TSelector) => (scope: TScope) => AsyncIterable<TMatch>,
+): MatcherCreator<TSelector, TScope, TMatch> {
   return function createMatcherWithRefinement(selector) {
     const { refinedBy } = selector;
+    const matcher = next(selector);
 
     if (refinedBy) {
-      const match = createMatcher(selector);
-      const refine = createRefiner(refinedBy);
+      const refine = recurse(refinedBy);
 
       return async function* matchAll(scope) {
-        for await (const subScope of match(scope)) {
+        for await (const subScope of matcher(scope)) {
           yield* refine(subScope);
         }
       };
     }
 
-    return createMatcher(selector);
+    return matcher;
   };
-}
-
-export function withRecursiveRefinement<TSelector, TScope>(
-  createMatcher: (
-    selector: TSelector & { refinedBy?: TSelector },
-  ) => (scope: TScope) => AsyncIterable<TScope>,
-): (
-  selector: TSelector & { refinedBy?: TSelector },
-) => (scope: TScope) => AsyncIterable<TScope> {
-  return withRefinement(createMatcher, createMatcher);
 }

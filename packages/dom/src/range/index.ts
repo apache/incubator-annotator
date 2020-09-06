@@ -18,4 +18,27 @@
  * under the License.
  */
 
+import type { RangeSelector } from './selector';
+import { makeCreateRangeSelectorMatcher } from './match';
+
 export * from './match';
+export * from './selector';
+
+export function withRange<T>(
+  createMatcher: (selector: T) => (scope: Range) => AsyncIterable<Range>,
+): (selector: T | RangeSelector<T>) => (scope: Range) => AsyncIterable<Range> {
+  const createRangeMatcher = makeCreateRangeSelectorMatcher(createMatcher);
+  return function createMatcherWithRange(selector) {
+    if ('type' in selector && selector.type === 'RangeSelector') {
+      return createRangeMatcher(selector);
+    }
+    return createMatcher(selector as T);
+  };
+}
+
+export function withRangeRecursive<T>(
+  createMatcher: (selector: T) => (scope: Range) => AsyncIterable<Range>,
+): (selector: T | RangeSelector<T>) => (scope: Range) => AsyncIterable<Range> {
+  const inner = withRange(createMatcher);
+  return withRange(inner);
+}

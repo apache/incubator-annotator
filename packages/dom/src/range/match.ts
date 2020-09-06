@@ -19,12 +19,7 @@
  */
 
 import { product } from './cartesian';
-
-export interface RangeSelector<T> {
-  type: 'RangeSelector';
-  startSelector: T;
-  endSelector: T;
-}
+import type { RangeSelector } from './selector';
 
 export function makeCreateRangeSelectorMatcher<T>(
   createMatcher: (selector: T) => (scope: Range) => AsyncIterable<Range>,

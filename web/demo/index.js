@@ -21,12 +21,15 @@
 /* global info, module, source, target */
 
 import {
-  makeCreateRangeSelectorMatcher,
   createTextQuoteSelectorMatcher,
   describeTextQuote,
   highlightRange,
 } from '@annotator/dom';
-import { withRecursiveRefinement } from '@annotator/selector';
+import {
+  composeMatcherCreator,
+  mapSelectorTypes,
+  withRefinement,
+} from '@annotator/selector';
 
 const EXAMPLE_SELECTORS = [
   {
@@ -91,18 +94,12 @@ function cleanup() {
   target.normalize();
 }
 
-const createMatcher = withRecursiveRefinement((selector) => {
-  const innerCreateMatcher = {
+const createMatcher = composeMatcherCreator(
+  withRefinement,
+  mapSelectorTypes({
     TextQuoteSelector: createTextQuoteSelectorMatcher,
-    RangeSelector: makeCreateRangeSelectorMatcher(createMatcher),
-  }[selector.type];
-
-  if (!innerCreateMatcher) {
-    throw new Error(`Unsupported selector type: ${selector.type}`);
-  }
-
-  return innerCreateMatcher(selector);
-});
+  }),
+);
 
 async function anchor(selector) {
   const scope = document.createRange();
