@@ -21,10 +21,18 @@
 import seek from 'dom-seek';
 import type { TextQuoteSelector } from '@annotator/selector';
 
+import { ownerDocument } from '../util';
+
 export async function describeTextQuote(
   range: Range,
-  scope: Range = range,
+  scope?: Range,
 ): Promise<TextQuoteSelector> {
+  // Default to search in the whole document.
+  if (scope === undefined) {
+    const document = ownerDocument(range);
+    scope = document.createRange();
+    scope.selectNodeContents(document);
+  }
   range = range.cloneRange();
 
   // Take the part of the range that falls within the scope.
