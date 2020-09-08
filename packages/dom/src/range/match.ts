@@ -20,6 +20,8 @@
 
 import type { Matcher, RangeSelector, Selector } from '@annotator/selector';
 
+import { ownerDocument } from '../util';
+
 import { product } from './cartesian';
 
 export function makeCreateRangeSelectorMatcher(
@@ -30,17 +32,13 @@ export function makeCreateRangeSelectorMatcher(
     const endMatcher = createMatcher(selector.endSelector);
 
     return async function* matchAll(scope) {
-      const { commonAncestorContainer } = scope;
-      const { ownerDocument } = commonAncestorContainer;
-      const document = ownerDocument ?? (commonAncestorContainer as Document);
-
       const startMatches = startMatcher(scope);
       const endMatches = endMatcher(scope);
 
       const pairs = product(startMatches, endMatches);
 
       for await (const [start, end] of pairs) {
-        const result = document.createRange();
+        const result = ownerDocument(scope).createRange();
 
         result.setStart(start.endContainer, start.endOffset);
         result.setEnd(end.startContainer, end.startOffset);

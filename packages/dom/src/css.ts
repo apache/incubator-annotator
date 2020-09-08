@@ -20,14 +20,13 @@
 
 import type { CssSelector, Matcher } from '@annotator/selector';
 
+import { ownerDocument } from './util';
+
 export function createCssSelectorMatcher(
   selector: CssSelector,
 ): Matcher<Range, Range> {
   return async function* matchAll(scope) {
-    const { commonAncestorContainer } = scope;
-    const { ownerDocument } = commonAncestorContainer;
-    const document = ownerDocument ?? (commonAncestorContainer as Document);
-
+    const document = ownerDocument(scope);
     for (const element of document.querySelectorAll(selector.value)) {
       const range = document.createRange();
       range.selectNode(element);

@@ -21,14 +21,13 @@
 import type { Matcher, TextQuoteSelector } from '@annotator/selector';
 import seek from 'dom-seek';
 
+import { ownerDocument } from '../util';
+
 export function createTextQuoteSelectorMatcher(
   selector: TextQuoteSelector,
 ): Matcher<Range, Range> {
   return async function* matchAll(scope) {
-    const { commonAncestorContainer } = scope;
-    const { ownerDocument } = commonAncestorContainer;
-    const document = ownerDocument ?? (commonAncestorContainer as Document);
-
+    const document = ownerDocument(scope);
     const scopeText = scope.toString();
 
     const exact = selector.exact;
@@ -37,7 +36,7 @@ export function createTextQuoteSelectorMatcher(
     const searchPattern = prefix + exact + suffix;
 
     const iter = document.createNodeIterator(
-      commonAncestorContainer,
+      scope.commonAncestorContainer,
       NodeFilter.SHOW_TEXT,
       {
         acceptNode(node: Text) {
