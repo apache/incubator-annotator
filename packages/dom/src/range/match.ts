@@ -40,7 +40,7 @@ export function makeCreateRangeSelectorMatcher(
       for await (const [start, end] of pairs) {
         const result = ownerDocument(scope).createRange();
 
-        result.setStart(start.endContainer, start.endOffset);
+        result.setStart(start.startContainer, start.startOffset);
         result.setEnd(end.startContainer, end.startOffset);
 
         if (!result.collapsed) yield result;
