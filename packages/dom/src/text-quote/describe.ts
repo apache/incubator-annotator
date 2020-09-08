@@ -149,7 +149,7 @@ function minimalSolution(
 
 // Get the index of the first character of range within the text of scope.
 function getRangeTextPosition(range: Range, scope: Range): number {
-  const iter = document.createNodeIterator(
+  const iter = ownerDocument(scope).createNodeIterator(
     scope.commonAncestorContainer,
     NodeFilter.SHOW_TEXT,
     {
@@ -169,7 +169,7 @@ function getRangeTextPosition(range: Range, scope: Range): number {
 
 function firstTextNodeInRange(range: Range): Text {
   // Find the first text node inside the range.
-  const iter = document.createNodeIterator(
+  const iter = ownerDocument(range).createNodeIterator(
     range.commonAncestorContainer,
     NodeFilter.SHOW_TEXT,
     {
