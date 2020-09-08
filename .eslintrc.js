@@ -45,7 +45,6 @@ module.exports = {
     'import/newline-after-import': 'error',
     'import/no-default-export': 'error',
     'import/no-internal-modules': 'error',
-    'import/no-relative-parent-imports': 'error',
     'import/order': ['error', { 'newlines-between': 'always' }],
     'import/unambiguous': 'error',
     'prettier/prettier': [
