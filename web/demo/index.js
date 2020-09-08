@@ -89,6 +89,7 @@ function cleanup() {
     removeHighlight();
   }
   target.normalize();
+  info.innerText = '';
 }
 
 const createMatcher = makeRefinable((selector) => {
@@ -120,17 +121,19 @@ async function anchor(selector) {
     cleanupFunctions.push(removeHighlight);
   }
 
-  info.innerText = JSON.stringify(selector, null, 2);
+  info.innerText += JSON.stringify(selector, null, 2) + '\n\n';
 }
 
 async function onSelectionChange() {
   cleanup();
-  const selection = document.getSelection();
-  const range = selection.getRangeAt(0);
   const scope = document.createRange();
   scope.selectNodeContents(source);
-  const selector = await describeTextQuote(range, scope);
-  anchor(selector);
+  const selection = document.getSelection();
+  for (let i = 0; i < selection.rangeCount; i++) {
+    const range = selection.getRangeAt(i);
+    const selector = await describeTextQuote(range, scope);
+    await anchor(selector);
+  }
 }
 
 function onSelectorExampleClick(event) {
