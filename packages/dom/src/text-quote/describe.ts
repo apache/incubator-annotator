@@ -36,9 +36,9 @@ export async function describeTextQuote(
   range = range.cloneRange();
 
   // Take the part of the range that falls within the scope.
-  if (!scope.isPointInRange(range.startContainer, range.startOffset))
+  if (range.compareBoundaryPoints(Range.START_TO_START, scope) === -1)
     range.setStart(scope.startContainer, scope.startOffset);
-  if (!scope.isPointInRange(range.endContainer, range.endOffset))
+  if (range.compareBoundaryPoints(Range.END_TO_END, scope) === 1)
     range.setEnd(scope.endContainer, scope.endOffset);
 
   return {
