@@ -18,7 +18,7 @@
  * under the License.
  */
 
-import { ownerDocument } from './util';
+import { ownerDocument } from './owner-document';
 
 // Wrap each text node in a given DOM Range with a <mark> or other element.
 // Breaks start and/or end node if needed.

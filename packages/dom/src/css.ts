@@ -20,7 +20,7 @@
 
 import type { CssSelector, Matcher } from '@annotator/selector';
 
-import { ownerDocument } from './util';
+import { ownerDocument } from './owner-document';
 
 export function createCssSelectorMatcher(
   selector: CssSelector,

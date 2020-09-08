@@ -21,7 +21,7 @@
 import seek from 'dom-seek';
 import type { TextQuoteSelector } from '@annotator/selector';
 
-import { ownerDocument } from '../util';
+import { ownerDocument } from '../owner-document';
 
 export async function describeTextQuote(
   range: Range,

@@ -20,5 +20,6 @@
 
 export function ownerDocument(range: Range): Document {
   const { startContainer } = range;
+  // node.ownerDocument is null iff node is itself a Document.
   return startContainer.ownerDocument ?? (startContainer as Document);
 }

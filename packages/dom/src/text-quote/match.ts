@@ -21,7 +21,7 @@
 import type { Matcher, TextQuoteSelector } from '@annotator/selector';
 import seek from 'dom-seek';
 
-import { ownerDocument } from '../util';
+import { ownerDocument } from '../owner-document';
 
 export function createTextQuoteSelectorMatcher(
   selector: TextQuoteSelector,

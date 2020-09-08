@@ -20,7 +20,7 @@
 
 import type { Matcher, RangeSelector, Selector } from '@annotator/selector';
 
-import { ownerDocument } from '../util';
+import { ownerDocument } from '../owner-document';
 
 import { product } from './cartesian';
 
