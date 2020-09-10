@@ -127,7 +127,9 @@ async function onSelectionChange() {
   cleanup();
   const selection = document.getSelection();
   const range = selection.getRangeAt(0);
-  const selector = await describeTextQuote(range, source);
+  const scope = document.createRange();
+  scope.selectNodeContents(source);
+  const selector = await describeTextQuote(range, scope);
   anchor(selector);
 }
 
