@@ -18,6 +18,8 @@
  * under the License.
  */
 
+import { ownerDocument } from './owner-document';
+
 // Wrap each text node in a given DOM Range with a <mark> or other element.
 // Breaks start and/or end node if needed.
 // Returns a function that cleans up the created highlight (not a perfect undo: split text nodes are
@@ -73,9 +75,7 @@ function textNodesInRange(range: Range): Text[] {
   }
 
   // Collect the text nodes.
-  const document =
-    range.startContainer.ownerDocument || (range.startContainer as Document);
-  const walker = document.createTreeWalker(
+  const walker = ownerDocument(range).createTreeWalker(
     range.commonAncestorContainer,
     NodeFilter.SHOW_TEXT,
     {

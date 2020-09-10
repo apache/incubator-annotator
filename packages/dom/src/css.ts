@@ -20,10 +20,23 @@
 
 import type { CssSelector, Matcher } from '@annotator/selector';
 
+import { ownerDocument } from './owner-document';
+
 export function createCssSelectorMatcher(
   selector: CssSelector,
-): Matcher<Document, Element> {
-  return async function* matchAll(scope: Document) {
-    yield* scope.querySelectorAll(selector.value);
+): Matcher<Range, Range> {
+  return async function* matchAll(scope) {
+    const document = ownerDocument(scope);
+    for (const element of document.querySelectorAll(selector.value)) {
+      const range = document.createRange();
+      range.selectNode(element);
+
+      if (
+        scope.isPointInRange(range.startContainer, range.startOffset) &&
+        scope.isPointInRange(range.endContainer, range.endOffset)
+      ) {
+        yield range;
+      }
+    }
   };
 }

@@ -172,7 +172,7 @@ describe('highlightRange', () => {
     const inputHtml = `<b>Try highlighting this image: <img> — would that work?</b>`;
     const doc = domParser.parseFromString(inputHtml, 'text/html');
 
-    const range = document.createRange();
+    const range = doc.createRange();
     range.selectNode(evaluateXPath(doc, '//img'));
 
     const removeHighlights = highlightRange(range);
