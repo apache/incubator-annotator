@@ -95,35 +95,25 @@ describe('createTextQuoteSelectorMatcher', () => {
     ]);
   });
 
-  it('works with parent of text as scope', async () => {
-    const { html, selector, expected } = testCases['simple'];
-    const doc = domParser.parseFromString(html, 'text/html');
-
-    const scope = doc.createRange();
-    scope.selectNodeContents(evaluateXPath(doc, '//b'));
-
-    await testMatcher(doc, scope, selector, expected);
-  });
-
-  it('works with parent of text as scope, when matching its first characters', async () => {
+  it('works when scope spans one text node’s contents, matching its first characters', async () => {
     const { html, selector, expected } = testCases['first characters'];
     const doc = domParser.parseFromString(html, 'text/html');
 
     const scope = doc.createRange();
-    scope.selectNodeContents(evaluateXPath(doc, '//b'));
+    scope.selectNodeContents(evaluateXPath(doc, '//b/text()'));
 
     await testMatcher(doc, scope, selector, expected);
   });
 
-  it('works with parent of text as scope, when matching its first characters, with an empty text node', async () => {
+  it('works when scope starts with an empty text node, matching its first characters', async () => {
     const { html, selector } = testCases['first characters'];
     const doc = domParser.parseFromString(html, 'text/html');
 
-    const scope = doc.createRange();
-    scope.selectNodeContents(evaluateXPath(doc, '//b'));
-
     const textNode = evaluateXPath(doc, '//b/text()') as Text;
     textNode.splitText(0);
+
+    const scope = doc.createRange();
+    scope.selectNodeContents(evaluateXPath(doc, '//b'));
 
     await testMatcher(doc, scope, selector, [
       {
@@ -135,7 +125,7 @@ describe('createTextQuoteSelectorMatcher', () => {
     ]);
   });
 
-  it('works when scope is a Range within one text node', async () => {
+  it('works when scope has both ends within one text node', async () => {
     const { html, selector, expected } = testCases['simple'];
     const doc = domParser.parseFromString(html, 'text/html');
 
@@ -146,7 +136,7 @@ describe('createTextQuoteSelectorMatcher', () => {
     await testMatcher(doc, scope, selector, expected);
   });
 
-  it('works when scope is a Range with both ends inside text nodes', async () => {
+  it('works when scope has both ends inside text nodes', async () => {
     const { html, selector, expected } = testCases['across elements'];
     const doc = domParser.parseFromString(html, 'text/html');
 
@@ -157,7 +147,7 @@ describe('createTextQuoteSelectorMatcher', () => {
     await testMatcher(doc, scope, selector, expected);
   });
 
-  it('works when scope is a Range with both ends inside elements', async () => {
+  it('works when scope has both ends inside an element', async () => {
     const { html, selector, expected } = testCases['across elements'];
     const doc = domParser.parseFromString(html, 'text/html');
 
