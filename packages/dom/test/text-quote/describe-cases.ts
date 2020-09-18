@@ -104,6 +104,21 @@ export const testCases: {
       suffix: '',
     },
   },
+  'multiple, overlapping false matches': {
+    html: '<b>aaaaaaaaaa</b>',
+    range: {
+      startContainerXPath: '//b/text()',
+      startOffset: 4,
+      endContainerXPath: '//b/text()',
+      endOffset: 7,
+    },
+    expected: {
+      type: 'TextQuoteSelector',
+      exact: 'aaa',
+      prefix: 'aaaa',
+      suffix: 'aaa',
+    },
+  },
   'empty quote': {
     html: '<b>To annotate or not to annotate</b>',
     range: {

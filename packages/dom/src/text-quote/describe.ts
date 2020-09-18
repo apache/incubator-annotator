@@ -92,6 +92,8 @@ function calculateContextForDisambiguation(
 
     // Use either the prefix or suffix, whichever is shortest.
     if (sufficientPrefixLength <= sufficientSuffixLength) {
+      // Compensate our search position for the increase in prefix length.
+      fromIndex -= sufficientPrefixLength - prefix.length;
       prefix = scopeText.substring(
         targetStartIndex - sufficientPrefixLength,
         targetStartIndex,
