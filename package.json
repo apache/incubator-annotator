@@ -31,6 +31,20 @@
     "web:build": "webpack --config=web/webpack.config.js --mode development",
     "web:server": "webpack-dev-server --config=web/webpack.config.js --hot --mode development"
   },
+  "exports": {
+    ".": {
+      "import": "./packages/apache-annotator/lib/index.mjs",
+      "require": "./packages/apache-annotator/lib/index.js"
+    },
+    "./dom": {
+      "import": "./packages/dom/lib/index.mjs",
+      "require": "./packages/dom/lib/index.js"
+    },
+    "./selector": {
+      "import": "./packages/selector/lib/index.mjs",
+      "require": "./packages/selector/lib/index.js"
+    }
+  },
   "devDependencies": {
     "@babel/cli": "^7.11.0",
     "@babel/core": "^7.11.0",
