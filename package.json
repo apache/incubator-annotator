@@ -32,12 +32,12 @@
     "web:server": "webpack-dev-server --config=web/webpack.config.js --hot --mode development"
   },
   "devDependencies": {
-    "@babel/cli": "^7.10.1",
-    "@babel/core": "^7.10.1",
-    "@babel/plugin-transform-runtime": "^7.10.1",
-    "@babel/preset-env": "^7.10.1",
-    "@babel/preset-typescript": "^7.10.1",
-    "@babel/register": "^7.10.1",
+    "@babel/cli": "^7.11.0",
+    "@babel/core": "^7.11.0",
+    "@babel/plugin-transform-runtime": "^7.11.0",
+    "@babel/preset-env": "^7.11.0",
+    "@babel/preset-typescript": "^7.10.4",
+    "@babel/register": "^7.11.0",
     "@types/chai": "^4.2.11",
     "@types/mocha": "^7.0.2",
     "@types/node-fetch": "^2.5.7",
