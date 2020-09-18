@@ -1,5 +1,5 @@
 {
-  "name": "annotator",
+  "name": "apache-annotator",
   "version": "0.1.0",
   "private": true,
   "description": "Apache Annotator provides annotation enabling code for browsers, servers, and humans.",
