@@ -1,7 +1,2 @@
-import * as dom from '@annotator/dom';
-import * as selector from '@annotator/selector';
-
-export {
-    dom,
-    selector,
-};
+export * as dom from '@annotator/dom';
+export * as selector from '@annotator/selector';

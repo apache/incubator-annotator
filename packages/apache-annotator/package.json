@@ -1,7 +1,7 @@
 {
   "name": "apache-annotator",
   "version": "0.1.0",
-  "description": "Web Annotation selector for engine.",
+  "description": "Apache Annotator provides annotation enabling code for browsers, servers, and humans.",
   "homepage": "https://annotator.apache.org",
   "repository": {
     "type": "git",
