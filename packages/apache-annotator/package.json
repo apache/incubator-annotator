@@ -1,0 +1,41 @@
+{
+  "name": "apache-annotator",
+  "version": "0.1.0",
+  "description": "Web Annotation selector for engine.",
+  "homepage": "https://annotator.apache.org",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/apache/incubator-annotator.git"
+  },
+  "license": "Apache-2.0",
+  "author": "Apache Software Foundation",
+  "exports": {
+    ".": {
+      "import": "./lib/index.mjs",
+      "require": "./lib/index.js"
+    },
+    "./dom": {
+      "import": "./lib/dom/index.mjs",
+      "require": "./lib/dom/index.js"
+    },
+    "./selector": {
+      "import": "./lib/selector/index.mjs",
+      "require": "./lib/selector/index.js"
+    }
+  },
+  "main": "./lib/index.js",
+  "module": "./lib/index.mjs",
+  "types": "./lib/index.d.ts",
+  "dependencies": {
+    "@annotator/dom": "^0.1.0",
+    "@annotator/selector": "^0.1.0",
+    "@babel/runtime-corejs3": "^7.8.7",
+    "core-js": "^3.6.4"
+  },
+  "engines": {
+    "node": "^10 || ^11 || ^12 || >=13.7"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
