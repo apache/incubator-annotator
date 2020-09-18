@@ -76,14 +76,18 @@ function calculateContextForDisambiguation(
 
     // Count how many characters before & after them the false match and target have in common.
     const sufficientPrefixLength = charactersNeededToBeUnique(
-      scopeText.substring(0, targetStartIndex),
-      scopeText.substring(0, matchStartIndex),
+      scopeText,
+      targetStartIndex,
+      matchStartIndex,
       true,
+      prefix.length,
     );
     const sufficientSuffixLength = charactersNeededToBeUnique(
-      scopeText.substring(targetEndIndex),
-      scopeText.substring(matchEndIndex),
+      scopeText,
+      targetEndIndex,
+      matchEndIndex,
       false,
+      suffix.length,
     );
 
     // Use either the prefix or suffix, whichever is shortest.
@@ -104,21 +108,16 @@ function calculateContextForDisambiguation(
 }
 
 function charactersNeededToBeUnique(
-  target: string,
-  impostor: string,
+  text: string,
+  target: number,
+  impostor: number,
   reverse = false,
-) {
-  // Count how many characters the two strings have in common.
-  let overlap = 0;
-  const charAt = (s: string, i: number) =>
-    reverse ? s[s.length - 1 - i] : s[overlap];
-  while (
-    overlap < target.length &&
-    charAt(target, overlap) === charAt(impostor, overlap)
-  )
+  overlap = 0,
+): number {
+  const nextChar = (offset: number) => reverse ? text[offset - 1 - overlap] : text[offset + overlap];
+  while (nextChar(target) && nextChar(target) === nextChar(impostor))
     overlap++;
-  if (overlap === target.length) return Infinity;
-  // (no substring of target can make it distinguishable from its impostor)
+  if (!nextChar(target)) return Infinity; // end/start of string reached.
   else return overlap + 1;
 }
 
