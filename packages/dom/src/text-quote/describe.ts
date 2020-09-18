@@ -74,21 +74,21 @@ function calculateContextForDisambiguation(
     // Skip the found match if it is the actual target.
     if (matchStartIndex === targetStartIndex) continue;
 
-    // Count how many characters before & after them the false match and target have in common.
-    const sufficientPrefixLength = charactersNeededToBeUnique(
-      scopeText,
-      targetStartIndex,
-      matchStartIndex,
-      true,
-      prefix.length,
-    );
-    const sufficientSuffixLength = charactersNeededToBeUnique(
-      scopeText,
-      targetEndIndex,
-      matchEndIndex,
-      false,
-      suffix.length,
-    );
+    // Count how many characters we’d need as a prefix to disqualify this match.
+    let sufficientPrefixLength = prefix.length + 1;
+    const firstChar = (offset: number) => scopeText[offset - sufficientPrefixLength];
+    while (firstChar(targetStartIndex) && firstChar(targetStartIndex) === firstChar(matchStartIndex))
+      sufficientPrefixLength++;
+    if (!firstChar(targetStartIndex)) // We reached the start of scopeText; prefix won’t work.
+      sufficientPrefixLength = Infinity;
+
+    // Count how many characters we’d need as a suffix to disqualify this match.
+    let sufficientSuffixLength = suffix.length + 1;
+    const lastChar = (offset: number) => scopeText[offset + sufficientSuffixLength - 1];
+    while (lastChar(targetEndIndex) && lastChar(targetEndIndex) === lastChar(matchEndIndex))
+      sufficientSuffixLength++;
+    if (!lastChar(targetEndIndex)) // We reached the end of scopeText; suffix won’t work.
+      sufficientSuffixLength = Infinity;
 
     // Use either the prefix or suffix, whichever is shortest.
     if (sufficientPrefixLength <= sufficientSuffixLength) {
@@ -107,20 +107,6 @@ function calculateContextForDisambiguation(
   }
 
   return { prefix, suffix };
-}
-
-function charactersNeededToBeUnique(
-  text: string,
-  target: number,
-  impostor: number,
-  reverse = false,
-  overlap = 0,
-): number {
-  const nextChar = (offset: number) => reverse ? text[offset - 1 - overlap] : text[offset + overlap];
-  while (nextChar(target) && nextChar(target) === nextChar(impostor))
-    overlap++;
-  if (!nextChar(target)) return Infinity; // end/start of string reached.
-  else return overlap + 1;
 }
 
 // Get the index of the first character of range within the text of scope.
