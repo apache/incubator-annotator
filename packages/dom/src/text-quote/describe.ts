@@ -51,100 +51,62 @@ export async function describeTextQuote(
 function calculateContextForDisambiguation(
   range: Range,
   scope: Range,
-): { prefix?: string; suffix?: string } {
+): { prefix: string; suffix: string } {
   const exactText = range.toString();
   const scopeText = scope.toString();
   const targetStartIndex = getRangeTextPosition(range, scope);
   const targetEndIndex = targetStartIndex + exactText.length;
 
-  // Find all matches of the text in the scope.
-  const stringMatches: number[] = [];
+  // Starting with an empty prefix and suffix, we search for matches. At each unintended match
+  // we encounter, we extend the prefix or suffix just enough to ensure it will no longer match.
+  let prefix = '';
+  let suffix = '';
   let fromIndex = 0;
   while (fromIndex <= scopeText.length) {
-    const matchIndex = scopeText.indexOf(exactText, fromIndex);
-    if (matchIndex === -1) break;
-    stringMatches.push(matchIndex);
-    fromIndex = matchIndex + 1;
-  }
+    const searchPattern = prefix + exactText + suffix;
+    const patternMatchIndex = scopeText.indexOf(searchPattern, fromIndex);
+    if (patternMatchIndex === -1) break;
+    fromIndex = patternMatchIndex + 1;
 
-  // Count for each undesired match the required prefix and suffix lengths, such that either of them
-  // would have invalidated the match.
-  const affixLengthPairs: Array<[number, number]> = [];
-  for (const matchStartIndex of stringMatches) {
+    const matchStartIndex = patternMatchIndex + prefix.length;
     const matchEndIndex = matchStartIndex + exactText.length;
 
     // Skip the found match if it is the actual target.
     if (matchStartIndex === targetStartIndex) continue;
 
-    // Count how many characters before & after them the false match and target have in common.
-    const sufficientPrefixLength = charactersNeededToBeUnique(
-      scopeText.substring(0, targetStartIndex),
-      scopeText.substring(0, matchStartIndex),
-      true,
-    );
-    const sufficientSuffixLength = charactersNeededToBeUnique(
-      scopeText.substring(targetEndIndex),
-      scopeText.substring(matchEndIndex),
-      false,
-    );
-    affixLengthPairs.push([sufficientPrefixLength, sufficientSuffixLength]);
-  }
+    // Count how many characters we’d need as a prefix to disqualify this match.
+    let sufficientPrefixLength = prefix.length + 1;
+    const firstChar = (offset: number) => scopeText[offset - sufficientPrefixLength];
+    while (firstChar(targetStartIndex) && firstChar(targetStartIndex) === firstChar(matchStartIndex))
+      sufficientPrefixLength++;
+    if (!firstChar(targetStartIndex)) // We reached the start of scopeText; prefix won’t work.
+      sufficientPrefixLength = Infinity;
 
-  // Find the prefix and suffix that would invalidate all mismatches, using the minimal characters
-  // for prefix and suffix combined.
-  const [prefixLength, suffixLength] = minimalSolution(affixLengthPairs);
-  const prefix = scopeText.substring(
-    targetStartIndex - prefixLength,
-    targetStartIndex,
-  );
-  const suffix = scopeText.substring(
-    targetEndIndex,
-    targetEndIndex + suffixLength,
-  );
-  return { prefix, suffix };
-}
+    // Count how many characters we’d need as a suffix to disqualify this match.
+    let sufficientSuffixLength = suffix.length + 1;
+    const lastChar = (offset: number) => scopeText[offset + sufficientSuffixLength - 1];
+    while (lastChar(targetEndIndex) && lastChar(targetEndIndex) === lastChar(matchEndIndex))
+      sufficientSuffixLength++;
+    if (!lastChar(targetEndIndex)) // We reached the end of scopeText; suffix won’t work.
+      sufficientSuffixLength = Infinity;
 
-function charactersNeededToBeUnique(
-  target: string,
-  impostor: string,
-  reverse = false,
-) {
-  // Count how many characters the two strings have in common.
-  let overlap = 0;
-  const charAt = (s: string, i: number) =>
-    reverse ? s[s.length - 1 - i] : s[overlap];
-  while (
-    overlap < target.length &&
-    charAt(target, overlap) === charAt(impostor, overlap)
-  )
-    overlap++;
-  if (overlap === target.length) return Infinity;
-  // (no substring of target can make it distinguishable from its impostor)
-  else return overlap + 1;
-}
-
-function minimalSolution(
-  requirements: Array<[number, number]>,
-): [number, number] {
-  // Ensure we try solutions with an empty prefix or suffix.
-  requirements.push([0, 0]);
-
-  // Build all the pairs and order them by their sums.
-  const pairs = requirements.flatMap((l) =>
-    requirements.map<[number, number]>((r) => [l[0], r[1]]),
-  );
-  pairs.sort((a, b) => a[0] + a[1] - (b[0] + b[1]));
-
-  // Find the first pair that satisfies every requirement.
-  for (const pair of pairs) {
-    const [p0, p1] = pair;
-    if (requirements.every(([r0, r1]) => r0 <= p0 || r1 <= p1)) {
-      return pair;
+    // Use either the prefix or suffix, whichever is shortest.
+    if (sufficientPrefixLength <= sufficientSuffixLength) {
+      // Compensate our search position for the increase in prefix length.
+      fromIndex -= sufficientPrefixLength - prefix.length;
+      prefix = scopeText.substring(
+        targetStartIndex - sufficientPrefixLength,
+        targetStartIndex,
+      );
+    } else {
+      suffix = scopeText.substring(
+        targetEndIndex,
+        targetEndIndex + sufficientSuffixLength,
+      );
     }
   }
 
-  // Return the largest pairing (unreachable).
-  return pairs[pairs.length - 1];
+  return { prefix, suffix };
 }
 
 // Get the index of the first character of range within the text of scope.
