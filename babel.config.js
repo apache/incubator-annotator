@@ -19,6 +19,7 @@
  */
 
 const path = require('path');
+const { DEFAULT_EXTENSIONS } = require('@babel/core');
 
 module.exports = (api) => {
   const ENV = api.env();
@@ -70,8 +71,8 @@ module.exports = (api) => {
         '@babel/runtime-corejs3/helpers/\\1.js',
       '^@babel/runtime-corejs3/regenerator$':
         '@babel/runtime-corejs3/regenerator/index.js',
-      extensions: ['.js', '.ts'],
     },
+    extensions: ['.ts', '.tsx', ...DEFAULT_EXTENSIONS],
   };
 
   // Options for the @babel/transform-runtime plugin.

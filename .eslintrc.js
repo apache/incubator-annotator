@@ -32,13 +32,7 @@ module.exports = {
   extends: ['eslint:recommended', 'plugin:import/recommended', 'prettier'],
   plugins: ['import', 'prettier'],
   rules: {
-    'import/extensions': [
-      'error',
-      'ignorePackages',
-      {
-        ts: 'never',
-      },
-    ],
+    'import/extensions': ['error', 'never'],
     'import/first': 'error',
     'import/newline-after-import': 'error',
     'import/no-absolute-path': 'error',

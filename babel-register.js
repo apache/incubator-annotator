@@ -18,4 +18,7 @@
  * under the License.
  */
 
-require('@babel/register')({ extensions: ['.ts'] });
+const { DEFAULT_EXTENSIONS } = require('@babel/core');
+require('@babel/register')({
+  extensions: ['.ts', '.tsx', ...DEFAULT_EXTENSIONS],
+});
