@@ -18,6 +18,8 @@
  * under the License.
  */
 
+const path = require('path');
+
 module.exports = (api) => {
   const ENV = api.env();
   const DEV = ENV === 'development';
@@ -53,7 +55,10 @@ module.exports = (api) => {
     alias: {
       ...(DEV || TEST
         ? {
-            '^@annotator/(.+)$': '@annotator/\\1/src/index.ts',
+            '^@annotator/([^/]+)$': path.join(
+              __dirname,
+              'packages/\\1/src/index.ts',
+            ),
           }
         : null),
       // TODO: Remove after babel/babel#8462 ships.
