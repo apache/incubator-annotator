@@ -5,6 +5,7 @@
     "packages/*/test/**/*",
   ],
   "references": [
+    { "path": "packages/apache-annotator" },
     { "path": "packages/dom" },
     { "path": "packages/selector" }
   ],
