@@ -1,32 +1,44 @@
 # [Apache Annotator](http://annotator.apache.org/) (incubating) [![Build Status](https://travis-ci.org/apache/incubator-annotator.svg?branch=master)](https://travis-ci.org/apache/incubator-annotator)
 
-> Apache Annotator provides annotation enabling code for browsers, servers,
-> and humans.
-
-* [`dev@` Mailing List archive](http://mail-archives.apache.org/mod_mbox/incubator-annotator-dev/)
-* [Issue Tracker](https://github.com/apache/incubator-annotator/issues)
-* [Wiki](https://github.com/apache/incubator-annotator/wiki)
+Apache Annotator (incubating) provides libraries to enable annotation related
+software, with an initial focus on identification of textual fragments in
+browser environments.
 
 ## Usage
 
-We're currently pre-releasing development copies of each library that makes up
-the sum total of Apache Annotator's code. You can grab any of them from our
-[npm organization](https://www.npmjs.com/org/annotator).
+The Apache Annotator project is written in TypeScript, but the project is
+compiled and distributed in CommonJS and ECMAScript Module formats.
 
-```sh
-$ # for example...
-$ npm install --save @annotator/dom
-```
+The project is made up of multiple packages. Install the `apache-annotator`
+package, which includes all sub-packages, or install individual packages from
+the `@annotator` scope.
 
-##### Requirements
+Import packages from either `apache-annotator/package` or `@annotator/package`.
 
-- [node](https://nodejs.org) ^10 || ^11 || ^12 || >=13.7
-- [yarn](https://www.yarnpkg.com/) ^1.5
+Currently, the following sub-packages are part of the project:
 
+### `@annotator/dom`
 
-## Development
+This package contains functions for creating and resolving Web Annotation
+Selectors in DOM environments.
 
-##### Requirements
+### `@annotator/selector`
+
+This package contains generic utilities for composing functions that create
+and resolve Web Annotation Selectors.
+
+## Getting Involved
+
+* Join the [mailing list]. Send an email to dev-subscribe@annotator.apache.org
+  to subscribe.
+* Browse the [issue tracker] and file new issues if you encounter problems.
+* Read or contribute to the [wiki].
+
+[mailing list]: http://mail-archives.apache.org/mod_mbox/incubator-annotator-dev/
+[issue tracker](https://github.com/apache/incubator-annotator/issues)
+[wiki](https://github.com/apache/incubator-annotator/wiki)
+
+### Requirements
 
 We use [Lerna](https://lernajs.io/) to juggle the various Apache Annotator
 libraries. If you'd like to contribute, you'll need the following:
@@ -34,26 +46,23 @@ libraries. If you'd like to contribute, you'll need the following:
 - [node](https://nodejs.org) ^10 || ^11 || ^12 || >=13.7
 - [yarn](https://www.yarnpkg.com/) ^1.5
 
-##### Setup
+#### Setup
 
 ```sh
 $ yarn install
 ```
 
-##### Test
+#### Test
 
 ```sh
 $ yarn test
 ```
 
-##### Run localhost demo server
+#### Start a local test project
 
 ```sh
 $ yarn start
 ```
-
-Once the test server has started, you can browse a local demo, and run tests in
-a browser by visiting `http://localhost:8080/`.
 
 ## Selectors
 
@@ -84,7 +93,7 @@ $ yarn validate --url https://raw.githubusercontent.com/w3c/web-annotation-tests
 
 With the `--url` option you can pass in a URL or a local path to a JSON file.
 
-##### Examples
+### Examples
 
 Valid:
 
@@ -100,20 +109,9 @@ Invalid:
 
 Apache License 2.0
 
-#### Validate Licensing
-
-[Apache Rat (Release Audit Tool)](https://creadur.apache.org/rat/) is a
-preferred code license checking tool used by [the ASF](https://apache.org/).
-The included `.ratignore` file contains a list of files to exclude from scans.
-
-To check for included licenses, run the following and view the output report:
-```sh
-java -jar ~/bin/apache-rat-0.13/apache-rat-0.13.jar -E .ratignore -d . > rat_report.txt
-```
-
 # Disclaimer
 
 Apache Annotator is currently undergoing incubation at The Apache Software
 Foundation.
 
-See the accompanying [DISCLAIMER](./DISCLAIMER) file for details.
+See the accompanying [DISCLAIMER](./DISCLAIMER-WIP) file for details.
