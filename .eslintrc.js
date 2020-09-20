@@ -72,6 +72,7 @@ module.exports = {
     ],
   },
   settings: {
+    'import/internal-regex': '^@annotator/',
     'import/resolver': {
       'babel-module': babelModuleResolver.options,
     },
