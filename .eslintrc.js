@@ -43,6 +43,7 @@ module.exports = {
     ],
     'import/first': 'error',
     'import/newline-after-import': 'error',
+    'import/no-absolute-path': 'error',
     'import/no-default-export': 'error',
     'import/no-internal-modules': 'error',
     'import/order': ['error', { 'newlines-between': 'always' }],
