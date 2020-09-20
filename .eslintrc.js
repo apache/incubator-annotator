@@ -18,7 +18,6 @@
  * under the License.
  */
 
-const path = require('path');
 const babel = require('@babel/core');
 
 // Use the root babel.config.js for module resolution.
@@ -44,7 +43,6 @@ module.exports = {
     'import/newline-after-import': 'error',
     'import/no-absolute-path': 'error',
     'import/no-default-export': 'error',
-    'import/no-internal-modules': 'error',
     'import/order': [
       'error',
       {
@@ -141,12 +139,6 @@ module.exports = {
         assert: true,
       },
       rules: {
-        'import/no-internal-modules': [
-          'error',
-          {
-            allow: [path.resolve(__dirname, './packages/*/src/**')],
-          },
-        ],
         'import/no-relative-parent-imports': 'off',
       },
     },
