@@ -19,7 +19,6 @@
  */
 
 /* eslint-env node */
-/* eslint-disable import/unambiguous */
 
 const path = require('path');
 
