@@ -19,7 +19,7 @@
  */
 
 import { assert } from 'chai';
-import { product } from '../../src/range/cartesian';
+import { cartesian } from '../../src/range/cartesian';
 
 async function* gen1() {
   yield 1;
@@ -37,25 +37,23 @@ async function* gen3() {
 }
 
 describe('cartesian', () => {
-  describe('product', () => {
-    it('yields the cartesian product of the yielded items', async () => {
-      const cart = product(gen1(), gen2(), gen3());
+  it('yields the cartesian product of the yielded items', async () => {
+    const cart = cartesian(gen1(), gen2(), gen3());
 
-      const expected = [
-        [1, 4, 5],
-        [2, 4, 5],
-        [3, 4, 5],
-        [1, 4, 6],
-        [2, 4, 6],
-        [3, 4, 6],
-      ];
+    const expected = [
+      [1, 4, 5],
+      [2, 4, 5],
+      [3, 4, 5],
+      [1, 4, 6],
+      [2, 4, 6],
+      [3, 4, 6],
+    ];
 
-      const result: number[][] = [];
-      for await (const value of cart) {
-        result.push(value);
-      }
+    const actual: number[][] = [];
+    for await (const value of cart) {
+      actual.push(value);
+    }
 
-      assert.sameDeepMembers(result, expected, 'yields the expected items');
-    });
+    assert.sameDeepMembers(actual, expected, 'yields the expected items');
   });
 });

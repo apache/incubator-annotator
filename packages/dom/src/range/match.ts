@@ -20,7 +20,7 @@
 
 import type { Matcher, RangeSelector, Selector } from '@annotator/selector';
 import { ownerDocument } from '../owner-document';
-import { product } from './cartesian';
+import { cartesian } from './cartesian';
 
 export function makeCreateRangeSelectorMatcher(
   createMatcher: <T extends Selector>(selector: T) => Matcher<Range, Range>,
@@ -33,7 +33,7 @@ export function makeCreateRangeSelectorMatcher(
       const startMatches = startMatcher(scope);
       const endMatches = endMatcher(scope);
 
-      const pairs = product(startMatches, endMatches);
+      const pairs = cartesian(startMatches, endMatches);
 
       for await (const [start, end] of pairs) {
         const result = ownerDocument(scope).createRange();
