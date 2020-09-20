@@ -20,7 +20,8 @@
 
 import { assert } from 'chai';
 import { highlightRange } from '../../src/highlight-range';
-import { RangeInfo, hydrateRange, evaluateXPath } from '../utils';
+import type { RangeInfo } from '../utils';
+import { hydrateRange, evaluateXPath } from '../utils';
 
 const domParser = new window.DOMParser();
 

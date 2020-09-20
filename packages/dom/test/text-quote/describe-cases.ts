@@ -19,7 +19,7 @@
  */
 
 import type { TextQuoteSelector } from '@annotator/selector';
-import { RangeInfo } from '../utils';
+import type { RangeInfo } from '../utils';
 
 export const testCases: {
   [name: string]: {

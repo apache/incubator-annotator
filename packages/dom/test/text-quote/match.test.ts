@@ -19,9 +19,10 @@
  */
 
 import { assert } from 'chai';
-import { TextQuoteSelector } from '@annotator/selector';
+import type { TextQuoteSelector } from '@annotator/selector';
 import { createTextQuoteSelectorMatcher } from '../../src/text-quote/match';
-import { evaluateXPath, RangeInfo } from '../utils';
+import { evaluateXPath } from '../utils';
+import type { RangeInfo } from '../utils';
 import { testCases } from './match-cases';
 
 const domParser = new window.DOMParser();
