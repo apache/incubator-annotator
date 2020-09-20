@@ -91,9 +91,6 @@ module.exports = {
         es2017: true,
         node: true,
       },
-      parserOptions: {
-        ecmaVersion: 2018,
-      },
       plugins: ['node'],
       rules: {
         'no-console': 'off',
