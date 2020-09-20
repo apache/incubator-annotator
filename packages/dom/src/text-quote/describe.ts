@@ -76,18 +76,28 @@ function calculateContextForDisambiguation(
 
     // Count how many characters we’d need as a prefix to disqualify this match.
     let sufficientPrefixLength = prefix.length + 1;
-    const firstChar = (offset: number) => scopeText[offset - sufficientPrefixLength];
-    while (firstChar(targetStartIndex) && firstChar(targetStartIndex) === firstChar(matchStartIndex))
+    const firstChar = (offset: number) =>
+      scopeText[offset - sufficientPrefixLength];
+    while (
+      firstChar(targetStartIndex) &&
+      firstChar(targetStartIndex) === firstChar(matchStartIndex)
+    )
       sufficientPrefixLength++;
-    if (!firstChar(targetStartIndex)) // We reached the start of scopeText; prefix won’t work.
+    if (!firstChar(targetStartIndex))
+      // We reached the start of scopeText; prefix won’t work.
       sufficientPrefixLength = Infinity;
 
     // Count how many characters we’d need as a suffix to disqualify this match.
     let sufficientSuffixLength = suffix.length + 1;
-    const lastChar = (offset: number) => scopeText[offset + sufficientSuffixLength - 1];
-    while (lastChar(targetEndIndex) && lastChar(targetEndIndex) === lastChar(matchEndIndex))
+    const lastChar = (offset: number) =>
+      scopeText[offset + sufficientSuffixLength - 1];
+    while (
+      lastChar(targetEndIndex) &&
+      lastChar(targetEndIndex) === lastChar(matchEndIndex)
+    )
       sufficientSuffixLength++;
-    if (!lastChar(targetEndIndex)) // We reached the end of scopeText; suffix won’t work.
+    if (!lastChar(targetEndIndex))
+      // We reached the end of scopeText; suffix won’t work.
       sufficientSuffixLength = Infinity;
 
     // Use either the prefix or suffix, whichever is shortest.
