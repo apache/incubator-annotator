@@ -5,7 +5,8 @@
   "homepage": "https://annotator.apache.org",
   "repository": {
     "type": "git",
-    "url": "https://github.com/apache/incubator-annotator.git"
+    "url": "https://github.com/apache/incubator-annotator.git",
+    "directory": "packages/dom"
   },
   "license": "Apache-2.0",
   "author": "Apache Software Foundation",
