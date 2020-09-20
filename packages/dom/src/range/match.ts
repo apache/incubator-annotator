@@ -19,9 +19,7 @@
  */
 
 import type { Matcher, RangeSelector, Selector } from '@annotator/selector';
-
 import { ownerDocument } from '../owner-document';
-
 import { product } from './cartesian';
 
 export function makeCreateRangeSelectorMatcher(

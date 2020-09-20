@@ -22,7 +22,6 @@
 
 import fs from 'fs';
 import { URL } from 'url';
-
 import Ajv from 'ajv';
 import { assert } from 'chai';
 import fetch from 'node-fetch';

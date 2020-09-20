@@ -19,7 +19,6 @@
  */
 
 const path = require('path');
-
 const babel = require('@babel/core');
 
 // Use the root babel.config.js for module resolution.
@@ -46,7 +45,23 @@ module.exports = {
     'import/no-absolute-path': 'error',
     'import/no-default-export': 'error',
     'import/no-internal-modules': 'error',
-    'import/order': ['error', { 'newlines-between': 'always' }],
+    'import/order': [
+      'error',
+      {
+        alphabetize: {
+          order: 'asc',
+        },
+        groups: [
+          'builtin',
+          'external',
+          'internal',
+          'parent',
+          'sibling',
+          'index',
+        ],
+        'newlines-between': 'never',
+      },
+    ],
     'import/unambiguous': 'error',
     'prettier/prettier': [
       'error',

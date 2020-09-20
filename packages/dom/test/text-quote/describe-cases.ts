@@ -19,7 +19,6 @@
  */
 
 import type { TextQuoteSelector } from '@annotator/selector';
-
 import { RangeInfo } from '../utils';
 
 export const testCases: {

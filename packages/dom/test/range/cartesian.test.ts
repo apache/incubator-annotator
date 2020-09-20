@@ -19,7 +19,6 @@
  */
 
 import { assert } from 'chai';
-
 import { product } from '../../src/range/cartesian';
 
 async function* gen1() {

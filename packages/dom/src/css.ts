@@ -19,7 +19,6 @@
  */
 
 import type { CssSelector, Matcher } from '@annotator/selector';
-
 import { ownerDocument } from './owner-document';
 
 export function createCssSelectorMatcher(

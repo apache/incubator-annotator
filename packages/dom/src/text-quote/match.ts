@@ -18,9 +18,8 @@
  * under the License.
  */
 
-import type { Matcher, TextQuoteSelector } from '@annotator/selector';
 import seek from 'dom-seek';
-
+import type { Matcher, TextQuoteSelector } from '@annotator/selector';
 import { ownerDocument } from '../owner-document';
 
 export function createTextQuoteSelectorMatcher(

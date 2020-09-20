@@ -19,7 +19,6 @@
  */
 
 import { assert } from 'chai';
-
 import { highlightRange } from '../../src/highlight-range';
 import { RangeInfo, hydrateRange, evaluateXPath } from '../utils';
 
