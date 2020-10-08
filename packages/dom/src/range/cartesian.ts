@@ -33,7 +33,7 @@ export async function* cartesian<T>(
       for await (const value of iterable) {
         yield { index, value };
       }
-      return { index, value: undefined };
+      return { index };
     };
     return generator();
   });
@@ -76,7 +76,7 @@ export async function* cartesian<T>(
 
     // Synchronously compute and yield tuples of the partial product.
     yield* scratch.reduce(
-      (a, b) => a.flatMap((v) => Array.from(b).map((w) => [...v, w])),
+      (a, b) => a.flatMap((v) => b.map((w) => [...v, w])),
       [[]] as T[][],
     );
   }
