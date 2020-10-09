@@ -20,7 +20,7 @@
 
 import type { TextQuoteSelector } from '@annotator/selector';
 import { ownerDocument } from '../owner-document';
-import seek from '../seek';
+import { Seeker } from '../seek';
 
 export async function describeTextQuote(
   range: Range,
@@ -120,22 +120,11 @@ function calculateContextForDisambiguation(
 
 // Get the index of the first character of range within the text of scope.
 function getRangeTextPosition(range: Range, scope: Range): number {
-  const iter = ownerDocument(scope).createNodeIterator(
-    scope.commonAncestorContainer,
-    NodeFilter.SHOW_TEXT,
-    {
-      acceptNode(node: Text) {
-        // Only reveal nodes within the range
-        return scope.intersectsNode(node)
-          ? NodeFilter.FILTER_ACCEPT
-          : NodeFilter.FILTER_REJECT;
-      },
-    },
-  );
+  const seeker = new Seeker(scope);
   const scopeOffset = isTextNode(scope.startContainer) ? scope.startOffset : 0;
   if (isTextNode(range.startContainer))
-    return seek(iter, range.startContainer) + range.startOffset - scopeOffset;
-  else return seek(iter, firstTextNodeInRange(range)) - scopeOffset;
+    return seeker.seek(range.startContainer) + range.startOffset - scopeOffset;
+  else return seeker.seek(firstTextNodeInRange(range)) - scopeOffset;
 }
 
 function firstTextNodeInRange(range: Range): Text {

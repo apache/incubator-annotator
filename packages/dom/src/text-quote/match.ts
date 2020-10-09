@@ -20,7 +20,7 @@
 
 import type { Matcher, TextQuoteSelector } from '@annotator/selector';
 import { ownerDocument } from '../owner-document';
-import seek from '../seek';
+import { TextSeeker } from '../seek';
 
 export function createTextQuoteSelectorMatcher(
   selector: TextQuoteSelector,
@@ -34,23 +34,15 @@ export function createTextQuoteSelectorMatcher(
     const suffix = selector.suffix || '';
     const searchPattern = prefix + exact + suffix;
 
-    const iter = document.createNodeIterator(
-      scope.commonAncestorContainer,
-      NodeFilter.SHOW_TEXT,
-      {
-        acceptNode(node: Text) {
-          // Only reveal nodes within the range; and skip any empty text nodes.
-          return scope.intersectsNode(node) && node.length > 0
-            ? NodeFilter.FILTER_ACCEPT
-            : NodeFilter.FILTER_REJECT;
-        },
-      },
-    );
-
-    // The index of the first character of iter.referenceNode inside the text.
-    let referenceNodeIndex = isTextNode(scope.startContainer)
-      ? -scope.startOffset
-      : 0;
+    let seeker: TextSeeker;
+    try {
+      seeker = new TextSeeker(scope);
+    } catch (error) {
+      // If the scope does not contain text nodes, we can stop. (if it contains
+      // only empty text nodes we continue: it would still match an empty quote)
+      if (error instanceof RangeError) return;
+      else throw error;
+    }
 
     let fromIndex = 0;
     while (fromIndex <= scopeText.length) {
@@ -66,12 +58,12 @@ export function createTextQuoteSelectorMatcher(
       const match = document.createRange();
 
       // Seek to the start of the match, make the range start there.
-      referenceNodeIndex += seek(iter, matchStartIndex - referenceNodeIndex);
-      match.setStart(iter.referenceNode, matchStartIndex - referenceNodeIndex);
+      seeker.seekTo(matchStartIndex);
+      match.setStart(seeker.referenceNode, seeker.offsetInReferenceNode);
 
       // Seek to the end of the match, make the range end there.
-      referenceNodeIndex += seek(iter, matchEndIndex - referenceNodeIndex);
-      match.setEnd(iter.referenceNode, matchEndIndex - referenceNodeIndex);
+      seeker.seekTo(matchEndIndex);
+      match.setEnd(seeker.referenceNode, seeker.offsetInReferenceNode);
 
       // Yield the match.
       yield match;
@@ -80,8 +72,4 @@ export function createTextQuoteSelectorMatcher(
       fromIndex = matchStartIndex + 1;
     }
   };
-}
-
-function isTextNode(node: Node): node is Text {
-  return node.nodeType === Node.TEXT_NODE;
 }
