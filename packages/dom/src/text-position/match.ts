@@ -20,7 +20,7 @@
 
 import type { Matcher, TextPositionSelector } from '@annotator/selector';
 import { ownerDocument } from '../owner-document';
-import { TextSeeker, CharSeeker } from '../seek';
+import { CharSeeker, TextNodeChunker, TextNodeSeeker } from '../seek';
 
 export function createTextPositionSelectorMatcher(
   selector: TextPositionSelector,
@@ -30,7 +30,7 @@ export function createTextPositionSelectorMatcher(
 
     const { start, end } = selector;
 
-    const codeUnitSeeker = new TextSeeker(scope);
+    const codeUnitSeeker = new TextNodeSeeker(scope);
     const codePointSeeker = new CharSeeker(codeUnitSeeker);
 
     // Create a range to represent the described text in the dom.
