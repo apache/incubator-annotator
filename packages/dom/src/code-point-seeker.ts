@@ -41,17 +41,6 @@ class _CodePointSeeker implements Seeker<string[]> {
     return this._readOrSeekTo(true, target, roundUp);
   }
 
-  read1(length?: number) {
-    const chunk = this.read(1, true);
-    if (length !== undefined && chunk.length > length) {
-      // The chunk was larger than requested; walk back a little.
-      this.seekBy(length - chunk.length);
-      return chunk.slice(0, length);
-    } else {
-      return chunk;
-    }
-  }
-
   private _readOrSeekTo(read: true, target: number, roundUp?: boolean): string[];
   private _readOrSeekTo(read: false, target: number, roundUp?: boolean): void;
   private _readOrSeekTo(read: boolean, target: number, roundUp: boolean = false): string[] | void {

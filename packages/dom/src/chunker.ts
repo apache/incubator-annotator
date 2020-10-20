@@ -20,20 +20,27 @@
 
 import { ownerDocument } from "./owner-document";
 
+// A Chunk represents a fragment (typically a string) of some document.
+// Subclasses can add further attributes to map the chunk to its position in the
+// data structure it came from (e.g. a DOM node).
 export interface Chunk<TData extends any> {
-  // A Chunk has a primary value (typically a string), and any other info that one may want to add to it.
   readonly data: TData;
-
-  // The initial idea was that a Chunk is any toString-able object. Should suffice for us.
-  // But it would not let one create e.g. a Chunk with an array of unicode characters.
-  // toString(): string;
 }
 
+// A Chunker lets one walk through the chunks of a document.
+// It is inspired by, and similar to, the DOM’s NodeIterator. (but unlike
+// NodeIterator, it has no concept of being ‘before’ or ‘after’ a chunk)
 export interface Chunker<TChunk extends Chunk<any>> {
-  readonly currentChunk: TChunk;
-  readNext(): TChunk | null;
-  readPrev(): TChunk | null;
-  // read(length?: 1 | -1, roundUp?: true): TChunk | null;
+  // currentChunk is null only if it contains no chunks at all.
+  readonly currentChunk: TChunk | null;
+
+  // Move currentChunk to the chunk following it, and return that chunk.
+  // If there are no chunks following it, keep currentChunk unchanged and return null.
+  nextChunk(): TChunk | null;
+
+  // Move currentChunk to the chunk preceding it, and return that chunk.
+  // If there are no preceding chunks, keep currentChunk unchanged and return null.
+  previousChunk(): TChunk | null;
 }
 
 export interface PartialTextNode extends Chunk<string> {
@@ -47,9 +54,9 @@ export class TextNodeChunker implements Chunker<PartialTextNode> {
   private iter: NodeIterator;
 
   get currentChunk() {
-    // The NodeFilter will guarantee this is a Text node (except before the
-    // first iteration step, but we do such a step in the constructor).
-    const node = this.iter.referenceNode as Text;
+    const node = this.iter.referenceNode;
+    if (!isText(node))
+      return null;
     const startOffset = (node === this.scope.startContainer) ? this.scope.startOffset : 0;
     const endOffset = (node === this.scope.endContainer) ? this.scope.endOffset : node.length;
     return {
@@ -73,10 +80,14 @@ export class TextNodeChunker implements Chunker<PartialTextNode> {
       },
     );
 
-    this.iter.nextNode(); // TODO choose how to handle a range without text nodes.
+    // Move the iterator to after the start (= root) node.
+    this.iter.nextNode();
+    // If the start node is not a text node, move it to the first text node (if any).
+    if (!isText(this.iter.referenceNode))
+      this.iter.nextNode();
   }
 
-  readNext() {
+  nextChunk() {
     // Move the iterator to after the current node, so nextNode() will cause a jump.
     if (this.iter.pointerBeforeReferenceNode)
       this.iter.nextNode();
@@ -86,7 +97,7 @@ export class TextNodeChunker implements Chunker<PartialTextNode> {
       return null;
   }
 
-  readPrev() {
+  previousChunk() {
     if (!this.iter.pointerBeforeReferenceNode)
       this.iter.previousNode();
     if (this.iter.previousNode())
@@ -94,4 +105,8 @@ export class TextNodeChunker implements Chunker<PartialTextNode> {
     else
       return null;
   }
+}
+
+function isText(node: Node): node is Text {
+  return node.nodeType === Node.TEXT_NODE;
 }

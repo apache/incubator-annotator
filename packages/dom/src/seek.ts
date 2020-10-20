@@ -18,9 +18,15 @@
  * under the License.
  */
 
-import { Chunk, Chunker, TextNodeChunker, PartialTextNode } from "./chunker";
+import { Chunk, TextNodeChunker, PartialTextNode } from "./chunker";
 
 const E_END = 'Iterator exhausted before seek ended.';
+
+interface NonEmptyChunker<TChunk extends Chunk<any>> {
+  readonly currentChunk: TChunk;
+  nextChunk(): TChunk | null;
+  previousChunk(): TChunk | null;
+}
 
 export interface BoundaryPointer<T extends any> {
   readonly referenceNode: T;
@@ -31,7 +37,6 @@ export interface Seeker<T extends Iterable<any> = string> {
   readonly position: number;
   read(length?: number, roundUp?: boolean): T;
   readTo(target: number, roundUp?: boolean): T;
-  // read1(length?: number): T;
   seekBy(length: number): void;
   seekTo(target: number): void;
 }
@@ -46,7 +51,7 @@ class _TextSeeker<TChunk extends Chunk<string>> implements Seeker<string> {
   // The current text position (measured in code units)
   get position() { return this.currentChunkPosition + this.offsetInChunk; }
 
-  constructor(protected chunker: Chunker<TChunk>) {
+  constructor(protected chunker: NonEmptyChunker<TChunk>) {
     // Walk to the start of the first non-empty chunk inside the scope.
     this.seekTo(0);
   }
@@ -57,17 +62,6 @@ class _TextSeeker<TChunk extends Chunk<string>> implements Seeker<string> {
 
   readTo(target: number, roundUp: boolean = false) {
     return this._readOrSeekTo(true, target, roundUp);
-  }
-
-  read1(length?: number) {
-    const chunk = this.read(1, true);
-    if (length !== undefined && chunk.length > length) {
-      // The chunk was larger than requested; walk back a little.
-      this.seekBy(length - chunk.length);
-      return chunk.substring(0, length);
-    } else {
-      return chunk;
-    }
   }
 
   seekBy(length: number) {
@@ -97,11 +91,11 @@ class _TextSeeker<TChunk extends Chunk<string>> implements Seeker<string> {
           // Move to the start of the next chunk, while counting the characters of the current one.
           if (read) result += this.chunker.currentChunk.data.substring(this.offsetInChunk);
           const chunkLength = this.chunker.currentChunk.data.length;
-          let nextChunk = this.chunker.readNext();
+          let nextChunk = this.chunker.nextChunk();
           if (nextChunk !== null) {
             // Skip empty chunks.
             while (nextChunk && nextChunk.data.length === 0)
-              nextChunk = this.chunker.readNext();
+              nextChunk = this.chunker.nextChunk();
             this.currentChunkPosition += chunkLength;
             this.offsetInChunk = 0;
           } else {
@@ -127,8 +121,8 @@ class _TextSeeker<TChunk extends Chunk<string>> implements Seeker<string> {
         } else {
           // Move to the end of the previous chunk.
           if (read) result = this.chunker.currentChunk.data.substring(0, this.offsetInChunk) + result;
-          const prevChunk = this.chunker.readPrev();
-          if (prevChunk !== null) {
+          const previousChunk = this.chunker.previousChunk();
+          if (previousChunk !== null) {
             this.currentChunkPosition -= this.chunker.currentChunk.data.length;
             this.offsetInChunk = this.chunker.currentChunk.data.length;
           } else {
@@ -157,7 +151,9 @@ export class TextSeeker<TChunk extends Chunk<string>> extends _TextSeeker<TChunk
 export class DomSeeker extends _TextSeeker<PartialTextNode> implements BoundaryPointer<Text> {
   constructor(scope: Range) {
     const chunker = new TextNodeChunker(scope);
-    super(chunker);
+    if (chunker.currentChunk === null)
+      throw new RangeError('Range does not contain any Text nodes.');
+    super(chunker as NonEmptyChunker<PartialTextNode>);
   }
 
   get referenceNode() {
