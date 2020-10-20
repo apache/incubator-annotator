@@ -20,7 +20,7 @@
 
 import type { Matcher, TextQuoteSelector } from '@annotator/selector';
 import { ownerDocument } from '../owner-document';
-import { TextSeeker } from '../seek';
+import { DomSeeker } from '../seek';
 
 export function createTextQuoteSelectorMatcher(
   selector: TextQuoteSelector,
@@ -34,9 +34,9 @@ export function createTextQuoteSelectorMatcher(
     const suffix = selector.suffix || '';
     const searchPattern = prefix + exact + suffix;
 
-    let seeker: TextSeeker;
+    let seeker: DomSeeker;
     try {
-      seeker = new TextSeeker(scope);
+      seeker = new DomSeeker(scope);
     } catch (error) {
       // If the scope does not contain text nodes, we can stop. (if it contains
       // only empty text nodes we continue: it would still match an empty quote)
