@@ -59,8 +59,8 @@ describe('createTextQuoteSelectorMatcher', () => {
       {
         startContainerXPath: '//b/text()[13]',
         startOffset: 0,
-        endContainerXPath: '//b/text()[21]',
-        endOffset: 0,
+        endContainerXPath: '//b/text()[20]',
+        endOffset: 1,
       },
     ]);
   });
@@ -88,8 +88,8 @@ describe('createTextQuoteSelectorMatcher', () => {
       {
         startContainerXPath: '//b/text()[4]', // "dolor"
         startOffset: 0,
-        endContainerXPath: '//b/text()[8]', // "et yada yada"
-        endOffset: 0,
+        endContainerXPath: '//b/text()[6]', // " am"
+        endOffset: 3,
       },
     ]);
   });

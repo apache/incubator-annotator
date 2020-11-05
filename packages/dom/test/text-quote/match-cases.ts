@@ -98,8 +98,8 @@ export const testCases: {
       {
         startContainerXPath: '//i/text()',
         startOffset: 0,
-        endContainerXPath: '//b/text()[2]',
-        endOffset: 0,
+        endContainerXPath: '//i/text()',
+        endOffset: 11,
       },
     ],
   },
@@ -114,8 +114,8 @@ export const testCases: {
       {
         startContainerXPath: '//title/text()',
         startOffset: 4,
-        endContainerXPath: '//b/text()[1]',
-        endOffset: 0,
+        endContainerXPath: '//title/text()',
+        endOffset: 9,
       },
     ],
   },

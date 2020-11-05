@@ -19,57 +19,124 @@
  */
 
 import type { Matcher, TextQuoteSelector } from '@annotator/selector';
-import { ownerDocument } from '../owner-document';
-import { DomSeeker } from '../seek';
+import { TextNodeChunker, Chunk, Chunker } from '../chunker';
+
+export interface ChunkRange<TChunk extends Chunk<any>> {
+  startChunk: TChunk;
+  startIndex: number;
+  endChunk: TChunk;
+  endIndex: number;
+}
 
 export function createTextQuoteSelectorMatcher(
   selector: TextQuoteSelector,
 ): Matcher<Range, Range> {
+  const abstractMatcher = abstractTextQuoteSelectorMatcher(selector);
   return async function* matchAll(scope) {
-    const document = ownerDocument(scope);
-    const scopeText = scope.toString();
+    const textChunks = new TextNodeChunker(scope);
 
+    for await (const abstractMatch of abstractMatcher(textChunks)) {
+      const match = document.createRange();
+      // The `+…startOffset` parts are only relevant for the first chunk, as it
+      // might start within a text node.
+      match.setStart(abstractMatch.startChunk.node,
+        abstractMatch.startIndex + abstractMatch.startChunk.startOffset);
+      match.setEnd(abstractMatch.endChunk.node,
+        abstractMatch.endIndex + abstractMatch.endChunk.startOffset);
+      yield match;
+    }
+  }
+}
+
+type AbstractMatcher<TChunk extends Chunk<string>> =
+  Matcher<Chunker<TChunk>, ChunkRange<TChunk>>
+
+export function abstractTextQuoteSelectorMatcher(
+  selector: TextQuoteSelector,
+): AbstractMatcher<any> {
+  return async function* matchAll<TChunk extends Chunk<string>>(textChunks: Chunker<TChunk>) {
     const exact = selector.exact;
     const prefix = selector.prefix || '';
     const suffix = selector.suffix || '';
     const searchPattern = prefix + exact + suffix;
 
-    let seeker: DomSeeker;
-    try {
-      seeker = new DomSeeker(scope);
-    } catch (error) {
-      // If the scope does not contain text nodes, we can stop. (if it contains
-      // only empty text nodes we continue: it would still match an empty quote)
-      if (error instanceof RangeError) return;
-      else throw error;
-    }
+    let partialMatches: Array<{
+      startChunk: TChunk;
+      startIndex: number;
+      charactersMatched: number;
+    }> = [];
 
-    let fromIndex = 0;
-    while (fromIndex <= scopeText.length) {
-      // Find the quote with its prefix and suffix in the string.
-      const patternStartIndex = scopeText.indexOf(searchPattern, fromIndex);
-      if (patternStartIndex === -1) return;
+    let chunk: TChunk | null;
+    while (chunk = textChunks.currentChunk) {
+      const chunkValue = chunk.data;
 
-      // Correct for the prefix and suffix lengths.
-      const matchStartIndex = patternStartIndex + prefix.length;
-      const matchEndIndex = matchStartIndex + exact.length;
+      // Continue checking any partial matches from the previous chunk(s).
+      const remainingPartialMatches: typeof partialMatches = [];
+      for (const { startChunk, startIndex, charactersMatched } of partialMatches) {
+        if (searchPattern.length - charactersMatched > chunkValue.length) {
+          if (chunkValue === searchPattern.substring(charactersMatched, charactersMatched + chunkValue.length)) {
+            // The chunk is too short to complete the match; comparison has to be completed in subsequent chunks.
+            remainingPartialMatches.push({
+              startChunk,
+              startIndex,
+              charactersMatched: charactersMatched + chunkValue.length,
+            });
+          }
+        }
+        else if (chunkValue.startsWith(searchPattern.substring(charactersMatched))) {
+          yield {
+            startChunk,
+            startIndex,
+            endChunk: chunk,
+            endIndex: searchPattern.length - charactersMatched,
+          };
+        }
+      }
+      partialMatches = remainingPartialMatches;
 
-      // Create a range to represent this exact quote in the dom.
-      const match = document.createRange();
+      // Try find the whole pattern in the chunk (possibly multiple times).
+      if (searchPattern.length <= chunkValue.length) {
+        let fromIndex = 0;
+        while (fromIndex <= chunkValue.length) {
+          const patternStartIndex = chunkValue.indexOf(searchPattern, fromIndex);
+          if (patternStartIndex === -1) break;
 
-      // Seek to the start of the match, make the range start there.
-      seeker.seekTo(matchStartIndex);
-      match.setStart(seeker.referenceNode, seeker.offsetInReferenceNode);
+          // Correct for the prefix and suffix lengths.
+          const matchStartIndex = patternStartIndex + prefix.length;
+          const matchEndIndex = matchStartIndex + exact.length;
 
-      // Seek to the end of the match, make the range end there.
-      seeker.seekTo(matchEndIndex);
-      match.setEnd(seeker.referenceNode, seeker.offsetInReferenceNode);
+          yield {
+            startChunk: chunk,
+            startIndex: matchStartIndex,
+            endChunk: chunk,
+            endIndex: matchEndIndex,
+          };
 
-      // Yield the match.
-      yield match;
+          // Advance the search forward to detect multiple occurrences within the same chunk.
+          fromIndex = matchStartIndex + 1;
+        }
+      }
 
-      // Advance the search forward to detect multiple occurrences.
-      fromIndex = matchStartIndex + 1;
+      // Check if this chunk ends with a partial match (or even multiple partial matches).
+      let newPartialMatches: number[] = [];
+      const searchStartPoint = Math.max(chunkValue.length - searchPattern.length + 1, 0);
+      for (let i = searchStartPoint; i < chunkValue.length; i++) {
+        const character = chunkValue[i];
+        newPartialMatches = newPartialMatches.filter(
+          partialMatchStartIndex => (character === searchPattern[i - partialMatchStartIndex])
+        );
+        if (character === searchPattern[0]) newPartialMatches.push(i);
+      }
+      for (const partialMatchStartIndex of newPartialMatches) {
+        partialMatches.push({
+          startChunk: chunk,
+          startIndex: partialMatchStartIndex,
+          charactersMatched: chunkValue.length - partialMatchStartIndex,
+        });
+      }
+
+      if (textChunks.nextChunk() === null)
+        break;
     }
   };
 }
