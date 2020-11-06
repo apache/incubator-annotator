@@ -41,12 +41,17 @@ export interface Seeker<T extends Iterable<any> = string> {
   seekTo(target: number): void;
 }
 
-class _TextSeeker<TChunk extends Chunk<string>> implements Seeker<string> {
+export class TextSeeker<TChunk extends Chunk<string>> implements Seeker<string> {
+  // The chunk containing our current text position.
+  get currentChunk() {
+    return this.chunker.currentChunk;
+  }
+
   // The index of the first character of the current chunk inside the text.
   private currentChunkPosition = 0;
 
   // The position inside the chunk where the last seek ended up.
-  protected offsetInChunk = 0;
+  offsetInChunk = 0;
 
   // The current text position (measured in code units)
   get position() { return this.currentChunkPosition + this.offsetInChunk; }
@@ -79,18 +84,18 @@ class _TextSeeker<TChunk extends Chunk<string>> implements Seeker<string> {
 
     if (this.position <= target) {
       while (this.position <= target) { // could be `while (true)`?
-        if (!roundUp && target < this.currentChunkPosition + this.chunker.currentChunk.data.length) {
+        if (!roundUp && target < this.currentChunkPosition + this.currentChunk.data.length) {
           // The target is before the end of the current chunk.
           // (we use < not ≤: if the target is *at* the end of the chunk, possibly
           // because the current chunk is empty, we prefer to take the next chunk)
           const newOffset = target - this.currentChunkPosition;
-          if (read) result += this.chunker.currentChunk.data.substring(this.offsetInChunk, newOffset);
+          if (read) result += this.currentChunk.data.substring(this.offsetInChunk, newOffset);
           this.offsetInChunk = newOffset;
           break;
         } else {
           // Move to the start of the next chunk, while counting the characters of the current one.
-          if (read) result += this.chunker.currentChunk.data.substring(this.offsetInChunk);
-          const chunkLength = this.chunker.currentChunk.data.length;
+          if (read) result += this.currentChunk.data.substring(this.offsetInChunk);
+          const chunkLength = this.currentChunk.data.length;
           let nextChunk = this.chunker.nextChunk();
           if (nextChunk !== null) {
             // Skip empty chunks.
@@ -115,16 +120,16 @@ class _TextSeeker<TChunk extends Chunk<string>> implements Seeker<string> {
         if (this.currentChunkPosition <= target) {
           // The target is within the current chunk.
           const newOffset = roundUp ? 0 : target - this.currentChunkPosition;
-          if (read) result = this.chunker.currentChunk.data.substring(newOffset, this.offsetInChunk) + result;
+          if (read) result = this.currentChunk.data.substring(newOffset, this.offsetInChunk) + result;
           this.offsetInChunk = newOffset;
           break;
         } else {
           // Move to the end of the previous chunk.
-          if (read) result = this.chunker.currentChunk.data.substring(0, this.offsetInChunk) + result;
+          if (read) result = this.currentChunk.data.substring(0, this.offsetInChunk) + result;
           const previousChunk = this.chunker.previousChunk();
           if (previousChunk !== null) {
-            this.currentChunkPosition -= this.chunker.currentChunk.data.length;
-            this.offsetInChunk = this.chunker.currentChunk.data.length;
+            this.currentChunkPosition -= this.currentChunk.data.length;
+            this.offsetInChunk = this.currentChunk.data.length;
           } else {
             this.offsetInChunk = 0;
             throw new RangeError(E_END);
@@ -137,18 +142,8 @@ class _TextSeeker<TChunk extends Chunk<string>> implements Seeker<string> {
   }
 }
 
-export class TextSeeker<TChunk extends Chunk<string>> extends _TextSeeker<TChunk> implements BoundaryPointer<TChunk> {
-  // The chunk containing our current text position.
-  get referenceNode() {
-    return this.chunker.currentChunk;
-  }
 
-  get offsetInReferenceNode() {
-    return this.offsetInChunk;
-  }
-}
-
-export class DomSeeker extends _TextSeeker<PartialTextNode> implements BoundaryPointer<Text> {
+export class DomSeeker extends TextSeeker<PartialTextNode> implements BoundaryPointer<Text> {
   constructor(scope: Range) {
     const chunker = new TextNodeChunker(scope);
     if (chunker.currentChunk === null)
@@ -157,10 +152,10 @@ export class DomSeeker extends _TextSeeker<PartialTextNode> implements BoundaryP
   }
 
   get referenceNode() {
-    return this.chunker.currentChunk.node;
+    return this.currentChunk.node;
   }
 
   get offsetInReferenceNode() {
-    return this.offsetInChunk + this.chunker.currentChunk.startOffset;
+    return this.offsetInChunk + this.currentChunk.startOffset;
   }
 }
