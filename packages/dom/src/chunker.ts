@@ -18,6 +18,7 @@
  * under the License.
  */
 
+import { normalizeRange } from "./normalize-range";
 import { ownerDocument } from "./owner-document";
 
 // A Chunk represents a fragment (typically a string) of some document.
@@ -78,6 +79,12 @@ export class TextNodeChunker implements Chunker<PartialTextNode> {
     const node = this.iter.referenceNode;
     if (!isText(node))
       return null;
+    return this.nodeToChunk(node);
+  }
+
+  nodeToChunk(node: Text): PartialTextNode {
+    if (!this.scope.intersectsNode(node))
+      throw new Error('Cannot convert node to chunk, as it falls outside of chunker’s scope.');
     const startOffset = (node === this.scope.startContainer) ? this.scope.startOffset : 0;
     const endOffset = (node === this.scope.endContainer) ? this.scope.endOffset : node.length;
     return {
@@ -85,7 +92,27 @@ export class TextNodeChunker implements Chunker<PartialTextNode> {
       startOffset,
       endOffset,
       data: node.data.substring(startOffset, endOffset),
+      equals(other) {
+        return (
+          other.node === this.node
+          && other.startOffset === this.startOffset
+          && other.endOffset === this.endOffset
+        );
+      },
     }
+  }
+
+  rangeToChunkRange(range: Range): ChunkRange<PartialTextNode> {
+    const textRange = normalizeRange(range);
+    // FIXME: normalizeRange can mess up: a collapsed range at the very end of
+    // the chunker’s scope might move to the next text node outside the scope.
+
+    const startChunk = this.nodeToChunk(textRange.startContainer);
+    const startIndex = textRange.startOffset - startChunk.startOffset;
+    const endChunk = this.nodeToChunk(textRange.endContainer);
+    const endIndex = textRange.endOffset - endChunk.startOffset;
+
+    return { startChunk, startIndex, endChunk, endIndex };
   }
 
   constructor(private scope: Range) {

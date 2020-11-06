@@ -53,41 +53,62 @@ export function abstractTextQuoteSelectorMatcher(
     const suffix = selector.suffix || '';
     const searchPattern = prefix + exact + suffix;
 
-    let partialMatches: Array<{
-      startChunk: TChunk;
-      startIndex: number;
+    // The code below runs a loop with three steps:
+    // 1. Continue checking any partial matches from the previous chunk(s).
+    // 2. Try find the whole pattern in the chunk (possibly multiple times).
+    // 3. Check if this chunk ends with a partial match (or even multiple partial matches).
+
+    interface PartialMatch {
+      startChunk?: TChunk;
+      startIndex?: number;
+      endChunk?: TChunk;
+      endIndex?: number;
       charactersMatched: number;
-    }> = [];
+    }
+    let partialMatches: PartialMatch[] = [];
 
     let chunk: TChunk | null;
     while (chunk = textChunks.currentChunk) {
       const chunkValue = chunk.data;
 
-      // Continue checking any partial matches from the previous chunk(s).
+      // 1. Continue checking any partial matches from the previous chunk(s).
       const remainingPartialMatches: typeof partialMatches = [];
-      for (const { startChunk, startIndex, charactersMatched } of partialMatches) {
-        if (searchPattern.length - charactersMatched > chunkValue.length) {
-          if (chunkValue === searchPattern.substring(charactersMatched, charactersMatched + chunkValue.length)) {
-            // The chunk is too short to complete the match; comparison has to be completed in subsequent chunks.
-            remainingPartialMatches.push({
-              startChunk,
-              startIndex,
-              charactersMatched: charactersMatched + chunkValue.length,
-            });
+      for (const partialMatch of partialMatches) {
+        const charactersMatched = partialMatch.charactersMatched;
+
+        // If the current chunk contains the start and/or end of the match, record these.
+        if (partialMatch.endChunk === undefined) {
+          const charactersUntilMatchEnd = prefix.length + exact.length - charactersMatched;
+          if (charactersUntilMatchEnd <= chunkValue.length) {
+            partialMatch.endChunk = chunk;
+            partialMatch.endIndex = charactersUntilMatchEnd;
           }
         }
-        else if (chunkValue.startsWith(searchPattern.substring(charactersMatched))) {
-          yield {
-            startChunk,
-            startIndex,
-            endChunk: chunk,
-            endIndex: searchPattern.length - charactersMatched,
-          };
+        if (partialMatch.startChunk === undefined) {
+          const charactersUntilMatchStart = prefix.length - charactersMatched;
+          if (
+            charactersUntilMatchStart < chunkValue.length
+            || partialMatch.endChunk !== undefined // handles an edge case: an empty quote at the end of a chunk.
+          ) {
+            partialMatch.startChunk = chunk;
+            partialMatch.startIndex = charactersUntilMatchStart;
+          }
+        }
+
+        const charactersUntilSuffixEnd = searchPattern.length - charactersMatched;
+        if (charactersUntilSuffixEnd <= chunkValue.length) {
+          if (chunkValue.startsWith(searchPattern.substring(charactersMatched))) {
+            yield partialMatch as ChunkRange<TChunk>; // all fields are certainly defined now.
+          }
+        } else if (chunkValue === searchPattern.substring(charactersMatched, charactersMatched + chunkValue.length)) {
+          // The chunk is too short to complete the match; comparison has to be completed in subsequent chunks.
+          partialMatch.charactersMatched += chunkValue.length;
+          remainingPartialMatches.push(partialMatch);
         }
       }
       partialMatches = remainingPartialMatches;
 
-      // Try find the whole pattern in the chunk (possibly multiple times).
+      // 2. Try find the whole pattern in the chunk (possibly multiple times).
       if (searchPattern.length <= chunkValue.length) {
         let fromIndex = 0;
         while (fromIndex <= chunkValue.length) {
@@ -106,11 +127,11 @@ export function abstractTextQuoteSelectorMatcher(
           };
 
           // Advance the search forward to detect multiple occurrences within the same chunk.
-          fromIndex = matchStartIndex + 1;
+          fromIndex = patternStartIndex + 1;
         }
       }
 
-      // Check if this chunk ends with a partial match (or even multiple partial matches).
+      // 3. Check if this chunk ends with a partial match (or even multiple partial matches).
       let newPartialMatches: number[] = [];
       const searchStartPoint = Math.max(chunkValue.length - searchPattern.length + 1, 0);
       for (let i = searchStartPoint; i < chunkValue.length; i++) {
@@ -121,11 +142,22 @@ export function abstractTextQuoteSelectorMatcher(
         if (character === searchPattern[0]) newPartialMatches.push(i);
       }
       for (const partialMatchStartIndex of newPartialMatches) {
-        partialMatches.push({
-          startChunk: chunk,
-          startIndex: partialMatchStartIndex,
-          charactersMatched: chunkValue.length - partialMatchStartIndex,
-        });
+        const charactersMatched = chunkValue.length - partialMatchStartIndex;
+        const partialMatch: PartialMatch = {
+          charactersMatched,
+        };
+        if (charactersMatched >= prefix.length + exact.length) {
+          partialMatch.endChunk = chunk;
+          partialMatch.endIndex = partialMatchStartIndex + prefix.length + exact.length;
+        }
+        if (
+          charactersMatched > prefix.length
+          || partialMatch.endChunk !== undefined // handles an edge case: an empty quote at the end of a chunk.
+        ) {
+          partialMatch.startChunk = chunk;
+          partialMatch.startIndex = partialMatchStartIndex + prefix.length;
+        }
+        partialMatches.push(partialMatch);
       }
 
       if (textChunks.nextChunk() === null)

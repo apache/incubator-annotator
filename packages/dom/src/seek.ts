@@ -18,14 +18,12 @@
  * under the License.
  */
 
-import { Chunk, TextNodeChunker, PartialTextNode } from "./chunker";
+import { Chunk, Chunker, TextNodeChunker, PartialTextNode, chunkEquals } from "./chunker";
 
 const E_END = 'Iterator exhausted before seek ended.';
 
-interface NonEmptyChunker<TChunk extends Chunk<any>> {
+export interface NonEmptyChunker<TChunk extends Chunk<any>> extends Chunker<TChunk> {
   readonly currentChunk: TChunk;
-  nextChunk(): TChunk | null;
-  previousChunk(): TChunk | null;
 }
 
 export interface BoundaryPointer<T extends any> {
@@ -77,6 +75,35 @@ export class TextSeeker<TChunk extends Chunk<string>> implements Seeker<string> 
     this._readOrSeekTo(false, target);
   }
 
+  seekToChunk(target: TChunk, offset: number = 0) {
+    this._readOrSeekToChunk(false, target, offset);
+  }
+
+  readToChunk(target: TChunk, offset: number = 0): string {
+    return this._readOrSeekToChunk(true, target, offset);
+  }
+
+  private _readOrSeekToChunk(read: true, target: TChunk, offset?: number): string
+  private _readOrSeekToChunk(read: false, target: TChunk, offset?: number): void
+  private _readOrSeekToChunk(read: boolean, target: TChunk, offset: number = 0): string {
+    // XXX We have no way of knowing whether a chunk follows or precedes the current chunk; we assume it follows.
+    let result = '';
+    // This will throw a RangeError if we reach the end without encountering the target chunk.
+    while (!chunkEquals(this.currentChunk, target)) {
+      if (read)
+        result += this.read(1, true);
+      else
+        this._readOrSeekTo(false, this.position + 1, true);
+    }
+    if (offset > this.offsetInChunk) {
+      if (read)
+        result += this.read(offset - this.offsetInChunk);
+      else
+        this.seekBy(offset - this.offsetInChunk);
+    }
+    return result;
+  }
+
   private _readOrSeekTo(read: true, target: number, roundUp?: boolean): string
   private _readOrSeekTo(read: false, target: number, roundUp?: boolean): void
   private _readOrSeekTo(read: boolean, target: number, roundUp: boolean = false): string | void {
@@ -84,15 +111,14 @@ export class TextSeeker<TChunk extends Chunk<string>> implements Seeker<string> 
 
     if (this.position <= target) {
       while (this.position <= target) { // could be `while (true)`?
-        if (!roundUp && target < this.currentChunkPosition + this.currentChunk.data.length) {
-          // The target is before the end of the current chunk.
+        if (
+          this.currentChunkPosition + this.currentChunk.data.length <= target
+          || (roundUp && this.offsetInChunk !== 0)
+        ) {
+          // The target is beyond the current chunk.
           // (we use < not ≤: if the target is *at* the end of the chunk, possibly
           // because the current chunk is empty, we prefer to take the next chunk)
-          const newOffset = target - this.currentChunkPosition;
-          if (read) result += this.currentChunk.data.substring(this.offsetInChunk, newOffset);
-          this.offsetInChunk = newOffset;
-          break;
-        } else {
+
           // Move to the start of the next chunk, while counting the characters of the current one.
           if (read) result += this.currentChunk.data.substring(this.offsetInChunk);
           const chunkLength = this.currentChunk.data.length;
@@ -113,6 +139,12 @@ export class TextSeeker<TChunk extends Chunk<string>> implements Seeker<string> 
             else
               throw new RangeError(E_END);
           }
+        } else {
+          // The target is within the current chunk.
+          const newOffset = target - this.currentChunkPosition;
+          if (read) result += this.currentChunk.data.substring(this.offsetInChunk, newOffset);
+          this.offsetInChunk = newOffset;
+          break;
         }
       }
     } else { // Similar to the if-block, but moving backward in the text.
@@ -141,7 +173,6 @@ export class TextSeeker<TChunk extends Chunk<string>> implements Seeker<string> 
     if (read) return result;
   }
 }
-
 
 export class DomSeeker extends TextSeeker<PartialTextNode> implements BoundaryPointer<Text> {
   constructor(scope: Range) {
