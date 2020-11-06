@@ -19,14 +19,7 @@
  */
 
 import type { Matcher, TextQuoteSelector } from '@annotator/selector';
-import { TextNodeChunker, Chunk, Chunker } from '../chunker';
-
-export interface ChunkRange<TChunk extends Chunk<any>> {
-  startChunk: TChunk;
-  startIndex: number;
-  endChunk: TChunk;
-  endIndex: number;
-}
+import { TextNodeChunker, Chunk, Chunker, ChunkRange } from '../chunker';
 
 export function createTextQuoteSelectorMatcher(
   selector: TextQuoteSelector,

@@ -25,6 +25,27 @@ import { ownerDocument } from "./owner-document";
 // data structure it came from (e.g. a DOM node).
 export interface Chunk<TData extends any> {
   readonly data: TData;
+  equals?(otherChunk: this): boolean;
+}
+
+export interface ChunkRange<TChunk extends Chunk<any>> {
+  startChunk: TChunk;
+  startIndex: number;
+  endChunk: TChunk;
+  endIndex: number;
+}
+
+export function chunkEquals(chunk1: Chunk<any>, chunk2: Chunk<any>): boolean {
+  return chunk1.equals ? chunk1.equals(chunk2) : chunk1 === chunk2;
+}
+
+export function chunkRangeEquals(range1: ChunkRange<any>, range2: ChunkRange<any>) {
+  return (
+    chunkEquals(range1.startChunk, range2.startChunk)
+    && chunkEquals(range1.endChunk, range2.endChunk)
+    && range1.startIndex === range2.startIndex
+    && range1.endIndex === range2.endIndex
+  );
 }
 
 // A Chunker lets one walk through the chunks of a document.
