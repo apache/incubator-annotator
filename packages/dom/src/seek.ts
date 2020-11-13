@@ -85,23 +85,49 @@ export class TextSeeker<TChunk extends Chunk<string>> implements Seeker<string> 
 
   private _readOrSeekToChunk(read: true, target: TChunk, offset?: number): string
   private _readOrSeekToChunk(read: false, target: TChunk, offset?: number): void
-  private _readOrSeekToChunk(read: boolean, target: TChunk, offset: number = 0): string {
-    // XXX We have no way of knowing whether a chunk follows or precedes the current chunk; we assume it follows.
+  private _readOrSeekToChunk(read: boolean, target: TChunk, offset: number = 0): string | void {
+    const oldPosition = this.position;
     let result = '';
-    // This will throw a RangeError if we reach the end without encountering the target chunk.
-    while (!chunkEquals(this.currentChunk, target)) {
-      if (read)
-        result += this.read(1, true);
-      else
-        this._readOrSeekTo(false, this.position + 1, true);
+
+    // Walk to the requested chunk.
+    if (!this.chunker.precedesCurrentChunk(target)) { // Search forwards.
+      while (!chunkEquals(this.currentChunk, target)) {
+        const [data, nextChunk] = this._readToNextChunk();
+        if (read) result += data;
+        if (nextChunk === null)
+          throw new RangeError(E_END);
+      }
+    } else { // Search backwards.
+      while (!chunkEquals(this.currentChunk, target)) {
+        const [data, previousChunk] = this._readToPreviousChunk();
+        if (read) result = data + result;
+        if (previousChunk === null)
+          throw new RangeError(E_END);
+      }
     }
-    if (offset > this.offsetInChunk) {
-      if (read)
-        result += this.read(offset - this.offsetInChunk);
-      else
-        this.seekBy(offset - this.offsetInChunk);
+
+    // Now we know where the chunk is, walk to the requested offset.
+    // Note we might have started inside the chunk, and the offset could even
+    // point to a position before or after the chunk.
+    const targetPosition = this.currentChunkPosition + offset;
+    if (!read) {
+      this.seekTo(targetPosition);
+    } else {
+      if (targetPosition >= this.position) {
+        // Read further until the target.
+        result += this.readTo(targetPosition);
+      }
+      else if (targetPosition >= oldPosition) {
+        // We passed by our target position: step back.
+        this.seekTo(targetPosition);
+        result = result.slice(0, targetPosition - oldPosition);
+      } else {
+        // The target precedes our starting position: read backwards from there.
+        this.seekTo(oldPosition);
+        result = this.readTo(targetPosition);
+      }
+      return result;
     }
-    return result;
   }
 
   private _readOrSeekTo(read: true, target: number, roundUp?: boolean): string
@@ -110,40 +136,30 @@ export class TextSeeker<TChunk extends Chunk<string>> implements Seeker<string> 
     let result = '';
 
     if (this.position <= target) {
-      while (this.position <= target) { // could be `while (true)`?
-        if (
-          this.currentChunkPosition + this.currentChunk.data.length <= target
-          || (roundUp && this.offsetInChunk !== 0)
-        ) {
+      while (true) {
+        if (this.currentChunkPosition + this.currentChunk.data.length <= target) {
           // The target is beyond the current chunk.
           // (we use < not ≤: if the target is *at* the end of the chunk, possibly
           // because the current chunk is empty, we prefer to take the next chunk)
 
-          // Move to the start of the next chunk, while counting the characters of the current one.
-          if (read) result += this.currentChunk.data.substring(this.offsetInChunk);
-          const chunkLength = this.currentChunk.data.length;
-          let nextChunk = this.chunker.nextChunk();
-          if (nextChunk !== null) {
-            // Skip empty chunks.
-            while (nextChunk && nextChunk.data.length === 0)
-              nextChunk = this.chunker.nextChunk();
-            this.currentChunkPosition += chunkLength;
-            this.offsetInChunk = 0;
-          } else {
-            // There is no next chunk. Finish at the end of the last chunk.
-            this.offsetInChunk = chunkLength;
-            // Either the end of this chunk is (beyond) our target, or the seek failed.
-            // (note that if roundUp is false then this.position ≤ target is guaranteed, so this would simply test for equality)
-            if (this.position >= target)
+          const [data, nextChunk] = this._readToNextChunk();
+          if (read) result += data;
+          if (nextChunk === null) {
+            if (this.position === target)
               break;
             else
               throw new RangeError(E_END);
           }
         } else {
           // The target is within the current chunk.
-          const newOffset = target - this.currentChunkPosition;
+          const newOffset = roundUp ? this.currentChunk.data.length : target - this.currentChunkPosition;
           if (read) result += this.currentChunk.data.substring(this.offsetInChunk, newOffset);
           this.offsetInChunk = newOffset;
+
+          // If we finish end at the end of the chunk, seek to the start of the next non-empty node.
+          // (TODO decide: should we keep this guarantee of not finishing at the end of a chunk?)
+          if (roundUp) this.seekBy(0);
+
           break;
         }
       }
@@ -156,21 +172,42 @@ export class TextSeeker<TChunk extends Chunk<string>> implements Seeker<string> 
           this.offsetInChunk = newOffset;
           break;
         } else {
-          // Move to the end of the previous chunk.
-          if (read) result = this.currentChunk.data.substring(0, this.offsetInChunk) + result;
-          const previousChunk = this.chunker.previousChunk();
-          if (previousChunk !== null) {
-            this.currentChunkPosition -= this.currentChunk.data.length;
-            this.offsetInChunk = this.currentChunk.data.length;
-          } else {
-            this.offsetInChunk = 0;
+          const [data, previousChunk] = this._readToPreviousChunk();
+          if (read) result = data + result;
+          if (previousChunk === null)
             throw new RangeError(E_END);
-          }
         }
       }
     }
 
     if (read) return result;
+  }
+
+  // Read to the start of the next chunk, if any; otherwise to the end of the current chunk.
+  _readToNextChunk(): [string, TChunk | null] {
+    const data = this.currentChunk.data.substring(this.offsetInChunk);
+    const chunkLength = this.currentChunk.data.length;
+    const nextChunk = this.chunker.nextChunk();
+    if (nextChunk !== null) {
+      this.currentChunkPosition += chunkLength;
+      this.offsetInChunk = 0;
+    } else {
+      this.offsetInChunk = chunkLength;
+    }
+    return [data, nextChunk];
+  }
+
+  // Read backwards to the end of the previous chunk, if any; otherwise to the start of the current chunk.
+  _readToPreviousChunk(): [string, TChunk | null] {
+    const data = this.currentChunk.data.substring(0, this.offsetInChunk);
+    const previousChunk = this.chunker.previousChunk();
+    if (previousChunk !== null) {
+      this.currentChunkPosition -= this.currentChunk.data.length;
+      this.offsetInChunk = this.currentChunk.data.length;
+    } else {
+      this.offsetInChunk = 0;
+    }
+    return [data, previousChunk];
   }
 }
 

@@ -63,6 +63,9 @@ export interface Chunker<TChunk extends Chunk<any>> {
   // Move currentChunk to the chunk preceding it, and return that chunk.
   // If there are no preceding chunks, keep currentChunk unchanged and return null.
   previousChunk(): TChunk | null;
+
+  // Test if a given chunk is before the current chunk.
+  precedesCurrentChunk(chunk: TChunk): boolean;
 }
 
 export interface PartialTextNode extends Chunk<string> {
@@ -152,6 +155,11 @@ export class TextNodeChunker implements Chunker<PartialTextNode> {
       return this.currentChunk;
     else
       return null;
+  }
+
+  precedesCurrentChunk(chunk: PartialTextNode) {
+    if (this.currentChunk === null) return false;
+    return !!(this.currentChunk.node.compareDocumentPosition(chunk.node) & Node.DOCUMENT_POSITION_PRECEDING);
   }
 }
 
