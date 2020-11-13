@@ -68,6 +68,7 @@ export function abstractTextQuoteSelectorMatcher(
     let partialMatches: PartialMatch[] = [];
 
     let chunk: TChunk | null;
+    let isFirstChunk = true;
     while (chunk = textChunks.currentChunk) {
       const chunkValue = chunk.data;
 
@@ -114,20 +115,18 @@ export function abstractTextQuoteSelectorMatcher(
         while (fromIndex <= chunkValue.length) {
           const patternStartIndex = chunkValue.indexOf(searchPattern, fromIndex);
           if (patternStartIndex === -1) break;
+          fromIndex = patternStartIndex + 1;
 
-          // Correct for the prefix and suffix lengths.
-          const matchStartIndex = patternStartIndex + prefix.length;
-          const matchEndIndex = matchStartIndex + exact.length;
+          // Handle edge case: an empty searchPattern would already have been yielded at the end of the last chunk.
+          if (patternStartIndex === 0 && searchPattern.length === 0 && !isFirstChunk)
+            continue;
 
           yield {
             startChunk: chunk,
-            startIndex: matchStartIndex,
+            startIndex: patternStartIndex + prefix.length,
             endChunk: chunk,
-            endIndex: matchEndIndex,
+            endIndex: patternStartIndex + prefix.length + exact.length,
           };
-
-          // Advance the search forward to detect multiple occurrences within the same chunk.
-          fromIndex = patternStartIndex + 1;
         }
       }
 
@@ -162,6 +161,8 @@ export function abstractTextQuoteSelectorMatcher(
 
       if (textChunks.nextChunk() === null)
         break;
+
+      isFirstChunk = false;
     }
   };
 }

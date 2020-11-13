@@ -194,7 +194,7 @@ async function testMatcher(
   const matcher = createTextQuoteSelectorMatcher(selector);
   const matches = [];
   for await (const value of matcher(scope)) matches.push(value);
-  assert.equal(matches.length, expected.length);
+  assert.equal(matches.length, expected.length, "Wrong number of matches.");
   matches.forEach((match, i) => {
     const expectedRange = expected[i];
     const expectedStartContainer = evaluateXPath(
