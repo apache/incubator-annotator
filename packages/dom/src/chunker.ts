@@ -106,9 +106,7 @@ export class TextNodeChunker implements Chunker<PartialTextNode> {
   }
 
   rangeToChunkRange(range: Range): ChunkRange<PartialTextNode> {
-    const textRange = normalizeRange(range);
-    // FIXME: normalizeRange can mess up: a collapsed range at the very end of
-    // the chunker’s scope might move to the next text node outside the scope.
+    const textRange = normalizeRange(range, this.scope);
 
     const startChunk = this.nodeToChunk(textRange.startContainer);
     const startIndex = textRange.startOffset - startChunk.startOffset;

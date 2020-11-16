@@ -50,14 +50,24 @@ export interface TextRange extends Range {
 //
 // If there is no text between the start and end, they thus collapse onto one a
 // single position; and if there are multiple equivalent positions, it takes the
-// first one.
+// first one; or, if scope is passed, the first equivalent falling within scope.
 //
 // Note that if the given range does not contain non-empty text nodes, it will
-// end up pointing at a text node outside of it (after it if possible, else
-// before). If the document does not contain any text nodes, an error is thrown.
-export function normalizeRange(range: Range): TextRange {
+// end up pointing at a text node outside of it (before it if possible, else
+// after). If the document does not contain any text nodes, an error is thrown.
+export function normalizeRange(range: Range, scope?: Range): TextRange {
   const document = ownerDocument(range);
-  const walker = document.createTreeWalker(document, NodeFilter.SHOW_TEXT);
+  const walker = document.createTreeWalker(
+    document,
+    NodeFilter.SHOW_TEXT,
+    {
+      acceptNode(node: Text) {
+        return (!scope || scope.intersectsNode(node))
+          ? NodeFilter.FILTER_ACCEPT
+          : NodeFilter.FILTER_REJECT;
+      },
+    },
+  );
 
   let [ startContainer, startOffset ] = snapBoundaryPointToTextNode(range.startContainer, range.startOffset);
 
@@ -69,6 +79,7 @@ export function normalizeRange(range: Range): TextRange {
     startOffset = 0;
   }
 
+  // Set the range’s start; note this might move its end too.
   range.setStart(startContainer, startOffset);
 
   let [ endContainer, endOffset ] = snapBoundaryPointToTextNode(range.endContainer, range.endOffset);
@@ -81,6 +92,7 @@ export function normalizeRange(range: Range): TextRange {
     endOffset = endContainer.length;
   }
 
+  // Set the range’s end; note this might move its start too.
   range.setEnd(endContainer, endOffset);
 
   return range as TextRange;
