@@ -18,4 +18,5 @@
  * under the License.
  */
 
+export * from './describe';
 export * from './match';
