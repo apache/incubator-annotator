@@ -19,12 +19,13 @@
  */
 
 import type { Matcher, TextQuoteSelector } from '@annotator/selector';
-import { TextNodeChunker, Chunk, Chunker, ChunkRange } from '../chunker';
+import { TextNodeChunker, Chunk, Chunker, ChunkRange, PartialTextNode } from '../chunker';
 
 export function createTextQuoteSelectorMatcher(
   selector: TextQuoteSelector,
 ): Matcher<Range, Range> {
   const abstractMatcher = abstractTextQuoteSelectorMatcher(selector);
+
   return async function* matchAll(scope) {
     const textChunks = new TextNodeChunker(scope);
 
@@ -41,12 +42,9 @@ export function createTextQuoteSelectorMatcher(
   }
 }
 
-type AbstractMatcher<TChunk extends Chunk<string>> =
-  Matcher<Chunker<TChunk>, ChunkRange<TChunk>>
-
 export function abstractTextQuoteSelectorMatcher(
   selector: TextQuoteSelector,
-): AbstractMatcher<any> {
+): <TChunk extends Chunk<any>>(scope: Chunker<TChunk>) => AsyncGenerator<ChunkRange<TChunk>, void, void> {
   return async function* matchAll<TChunk extends Chunk<string>>(textChunks: Chunker<TChunk>) {
     const exact = selector.exact;
     const prefix = selector.prefix || '';

@@ -20,32 +20,47 @@
 
 import type { Matcher, TextPositionSelector } from '@annotator/selector';
 import { ownerDocument } from '../owner-document';
-import { DomSeeker } from '../seek';
+import { TextSeeker, NonEmptyChunker } from '../seek';
 import { CodePointSeeker } from '../code-point-seeker';
+import { Chunk, ChunkRange, TextNodeChunker, PartialTextNode } from '../chunker';
 
 export function createTextPositionSelectorMatcher(
   selector: TextPositionSelector,
 ): Matcher<Range, Range> {
+  const abstractMatcher = abstractTextPositionSelectorMatcher(selector);
+
   return async function* matchAll(scope) {
-    const document = ownerDocument(scope);
+    const textChunks = new TextNodeChunker(scope);
 
-    const { start, end } = selector;
+    if (textChunks.currentChunk === null)
+      throw new RangeError('Range does not contain any Text nodes.');
+    const matches = abstractMatcher(textChunks as NonEmptyChunker<PartialTextNode>);
 
-    const codeUnitSeeker = new DomSeeker(scope);
+    for await (const abstractMatch of matches) {
+      const match = ownerDocument(scope).createRange();
+      match.setStart(abstractMatch.startChunk.node, abstractMatch.startChunk.startOffset + abstractMatch.startIndex);
+      match.setEnd(abstractMatch.endChunk.node, abstractMatch.endChunk.startOffset + abstractMatch.endIndex);
+      yield match;
+    }
+  };
+}
+
+export function abstractTextPositionSelectorMatcher(
+  selector: TextPositionSelector,
+): <TChunk extends Chunk<any>>(scope: NonEmptyChunker<TChunk>) => AsyncGenerator<ChunkRange<TChunk>, void, void> {
+  const { start, end } = selector;
+
+  return async function* matchAll<TChunk extends Chunk<string>>(textChunks: NonEmptyChunker<TChunk>) {
+    const codeUnitSeeker = new TextSeeker(textChunks);
     const codePointSeeker = new CodePointSeeker(codeUnitSeeker);
 
-    // Create a range to represent the described text in the dom.
-    const match = document.createRange();
-
-    // Seek to the start of the match, make the range start there.
     codePointSeeker.seekTo(start);
-    match.setStart(codeUnitSeeker.referenceNode, codeUnitSeeker.offsetInReferenceNode);
-
-    // Seek to the end of the match, make the range end there.
+    const startChunk = codeUnitSeeker.currentChunk;
+    const startIndex = codeUnitSeeker.offsetInChunk;
     codePointSeeker.seekTo(end);
-    match.setEnd(codeUnitSeeker.referenceNode, codeUnitSeeker.offsetInReferenceNode);
+    const endChunk = codeUnitSeeker.currentChunk;
+    const endIndex = codeUnitSeeker.offsetInChunk;
 
-    // Yield the match.
-    yield match;
-  };
+    yield { startChunk, startIndex, endChunk, endIndex };
+  }
 }
