@@ -18,12 +18,13 @@
  * under the License.
  */
 
-import { Seeker, BoundaryPointer } from "./seek";
+import { ChunkSeeker } from "./seek";
+import { Chunk } from "./chunker";
 
-class _CodePointSeeker implements Seeker<string[]> {
+export class CodePointSeeker<TChunk extends Chunk<string>> implements ChunkSeeker<TChunk, string[]> {
   position = 0;
 
-  constructor(public readonly raw: Seeker<string>) {}
+  constructor(public readonly raw: ChunkSeeker<TChunk>) {}
 
   seekBy(length: number) {
     this.seekTo(this.position + length);
@@ -39,6 +40,54 @@ class _CodePointSeeker implements Seeker<string[]> {
 
   readTo(target: number, roundUp?: boolean) {
     return this._readOrSeekTo(true, target, roundUp);
+  }
+
+  get currentChunk() {
+    return this.raw.currentChunk;
+  }
+
+  get offsetInChunk() {
+    return this.raw.offsetInChunk;
+  }
+
+  seekToChunk(target: TChunk, offset: number = 0) {
+    this._readOrSeekToChunk(false, target, offset);
+  }
+
+  readToChunk(target: TChunk, offset: number = 0) {
+    return this._readOrSeekToChunk(true, target, offset);
+  }
+
+  private _readOrSeekToChunk(read: true, target: TChunk, offset?: number): string[]
+  private _readOrSeekToChunk(read: false, target: TChunk, offset?: number): void
+  private _readOrSeekToChunk(read: boolean, target: TChunk, offset: number = 0) {
+    const oldPosition = this.position;
+    const oldRawPosition = this.raw.position;
+
+    let result = [...this.raw.readToChunk(target, 0)];
+    this.position = this.raw.position >= oldRawPosition
+      ? this.position + result.length
+      : this.position - result.length;
+
+    const targetPosition = this.position + offset;
+    if (!read) {
+      this.seekTo(targetPosition);
+    } else {
+      if (targetPosition >= this.position) {
+        // Read further until the target.
+        result = result.concat(this.readTo(targetPosition));
+      }
+      else if (targetPosition >= oldPosition) {
+        // We passed by our target position: step back.
+        this.seekTo(targetPosition);
+        result = result.slice(0, targetPosition - oldPosition);
+      } else {
+        // The target precedes our starting position: read backwards from there.
+        this.seekTo(oldPosition);
+        result = this.readTo(targetPosition);
+      }
+    }
+    return result;
   }
 
   private _readOrSeekTo(read: true, target: number, roundUp?: boolean): string[];
@@ -94,18 +143,6 @@ class _CodePointSeeker implements Seeker<string[]> {
 
     if (read) return result;
   }
-}
-
-export class CodePointSeeker extends _CodePointSeeker implements Seeker<string[]>, BoundaryPointer<string[]> {
-  constructor(public readonly raw: Seeker<string> & BoundaryPointer<Text>) {
-    super(raw);
-  }
-
-  get referenceNode() { return [...this.raw.referenceNode.data] };
-  get offsetInReferenceNode() {
-    const substring = this.raw.referenceNode.data.substring(0, this.raw.offsetInReferenceNode);
-    return [...substring].length;
-  };
 }
 
 function endsWithinCharacter(s: string) {

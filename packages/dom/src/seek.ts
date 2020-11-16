@@ -18,17 +18,12 @@
  * under the License.
  */
 
-import { Chunk, Chunker, TextNodeChunker, PartialTextNode, chunkEquals } from "./chunker";
+import { Chunk, Chunker, chunkEquals } from "./chunker";
 
 const E_END = 'Iterator exhausted before seek ended.';
 
 export interface NonEmptyChunker<TChunk extends Chunk<any>> extends Chunker<TChunk> {
   readonly currentChunk: TChunk;
-}
-
-export interface BoundaryPointer<T extends any> {
-  readonly referenceNode: T;
-  readonly offsetInReferenceNode: number;
 }
 
 export interface Seeker<T extends Iterable<any> = string> {
@@ -39,7 +34,14 @@ export interface Seeker<T extends Iterable<any> = string> {
   seekTo(target: number): void;
 }
 
-export class TextSeeker<TChunk extends Chunk<string>> implements Seeker<string> {
+export interface ChunkSeeker<TChunk extends Chunk<any>, T extends Iterable<any> = string> extends Seeker<T> {
+  readonly currentChunk: TChunk;
+  readonly offsetInChunk: number;
+  seekToChunk(chunk: TChunk, offset?: number): void;
+  readToChunk(chunk: TChunk, offset?: number): T;
+}
+
+export class TextSeeker<TChunk extends Chunk<string>> implements ChunkSeeker<TChunk> {
   // The chunk containing our current text position.
   get currentChunk() {
     return this.chunker.currentChunk;
@@ -208,22 +210,5 @@ export class TextSeeker<TChunk extends Chunk<string>> implements Seeker<string> 
       this.offsetInChunk = 0;
     }
     return [data, previousChunk];
-  }
-}
-
-export class DomSeeker extends TextSeeker<PartialTextNode> implements BoundaryPointer<Text> {
-  constructor(scope: Range) {
-    const chunker = new TextNodeChunker(scope);
-    if (chunker.currentChunk === null)
-      throw new RangeError('Range does not contain any Text nodes.');
-    super(chunker as NonEmptyChunker<PartialTextNode>);
-  }
-
-  get referenceNode() {
-    return this.currentChunk.node;
-  }
-
-  get offsetInReferenceNode() {
-    return this.offsetInChunk + this.currentChunk.startOffset;
   }
 }

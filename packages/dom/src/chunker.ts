@@ -24,7 +24,7 @@ import { ownerDocument } from "./owner-document";
 // A Chunk represents a fragment (typically a string) of some document.
 // Subclasses can add further attributes to map the chunk to its position in the
 // data structure it came from (e.g. a DOM node).
-export interface Chunk<TData extends any> {
+export interface Chunk<TData> {
   readonly data: TData;
   equals?(otherChunk: this): boolean;
 }
