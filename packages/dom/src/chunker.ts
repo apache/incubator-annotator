@@ -116,6 +116,21 @@ export class TextNodeChunker implements Chunker<PartialTextNode> {
     return { startChunk, startIndex, endChunk, endIndex };
   }
 
+  chunkRangeToRange(chunkRange: ChunkRange<PartialTextNode>): Range {
+    const range = ownerDocument(this.scope).createRange();
+    // The `+…startOffset` parts are only relevant for the first chunk, as it
+    // might start within a text node.
+    range.setStart(
+      chunkRange.startChunk.node,
+      chunkRange.startIndex + chunkRange.startChunk.startOffset,
+    );
+    range.setEnd(
+      chunkRange.endChunk.node,
+      chunkRange.endIndex + chunkRange.endChunk.startOffset,
+    );
+    return range;
+  }
+
   constructor(private scope: Range) {
     this.iter = ownerDocument(scope).createNodeIterator(
       scope.commonAncestorContainer,

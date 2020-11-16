@@ -19,7 +19,6 @@
  */
 
 import type { Matcher, TextPositionSelector } from '@annotator/selector';
-import { ownerDocument } from '../owner-document';
 import { TextSeeker, NonEmptyChunker } from '../seek';
 import { CodePointSeeker } from '../code-point-seeker';
 import { Chunk, ChunkRange, TextNodeChunker, PartialTextNode } from '../chunker';
@@ -37,10 +36,7 @@ export function createTextPositionSelectorMatcher(
     const matches = abstractMatcher(textChunks as NonEmptyChunker<PartialTextNode>);
 
     for await (const abstractMatch of matches) {
-      const match = ownerDocument(scope).createRange();
-      match.setStart(abstractMatch.startChunk.node, abstractMatch.startChunk.startOffset + abstractMatch.startIndex);
-      match.setEnd(abstractMatch.endChunk.node, abstractMatch.endChunk.startOffset + abstractMatch.endIndex);
-      yield match;
+      yield textChunks.chunkRangeToRange(abstractMatch);
     }
   };
 }

@@ -30,14 +30,7 @@ export function createTextQuoteSelectorMatcher(
     const textChunks = new TextNodeChunker(scope);
 
     for await (const abstractMatch of abstractMatcher(textChunks)) {
-      const match = document.createRange();
-      // The `+…startOffset` parts are only relevant for the first chunk, as it
-      // might start within a text node.
-      match.setStart(abstractMatch.startChunk.node,
-        abstractMatch.startIndex + abstractMatch.startChunk.startOffset);
-      match.setEnd(abstractMatch.endChunk.node,
-        abstractMatch.endIndex + abstractMatch.endChunk.startOffset);
-      yield match;
+      yield textChunks.chunkRangeToRange(abstractMatch);
     }
   }
 }
