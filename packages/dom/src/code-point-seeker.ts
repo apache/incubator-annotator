@@ -61,10 +61,9 @@ export class CodePointSeeker<TChunk extends Chunk<string>> implements ChunkSeeke
   private _readOrSeekToChunk(read: true, target: TChunk, offset?: number): string[]
   private _readOrSeekToChunk(read: false, target: TChunk, offset?: number): void
   private _readOrSeekToChunk(read: boolean, target: TChunk, offset: number = 0) {
-    const oldPosition = this.position;
     const oldRawPosition = this.raw.position;
 
-    let s = this.raw.readToChunk(target, 0);
+    let s = this.raw.readToChunk(target, offset);
 
     const movedForward = this.raw.position >= oldRawPosition;
 
@@ -82,25 +81,7 @@ export class CodePointSeeker<TChunk extends Chunk<string>> implements ChunkSeeke
       ? this.position + result.length
       : this.position - result.length;
 
-    const targetPosition = this.position + offset;
-    if (!read) {
-      this.seekTo(targetPosition);
-    } else {
-      if (targetPosition >= this.position) {
-        // Read further until the target.
-        result = result.concat(this.readTo(targetPosition));
-      }
-      else if (targetPosition >= oldPosition) {
-        // We passed by our target position: step back.
-        this.seekTo(targetPosition);
-        result = result.slice(0, targetPosition - oldPosition);
-      } else {
-        // The target precedes our starting position: read backwards from there.
-        this.seekTo(oldPosition);
-        result = this.readTo(targetPosition);
-      }
-      return result;
-    }
+    if (read) return result;
   }
 
   private _readOrSeekTo(read: true, target: number, roundUp?: boolean): string[];
