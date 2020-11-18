@@ -64,8 +64,21 @@ export class CodePointSeeker<TChunk extends Chunk<string>> implements ChunkSeeke
     const oldPosition = this.position;
     const oldRawPosition = this.raw.position;
 
-    let result = [...this.raw.readToChunk(target, 0)];
-    this.position = this.raw.position >= oldRawPosition
+    let s = this.raw.readToChunk(target, 0);
+
+    const movedForward = this.raw.position >= oldRawPosition;
+
+    if (movedForward && endsWithinCharacter(s)) {
+      this.raw.seekBy(-1);
+      s = s.slice(0, -1);
+    } else if (!movedForward && startsWithinCharacter(s)) {
+      this.raw.seekBy(1);
+      s = s.slice(1);
+    }
+
+    let result = [...s];
+
+    this.position = movedForward
       ? this.position + result.length
       : this.position - result.length;
 
@@ -86,8 +99,8 @@ export class CodePointSeeker<TChunk extends Chunk<string>> implements ChunkSeeke
         this.seekTo(oldPosition);
         result = this.readTo(targetPosition);
       }
+      return result;
     }
-    return result;
   }
 
   private _readOrSeekTo(read: true, target: number, roundUp?: boolean): string[];
