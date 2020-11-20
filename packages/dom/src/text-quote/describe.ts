@@ -97,20 +97,17 @@ async function abstractDescribeTextQuote<TChunk extends Chunk<string>>(
     seeker1.seekToChunk(target.startChunk, target.startIndex - prefix.length);
     seeker2.seekToChunk(unintendedMatch.startChunk, unintendedMatch.startIndex - prefix.length);
     const extraPrefix = readUntilDifferent(seeker1, seeker2, true);
-    let sufficientPrefix = extraPrefix !== undefined ? extraPrefix + prefix : undefined;
 
     // Count how many characters we’d need as a suffix to disqualify this match.
     seeker1.seekToChunk(target.endChunk, target.endIndex + suffix.length);
     seeker2.seekToChunk(unintendedMatch.endChunk, unintendedMatch.endIndex + suffix.length);
     const extraSuffix = readUntilDifferent(seeker1, seeker2, false);
-    let sufficientSuffix = extraSuffix !== undefined ? suffix + extraSuffix : undefined;
 
     // Use either the prefix or suffix, whichever is shortest.
-    if (sufficientPrefix !== undefined && (sufficientSuffix === undefined || sufficientPrefix.length <= sufficientSuffix.length)) {
-      prefix = sufficientPrefix;
-      // seeker.seekBy(sufficientPrefix.length - prefix.length) // Would be required if we’d skip the processed part.
-    } else if (sufficientSuffix !== undefined) {
-      suffix = sufficientSuffix;
+    if (extraPrefix !== undefined && (extraSuffix === undefined || extraPrefix.length <= extraSuffix.length)) {
+      prefix = extraPrefix + prefix;
+    } else if (extraSuffix !== undefined) {
+      suffix = suffix + extraSuffix;
     } else {
       throw new Error('Target cannot be disambiguated; how could that have happened‽');
     }
