@@ -66,9 +66,9 @@ export function abstractTextQuoteSelectorMatcher(
     }
     let partialMatches: PartialMatch[] = [];
 
-    let chunk: TChunk | null;
     let isFirstChunk = true;
-    while (chunk = textChunks.currentChunk) {
+    do {
+      const chunk = textChunks.currentChunk;
       const chunkValue = chunk.data;
 
       // 1. Continue checking any partial matches from the previous chunk(s).
@@ -158,10 +158,7 @@ export function abstractTextQuoteSelectorMatcher(
         partialMatches.push(partialMatch);
       }
 
-      if (textChunks.nextChunk() === null)
-        break;
-
       isFirstChunk = false;
-    }
+    } while (textChunks.nextChunk() !== null);
   };
 }
