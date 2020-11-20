@@ -27,6 +27,7 @@ export type {
   TextPositionSelector,
   TextQuoteSelector,
 } from './types';
+export * from './text';
 
 export function makeRefinable<
   // Any subtype of Selector can be made refinable; but note we limit the value

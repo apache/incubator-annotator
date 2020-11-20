@@ -19,11 +19,9 @@
  */
 
 import type { TextPositionSelector } from '@annotator/selector';
-import type { Chunk, Chunker, ChunkRange } from '../chunker';
-import { TextNodeChunker } from '../chunker';
-import { CodePointSeeker } from '../code-point-seeker';
+import { describeTextPosition as abstractDescribeTextPosition } from '@annotator/selector';
+import { TextNodeChunker } from '../text-node-chunker';
 import { ownerDocument } from '../owner-document';
-import { TextSeeker } from '../seek';
 
 export async function describeTextPosition(
   range: Range,
@@ -47,22 +45,4 @@ export async function describeTextPosition(
     textChunks.rangeToChunkRange(range),
     textChunks,
   );
-}
-
-async function abstractDescribeTextPosition<TChunk extends Chunk<string>>(
-  target: ChunkRange<TChunk>,
-  scope: Chunker<TChunk>,
-): Promise<TextPositionSelector> {
-  const codeUnitSeeker = new TextSeeker(scope);
-  const codePointSeeker = new CodePointSeeker(codeUnitSeeker);
-
-  codePointSeeker.seekToChunk(target.startChunk, target.startIndex);
-  const start = codePointSeeker.position;
-  codePointSeeker.seekToChunk(target.endChunk, target.endIndex);
-  const end = codePointSeeker.position;
-  return {
-    type: 'TextPositionSelector',
-    start,
-    end,
-  };
 }

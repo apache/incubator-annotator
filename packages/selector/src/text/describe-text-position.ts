@@ -18,29 +18,25 @@
  * under the License.
  */
 
-import type { TextQuoteSelector } from '@annotator/selector';
-import { describeTextQuote as abstractDescribeTextQuote } from '@annotator/selector';
-import { TextNodeChunker } from '../text-node-chunker';
-import { ownerDocument } from '../owner-document';
+import type { TextPositionSelector } from '../types';
+import type { Chunk, Chunker, ChunkRange } from './chunker';
+import { CodePointSeeker } from './code-point-seeker';
+import { TextSeeker } from './seek';
 
-export async function describeTextQuote(
-  range: Range,
-  maybeScope?: Range,
-): Promise<TextQuoteSelector> {
-  // Default to search in the whole document.
-  let scope: Range;
-  if (maybeScope !== undefined) {
-    scope = maybeScope;
-  } else {
-    const document = ownerDocument(range);
-    scope = document.createRange();
-    scope.selectNodeContents(document);
-  }
+export async function describeTextPosition<TChunk extends Chunk<string>>(
+  target: ChunkRange<TChunk>,
+  scope: Chunker<TChunk>,
+): Promise<TextPositionSelector> {
+  const codeUnitSeeker = new TextSeeker(scope);
+  const codePointSeeker = new CodePointSeeker(codeUnitSeeker);
 
-  const chunker = new TextNodeChunker(scope);
-
-  return await abstractDescribeTextQuote(
-    chunker.rangeToChunkRange(range),
-    () => new TextNodeChunker(scope),
-  );
+  codePointSeeker.seekToChunk(target.startChunk, target.startIndex);
+  const start = codePointSeeker.position;
+  codePointSeeker.seekToChunk(target.endChunk, target.endIndex);
+  const end = codePointSeeker.position;
+  return {
+    type: 'TextPositionSelector',
+    start,
+    end,
+  };
 }

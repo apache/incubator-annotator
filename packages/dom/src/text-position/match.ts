@@ -19,10 +19,8 @@
  */
 
 import type { Matcher, TextPositionSelector } from '@annotator/selector';
-import type { Chunk, ChunkRange, Chunker } from '../chunker';
-import { TextNodeChunker } from '../chunker';
-import { CodePointSeeker } from '../code-point-seeker';
-import { TextSeeker } from '../seek';
+import { textPositionSelectorMatcher as abstractTextPositionSelectorMatcher } from '@annotator/selector';
+import { TextNodeChunker } from '../text-node-chunker';
 
 export function createTextPositionSelectorMatcher(
   selector: TextPositionSelector,
@@ -37,29 +35,5 @@ export function createTextPositionSelectorMatcher(
     for await (const abstractMatch of matches) {
       yield textChunks.chunkRangeToRange(abstractMatch);
     }
-  };
-}
-
-export function abstractTextPositionSelectorMatcher(
-  selector: TextPositionSelector,
-): <TChunk extends Chunk<any>>(
-  scope: Chunker<TChunk>,
-) => AsyncGenerator<ChunkRange<TChunk>, void, void> {
-  const { start, end } = selector;
-
-  return async function* matchAll<TChunk extends Chunk<string>>(
-    textChunks: Chunker<TChunk>,
-  ) {
-    const codeUnitSeeker = new TextSeeker(textChunks);
-    const codePointSeeker = new CodePointSeeker(codeUnitSeeker);
-
-    codePointSeeker.seekTo(start);
-    const startChunk = codeUnitSeeker.currentChunk;
-    const startIndex = codeUnitSeeker.offsetInChunk;
-    codePointSeeker.seekTo(end);
-    const endChunk = codeUnitSeeker.currentChunk;
-    const endIndex = codeUnitSeeker.offsetInChunk;
-
-    yield { startChunk, startIndex, endChunk, endIndex };
   };
 }
