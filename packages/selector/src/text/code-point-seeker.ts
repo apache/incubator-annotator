@@ -19,13 +19,13 @@
  */
 
 import type { Chunk } from './chunker';
-import type { ChunkSeeker } from './seek';
+import type { Seeker } from './seeker';
 
 export class CodePointSeeker<TChunk extends Chunk<string>>
-  implements ChunkSeeker<TChunk, string[]> {
+  implements Seeker<TChunk, string[]> {
   position = 0;
 
-  constructor(public readonly raw: ChunkSeeker<TChunk>) {}
+  constructor(public readonly raw: Seeker<TChunk>) {}
 
   seekBy(length: number): void {
     this.seekTo(this.position + length);

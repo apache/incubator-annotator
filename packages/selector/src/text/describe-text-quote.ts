@@ -21,8 +21,8 @@
 import type { TextQuoteSelector } from '../types';
 import type { Chunk, Chunker, ChunkRange } from './chunker';
 import { chunkRangeEquals } from './chunker';
-import type { Seeker } from './seek';
-import { TextSeeker } from './seek';
+import type { RelativeSeeker } from './seeker';
+import { TextSeeker } from './seeker';
 import { textQuoteSelectorMatcher } from '.';
 
 export async function describeTextQuote<TChunk extends Chunk<string>>(
@@ -71,6 +71,12 @@ export async function describeTextQuote<TChunk extends Chunk<string>>(
 
     // We’ll have to add more prefix/suffix to disqualify this unintended match.
     const unintendedMatch = nextMatch.value;
+
+    // Create two seekers to simultaneously read characters near both the target
+    // and the unintended match.
+    // Possible optimisation: as these need not be AbsoluteSeekers, a different
+    // implementation could provide direct ‘jump’ access in seekToChunk (the
+    // scope’s Chunker would of course also have to support this).
     const seeker1 = new TextSeeker(scope());
     const seeker2 = new TextSeeker(scope());
 
@@ -107,8 +113,8 @@ export async function describeTextQuote<TChunk extends Chunk<string>>(
 }
 
 function readUntilDifferent(
-  seeker1: Seeker,
-  seeker2: Seeker,
+  seeker1: RelativeSeeker,
+  seeker2: RelativeSeeker,
   reverse: boolean,
 ): string | undefined {
   let result = '';

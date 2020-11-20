@@ -23,26 +23,145 @@ import { chunkEquals } from './chunker';
 
 const E_END = 'Iterator exhausted before seek ended.';
 
-export interface Seeker<T extends Iterable<any> = string> {
-  readonly position: number;
-  read(length?: number, roundUp?: boolean): T;
-  readTo(target: number, roundUp?: boolean): T;
+/**
+ * Abstraction to seek (jump) or read to a position inside a ‘file’ consisting of a
+ * sequence of data chunks.
+ *
+ * @remarks
+ * This interface is a combination of three interfaces in one: for seeking to a
+ * relative position, an absolute position, or a specific chunk. These three are
+ * defined separately for clarity and flexibility, but normally used together.
+ *
+ * A Seeker internally maintains a pointer to the chunk it is currently ‘in’ and
+ * the offset position within that chunk.
+ *
+ * @typeParam TChunk - Type of chunks the file consists of.
+ * @typeParam TData - Type of data this seeker’s read methods will return (not
+ * necessarily the same as the `TData` parameter of {@link Chunk}, see e.g.
+ * {@link CodePointSeeker})
+ */
+export interface Seeker<
+  TChunk extends Chunk<any>,
+  TData extends Iterable<any> = string
+> extends RelativeSeeker<TData>, AbsoluteSeeker<TData>, ChunkSeeker<TChunk, TData> {
+};
+
+/**
+ * Seeks/reads by a given number of characters.
+ */
+export interface RelativeSeeker<TData extends Iterable<any> = string> {
+  /**
+   * Move forward or backward by a number of characters.
+   *
+   * @param length - The number of characters to pass. A negative number moves
+   * backwards in the file.
+   */
   seekBy(length: number): void;
-  seekTo(target: number): void;
+
+  /**
+   * Read forward or backward by a number of characters.
+   *
+   * @remarks Equal to {@link seekBy}, but returning the characters passed.
+   *
+   * @param length - The number of characters to read. A negative number moves
+   * backwards in the file.
+   * @param roundUp - If true, then, after reading the given number of
+   * characters, read further until the end (or start) of the current chunk.
+   * @returns The characters passed (in their normal order, even when moving
+   * backwards)
+   */
+  read(length?: number, roundUp?: boolean): TData;
 }
 
+/**
+ * Seek/read to absolute positions in the file.
+ */
+export interface AbsoluteSeeker<TData extends Iterable<any> = string> {
+  /**
+   * The current position in the file in terms of character count: i.e. the
+   * number of characters before the place currently being pointed at.
+   */
+  readonly position: number;
+
+  /**
+   * Move to the given position in the file.
+   *
+   * @param target - The position to end up at.
+   */
+  seekTo(target: number): void;
+
+  /**
+   * Read forward or backward from the current to the given position in the
+   * file, returning the characters that have been passed.
+   *
+   * @remarks Equal to {@link seekTo}, but returning the characters passed.
+   *
+   * @param target - The position to end up at.
+   * @param roundUp - If true, then, after reading to the target position, read
+   * further until the end (or start) of the current chunk.
+   * @returns The characters passed (in their normal order, even when moving
+   * backwards)
+   */
+  readTo(target: number, roundUp?: boolean): TData;
+}
+
+/**
+ * Seek/read to (and within) specfic chunks the file consists of; and access the
+ * chunk and offset in that chunk corresponding to the current position.
+ *
+ * Note that all offset numbers in this interface are representing units of the
+ * {@link Chunk.data | data type of `TChunk`}; which might differ from that of
+ * `TData`.
+ */
 export interface ChunkSeeker<
   TChunk extends Chunk<any>,
-  T extends Iterable<any> = string
-> extends Seeker<T> {
+  TData extends Iterable<any> = string,
+> {
+  /**
+   * The chunk containing the current position.
+   *
+   * @remarks
+   * When the position falls at the edge between two chunks, `currentChunk` is
+   * always the later one (thus {@link offsetInChunk} would be zero). Note that
+   * an empty chunk (for which position zero is at both its edges) can
+   * hence never be the current chunk unless it is the last chunk in the file.
+   */
   readonly currentChunk: TChunk;
+
+  /**
+   * The offset inside `currentChunk` corresponding to the current position.
+   * Can be between zero and the length of the chunk (inclusive; but it could
+   * equal the length of the chunk only if currentChunk is the last chunk).
+   */
   readonly offsetInChunk: number;
+
+  /**
+   * Move to the start of a given chunk, or to an offset relative to that.
+   *
+   * @param chunk - The chunk of the file to move to.
+   * @param offset - The offset to move to, relative to the start of `chunk`.
+   * Defaults to zero.
+   */
   seekToChunk(chunk: TChunk, offset?: number): void;
-  readToChunk(chunk: TChunk, offset?: number): T;
+
+  /**
+   * Read to the start of a given chunk, or to an offset relative to that.
+   *
+   * @remarks Equal to {@link seekToChunk}, but returning the characters passed.
+   *
+   * @param chunk - The chunk of the file to move to.
+   * @param offset - The offset to move to, relative to the start of `chunk`.
+   * Defaults to zero.
+   */
+  readToChunk(chunk: TChunk, offset?: number): TData;
 }
 
+// The TextSeeker takes a Chunker as input, and lets it be treated as a single
+// string. Seeking to a given numeric position will cause it to pull chunks from
+// the underlying Chunker, counting their lengths until the requested position
+// is reached.
 export class TextSeeker<TChunk extends Chunk<string>>
-  implements ChunkSeeker<TChunk> {
+  implements Seeker<TChunk> {
   // The chunk containing our current text position.
   get currentChunk(): TChunk {
     return this.chunker.currentChunk;

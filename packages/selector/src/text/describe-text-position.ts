@@ -21,7 +21,7 @@
 import type { TextPositionSelector } from '../types';
 import type { Chunk, Chunker, ChunkRange } from './chunker';
 import { CodePointSeeker } from './code-point-seeker';
-import { TextSeeker } from './seek';
+import { TextSeeker } from './seeker';
 
 export async function describeTextPosition<TChunk extends Chunk<string>>(
   target: ChunkRange<TChunk>,

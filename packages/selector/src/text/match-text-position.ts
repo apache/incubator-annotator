@@ -21,7 +21,7 @@
 import type { TextPositionSelector } from '../types';
 import type { Chunk, ChunkRange, Chunker } from './chunker';
 import { CodePointSeeker } from './code-point-seeker';
-import { TextSeeker } from './seek';
+import { TextSeeker } from './seeker';
 
 export function textPositionSelectorMatcher(
   selector: TextPositionSelector,
