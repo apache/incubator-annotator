@@ -22,7 +22,7 @@ import type { TextQuoteSelector } from '@annotator/selector';
 import { ownerDocument } from '../owner-document';
 import { Chunk, Chunker, ChunkRange, TextNodeChunker, chunkRangeEquals } from '../chunker';
 import { abstractTextQuoteSelectorMatcher } from '.';
-import { TextSeeker } from '../seek';
+import { TextSeeker, Seeker } from '../seek';
 
 export async function describeTextQuote(
   range: Range,
@@ -96,54 +96,14 @@ async function abstractDescribeTextQuote<TChunk extends Chunk<string>>(
     // Count how many characters we’d need as a prefix to disqualify this match.
     seeker1.seekToChunk(target.startChunk, target.startIndex - prefix.length);
     seeker2.seekToChunk(unintendedMatch.startChunk, unintendedMatch.startIndex - prefix.length);
-    let sufficientPrefix: string | undefined = prefix;
-    while (true) {
-      let previousCharacter: string;
-      try {
-        previousCharacter = seeker1.read(-1);
-      } catch (err) {
-        sufficientPrefix = undefined; // Start of text reached.
-        break;
-      }
-      sufficientPrefix = previousCharacter + sufficientPrefix;
-
-      // Break if the newly added character makes the prefix unambiguous.
-      try {
-        const unintendedMatchPreviousCharacter = seeker2.read(-1);
-        if (previousCharacter !== unintendedMatchPreviousCharacter) break;
-      } catch (err) {
-        if (err instanceof RangeError)
-          break;
-        else
-          throw err;
-      }
-    }
+    const extraPrefix = readUntilDifferent(seeker1, seeker2, true);
+    let sufficientPrefix = extraPrefix !== undefined ? extraPrefix + prefix : undefined;
 
     // Count how many characters we’d need as a suffix to disqualify this match.
     seeker1.seekToChunk(target.endChunk, target.endIndex + suffix.length);
     seeker2.seekToChunk(unintendedMatch.endChunk, unintendedMatch.endIndex + suffix.length);
-    let sufficientSuffix: string | undefined = suffix;
-    while (true) {
-      let nextCharacter: string;
-      try {
-        nextCharacter = seeker1.read(1);
-      } catch (err) {
-        sufficientSuffix = undefined; // End of text reached.
-        break;
-      }
-      sufficientSuffix += nextCharacter;
-
-      // Break if the newly added character makes the suffix unambiguous.
-      try {
-        const unintendedMatchNextCharacter = seeker2.read(1);
-        if (nextCharacter !== unintendedMatchNextCharacter) break;
-      } catch (err) {
-        if (err instanceof RangeError)
-          break;
-        else
-          throw err;
-      }
-    }
+    const extraSuffix = readUntilDifferent(seeker1, seeker2, false);
+    let sufficientSuffix = extraSuffix !== undefined ? suffix + extraSuffix : undefined;
 
     // Use either the prefix or suffix, whichever is shortest.
     if (sufficientPrefix !== undefined && (sufficientSuffix === undefined || sufficientPrefix.length <= sufficientSuffix.length)) {
@@ -154,5 +114,34 @@ async function abstractDescribeTextQuote<TChunk extends Chunk<string>>(
     } else {
       throw new Error('Target cannot be disambiguated; how could that have happened‽');
     }
+  }
+}
+
+function readUntilDifferent(
+  seeker1: Seeker,
+  seeker2: Seeker,
+  reverse: boolean,
+): string | undefined {
+  let result = '';
+  while (true) {
+    let nextCharacter: string;
+    try {
+      nextCharacter = seeker1.read(reverse ? -1 : 1);
+    } catch (err) {
+      return undefined; // Start/end of text reached: cannot expand result.
+    }
+    result = reverse
+      ? nextCharacter + result
+      : result + nextCharacter;
+
+    // Check if the newly added character makes the result differ from the second seeker.
+    let comparisonCharacter: string | undefined;
+    try {
+      comparisonCharacter = seeker2.read(reverse ? -1 : 1);
+    } catch (err) { // A RangeError would merely mean seeker2 is exhausted.
+      if (!(err instanceof RangeError)) throw err;
+    }
+    if (nextCharacter !== comparisonCharacter)
+      return result;
   }
 }
