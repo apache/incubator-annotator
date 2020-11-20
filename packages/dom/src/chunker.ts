@@ -114,6 +114,15 @@ export class TextNodeChunker implements Chunker<PartialTextNode> {
   }
 
   rangeToChunkRange(range: Range): ChunkRange<PartialTextNode> {
+    range = range.cloneRange();
+
+    // Take the part of the range that falls within the scope.
+    if (range.compareBoundaryPoints(Range.START_TO_START, this.scope) === -1)
+      range.setStart(this.scope.startContainer, this.scope.startOffset);
+    if (range.compareBoundaryPoints(Range.END_TO_END, this.scope) === 1)
+      range.setEnd(this.scope.endContainer, this.scope.endOffset);
+
+    // Ensure it starts and ends at text nodes.
     const textRange = normalizeRange(range, this.scope);
 
     const startChunk = this.nodeToChunk(textRange.startContainer);

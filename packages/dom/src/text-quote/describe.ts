@@ -38,13 +38,6 @@ export async function describeTextQuote(
     scope.selectNodeContents(document);
   }
 
-  // Take the part of the range that falls within the scope.
-  range = range.cloneRange();
-  if (range.compareBoundaryPoints(Range.START_TO_START, scope) === -1)
-    range.setStart(scope.startContainer, scope.startOffset);
-  if (range.compareBoundaryPoints(Range.END_TO_END, scope) === 1)
-    range.setEnd(scope.endContainer, scope.endOffset);
-
   const chunker = new TextNodeChunker(scope);
 
   return await abstractDescribeTextQuote(
