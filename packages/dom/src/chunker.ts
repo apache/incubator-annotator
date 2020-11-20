@@ -18,8 +18,8 @@
  * under the License.
  */
 
-import { normalizeRange } from "./normalize-range";
-import { ownerDocument } from "./owner-document";
+import { normalizeRange } from './normalize-range';
+import { ownerDocument } from './owner-document';
 
 // A Chunk represents a fragment (typically a string) of some document.
 // Subclasses can add further attributes to map the chunk to its position in the
@@ -40,12 +40,15 @@ export function chunkEquals(chunk1: Chunk<any>, chunk2: Chunk<any>): boolean {
   return chunk1.equals ? chunk1.equals(chunk2) : chunk1 === chunk2;
 }
 
-export function chunkRangeEquals(range1: ChunkRange<any>, range2: ChunkRange<any>) {
+export function chunkRangeEquals(
+  range1: ChunkRange<any>,
+  range2: ChunkRange<any>,
+): boolean {
   return (
-    chunkEquals(range1.startChunk, range2.startChunk)
-    && chunkEquals(range1.endChunk, range2.endChunk)
-    && range1.startIndex === range2.startIndex
-    && range1.endIndex === range2.endIndex
+    chunkEquals(range1.startChunk, range2.startChunk) &&
+    chunkEquals(range1.endChunk, range2.endChunk) &&
+    range1.startIndex === range2.startIndex &&
+    range1.endIndex === range2.endIndex
   );
 }
 
@@ -80,11 +83,19 @@ export class EmptyScopeError extends TypeError {
   }
 }
 
-export class TextNodeChunker implements Chunker<PartialTextNode> {
+export class OutOfScopeError extends TypeError {
+  constructor(message?: string) {
+    super(
+      message ||
+        'Cannot convert node to chunk, as it falls outside of chunker’s scope.',
+    );
+  }
+}
 
+export class TextNodeChunker implements Chunker<PartialTextNode> {
   private iter: NodeIterator;
 
-  get currentChunk() {
+  get currentChunk(): PartialTextNode {
     const node = this.iter.referenceNode;
 
     // This test should not actually be needed, but it keeps TypeScript happy.
@@ -94,10 +105,13 @@ export class TextNodeChunker implements Chunker<PartialTextNode> {
   }
 
   nodeToChunk(node: Text): PartialTextNode {
-    if (!this.scope.intersectsNode(node))
-      throw new Error('Cannot convert node to chunk, as it falls outside of chunker’s scope.');
-    const startOffset = (node === this.scope.startContainer) ? this.scope.startOffset : 0;
-    const endOffset = (node === this.scope.endContainer) ? this.scope.endOffset : node.length;
+    if (!this.scope.intersectsNode(node)) throw new OutOfScopeError();
+
+    const startOffset =
+      node === this.scope.startContainer ? this.scope.startOffset : 0;
+    const endOffset =
+      node === this.scope.endContainer ? this.scope.endOffset : node.length;
+
     return {
       node,
       startOffset,
@@ -105,12 +119,12 @@ export class TextNodeChunker implements Chunker<PartialTextNode> {
       data: node.data.substring(startOffset, endOffset),
       equals(other) {
         return (
-          other.node === this.node
-          && other.startOffset === this.startOffset
-          && other.endOffset === this.endOffset
+          other.node === this.node &&
+          other.startOffset === this.startOffset &&
+          other.endOffset === this.endOffset
         );
       },
-    }
+    };
   }
 
   rangeToChunkRange(range: Range): ChunkRange<PartialTextNode> {
@@ -173,28 +187,27 @@ export class TextNodeChunker implements Chunker<PartialTextNode> {
     }
   }
 
-  nextChunk() {
+  nextChunk(): PartialTextNode | null {
     // Move the iterator to after the current node, so nextNode() will cause a jump.
-    if (this.iter.pointerBeforeReferenceNode)
-      this.iter.nextNode();
-    if (this.iter.nextNode())
-      return this.currentChunk;
-    else
-      return null;
+    if (this.iter.pointerBeforeReferenceNode) this.iter.nextNode();
+
+    if (this.iter.nextNode()) return this.currentChunk;
+    else return null;
   }
 
-  previousChunk() {
-    if (!this.iter.pointerBeforeReferenceNode)
-      this.iter.previousNode();
-    if (this.iter.previousNode())
-      return this.currentChunk;
-    else
-      return null;
+  previousChunk(): PartialTextNode | null {
+    if (!this.iter.pointerBeforeReferenceNode) this.iter.previousNode();
+
+    if (this.iter.previousNode()) return this.currentChunk;
+    else return null;
   }
 
-  precedesCurrentChunk(chunk: PartialTextNode) {
+  precedesCurrentChunk(chunk: PartialTextNode): boolean {
     if (this.currentChunk === null) return false;
-    return !!(this.currentChunk.node.compareDocumentPosition(chunk.node) & Node.DOCUMENT_POSITION_PRECEDING);
+    return !!(
+      this.currentChunk.node.compareDocumentPosition(chunk.node) &
+      Node.DOCUMENT_POSITION_PRECEDING
+    );
   }
 }
 

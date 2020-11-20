@@ -18,49 +18,58 @@
  * under the License.
  */
 
-import { ChunkSeeker } from "./seek";
-import { Chunk } from "./chunker";
+import type { Chunk } from './chunker';
+import type { ChunkSeeker } from './seek';
 
-export class CodePointSeeker<TChunk extends Chunk<string>> implements ChunkSeeker<TChunk, string[]> {
+export class CodePointSeeker<TChunk extends Chunk<string>>
+  implements ChunkSeeker<TChunk, string[]> {
   position = 0;
 
   constructor(public readonly raw: ChunkSeeker<TChunk>) {}
 
-  seekBy(length: number) {
+  seekBy(length: number): void {
     this.seekTo(this.position + length);
   }
 
-  seekTo(target: number) {
+  seekTo(target: number): void {
     this._readOrSeekTo(false, target);
   }
 
-  read(length: number, roundUp?: boolean) {
+  read(length: number, roundUp?: boolean): string[] {
     return this.readTo(this.position + length, roundUp);
   }
 
-  readTo(target: number, roundUp?: boolean) {
+  readTo(target: number, roundUp?: boolean): string[] {
     return this._readOrSeekTo(true, target, roundUp);
   }
 
-  get currentChunk() {
+  get currentChunk(): TChunk {
     return this.raw.currentChunk;
   }
 
-  get offsetInChunk() {
+  get offsetInChunk(): number {
     return this.raw.offsetInChunk;
   }
 
-  seekToChunk(target: TChunk, offset: number = 0) {
+  seekToChunk(target: TChunk, offset = 0): void {
     this._readOrSeekToChunk(false, target, offset);
   }
 
-  readToChunk(target: TChunk, offset: number = 0) {
+  readToChunk(target: TChunk, offset = 0): string[] {
     return this._readOrSeekToChunk(true, target, offset);
   }
 
-  private _readOrSeekToChunk(read: true, target: TChunk, offset?: number): string[]
-  private _readOrSeekToChunk(read: false, target: TChunk, offset?: number): void
-  private _readOrSeekToChunk(read: boolean, target: TChunk, offset: number = 0) {
+  private _readOrSeekToChunk(
+    read: true,
+    target: TChunk,
+    offset?: number,
+  ): string[];
+  private _readOrSeekToChunk(
+    read: false,
+    target: TChunk,
+    offset?: number,
+  ): void;
+  private _readOrSeekToChunk(read: boolean, target: TChunk, offset = 0) {
     const oldRawPosition = this.raw.position;
 
     let s = this.raw.readToChunk(target, offset);
@@ -75,7 +84,7 @@ export class CodePointSeeker<TChunk extends Chunk<string>> implements ChunkSeeke
       s = s.slice(1);
     }
 
-    let result = [...s];
+    const result = [...s];
 
     this.position = movedForward
       ? this.position + result.length
@@ -84,9 +93,17 @@ export class CodePointSeeker<TChunk extends Chunk<string>> implements ChunkSeeke
     if (read) return result;
   }
 
-  private _readOrSeekTo(read: true, target: number, roundUp?: boolean): string[];
+  private _readOrSeekTo(
+    read: true,
+    target: number,
+    roundUp?: boolean,
+  ): string[];
   private _readOrSeekTo(read: false, target: number, roundUp?: boolean): void;
-  private _readOrSeekTo(read: boolean, target: number, roundUp: boolean = false): string[] | void {
+  private _readOrSeekTo(
+    read: boolean,
+    target: number,
+    roundUp = false,
+  ): string[] | void {
     let result: string[] = [];
 
     if (this.position < target) {
@@ -96,7 +113,7 @@ export class CodePointSeeker<TChunk extends Chunk<string>> implements ChunkSeeke
         let s = unpairedSurrogate + this.raw.read(1, true);
         if (endsWithinCharacter(s)) {
           unpairedSurrogate = s.slice(-1); // consider this half-character part of the next string.
-          s = s.slice(0,-1);
+          s = s.slice(0, -1);
         } else {
           unpairedSurrogate = '';
         }
@@ -107,11 +124,14 @@ export class CodePointSeeker<TChunk extends Chunk<string>> implements ChunkSeeke
       if (unpairedSurrogate) this.raw.seekBy(-1); // align with the last complete character.
       if (!roundUp && this.position > target) {
         const overshootInCodePoints = this.position - target;
-        const overshootInCodeUnits = characters.slice(-overshootInCodePoints).join('').length;
+        const overshootInCodeUnits = characters
+          .slice(-overshootInCodePoints)
+          .join('').length;
         this.position -= overshootInCodePoints;
         this.raw.seekBy(-overshootInCodeUnits);
       }
-    } else { // Nearly equal to the if-block, but moving backward in the text.
+    } else {
+      // Nearly equal to the if-block, but moving backward in the text.
       let unpairedSurrogate = '';
       let characters: string[] = [];
       while (this.position > target) {
@@ -129,7 +149,9 @@ export class CodePointSeeker<TChunk extends Chunk<string>> implements ChunkSeeke
       if (unpairedSurrogate) this.raw.seekBy(1);
       if (!roundUp && this.position < target) {
         const overshootInCodePoints = target - this.position;
-        const overshootInCodeUnits = characters.slice(0, overshootInCodePoints).join('').length;
+        const overshootInCodeUnits = characters
+          .slice(0, overshootInCodePoints)
+          .join('').length;
         this.position += overshootInCodePoints;
         this.raw.seekBy(overshootInCodeUnits);
       }
@@ -141,10 +163,10 @@ export class CodePointSeeker<TChunk extends Chunk<string>> implements ChunkSeeke
 
 function endsWithinCharacter(s: string) {
   const codeUnit = s.charCodeAt(s.length - 1);
-  return (0xD800 <= codeUnit && codeUnit <= 0xDBFF)
+  return 0xd800 <= codeUnit && codeUnit <= 0xdbff;
 }
 
 function startsWithinCharacter(s: string) {
   const codeUnit = s.charCodeAt(0);
-  return (0xDC00 <= codeUnit && codeUnit <= 0xDFFF)
+  return 0xdc00 <= codeUnit && codeUnit <= 0xdfff;
 }

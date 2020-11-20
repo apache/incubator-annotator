@@ -76,7 +76,7 @@ export async function* cartesian<T>(
 
     // Synchronously compute and yield tuples of the partial product.
     yield* scratch.reduce(
-      (a, b) => a.flatMap((v) => b.map((w) => [...v, w])),
+      (acc, next) => acc.flatMap((v) => next.map((w) => [...v, w])),
       [[]] as T[][],
     );
   }

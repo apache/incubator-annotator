@@ -19,9 +19,10 @@
  */
 
 import type { Matcher, TextPositionSelector } from '@annotator/selector';
-import { TextSeeker } from '../seek';
+import type { Chunk, ChunkRange, Chunker } from '../chunker';
+import { TextNodeChunker } from '../chunker';
 import { CodePointSeeker } from '../code-point-seeker';
-import { Chunk, ChunkRange, TextNodeChunker, Chunker } from '../chunker';
+import { TextSeeker } from '../seek';
 
 export function createTextPositionSelectorMatcher(
   selector: TextPositionSelector,
@@ -41,10 +42,14 @@ export function createTextPositionSelectorMatcher(
 
 export function abstractTextPositionSelectorMatcher(
   selector: TextPositionSelector,
-): <TChunk extends Chunk<any>>(scope: Chunker<TChunk>) => AsyncGenerator<ChunkRange<TChunk>, void, void> {
+): <TChunk extends Chunk<any>>(
+  scope: Chunker<TChunk>,
+) => AsyncGenerator<ChunkRange<TChunk>, void, void> {
   const { start, end } = selector;
 
-  return async function* matchAll<TChunk extends Chunk<string>>(textChunks: Chunker<TChunk>) {
+  return async function* matchAll<TChunk extends Chunk<string>>(
+    textChunks: Chunker<TChunk>,
+  ) {
     const codeUnitSeeker = new TextSeeker(textChunks);
     const codePointSeeker = new CodePointSeeker(codeUnitSeeker);
 
@@ -56,5 +61,5 @@ export function abstractTextPositionSelectorMatcher(
     const endIndex = codeUnitSeeker.offsetInChunk;
 
     yield { startChunk, startIndex, endChunk, endIndex };
-  }
+  };
 }

@@ -19,10 +19,12 @@
  */
 
 import type { TextQuoteSelector } from '@annotator/selector';
+import type { Chunk, Chunker, ChunkRange } from '../chunker';
+import { TextNodeChunker, chunkRangeEquals } from '../chunker';
 import { ownerDocument } from '../owner-document';
-import { Chunk, Chunker, ChunkRange, TextNodeChunker, chunkRangeEquals } from '../chunker';
+import type { Seeker } from '../seek';
+import { TextSeeker } from '../seek';
 import { abstractTextQuoteSelectorMatcher } from '.';
-import { TextSeeker, Seeker } from '../seek';
 
 export async function describeTextQuote(
   range: Range,
@@ -67,9 +69,11 @@ async function abstractDescribeTextQuote<TChunk extends Chunk<string>>(
       exact,
       prefix,
       suffix,
-    }
+    };
 
-    const matches = abstractTextQuoteSelectorMatcher(tentativeSelector)(scope());
+    const matches = abstractTextQuoteSelectorMatcher(tentativeSelector)(
+      scope(),
+    );
     let nextMatch = await matches.next();
 
     // If this match is the intended one, no need to act.
@@ -95,21 +99,32 @@ async function abstractDescribeTextQuote<TChunk extends Chunk<string>>(
 
     // Count how many characters we’d need as a prefix to disqualify this match.
     seeker1.seekToChunk(target.startChunk, target.startIndex - prefix.length);
-    seeker2.seekToChunk(unintendedMatch.startChunk, unintendedMatch.startIndex - prefix.length);
+    seeker2.seekToChunk(
+      unintendedMatch.startChunk,
+      unintendedMatch.startIndex - prefix.length,
+    );
     const extraPrefix = readUntilDifferent(seeker1, seeker2, true);
 
     // Count how many characters we’d need as a suffix to disqualify this match.
     seeker1.seekToChunk(target.endChunk, target.endIndex + suffix.length);
-    seeker2.seekToChunk(unintendedMatch.endChunk, unintendedMatch.endIndex + suffix.length);
+    seeker2.seekToChunk(
+      unintendedMatch.endChunk,
+      unintendedMatch.endIndex + suffix.length,
+    );
     const extraSuffix = readUntilDifferent(seeker1, seeker2, false);
 
     // Use either the prefix or suffix, whichever is shortest.
-    if (extraPrefix !== undefined && (extraSuffix === undefined || extraPrefix.length <= extraSuffix.length)) {
+    if (
+      extraPrefix !== undefined &&
+      (extraSuffix === undefined || extraPrefix.length <= extraSuffix.length)
+    ) {
       prefix = extraPrefix + prefix;
     } else if (extraSuffix !== undefined) {
       suffix = suffix + extraSuffix;
     } else {
-      throw new Error('Target cannot be disambiguated; how could that have happened‽');
+      throw new Error(
+        'Target cannot be disambiguated; how could that have happened‽',
+      );
     }
   }
 }
@@ -127,18 +142,16 @@ function readUntilDifferent(
     } catch (err) {
       return undefined; // Start/end of text reached: cannot expand result.
     }
-    result = reverse
-      ? nextCharacter + result
-      : result + nextCharacter;
+    result = reverse ? nextCharacter + result : result + nextCharacter;
 
     // Check if the newly added character makes the result differ from the second seeker.
     let comparisonCharacter: string | undefined;
     try {
       comparisonCharacter = seeker2.read(reverse ? -1 : 1);
-    } catch (err) { // A RangeError would merely mean seeker2 is exhausted.
+    } catch (err) {
+      // A RangeError would merely mean seeker2 is exhausted.
       if (!(err instanceof RangeError)) throw err;
     }
-    if (nextCharacter !== comparisonCharacter)
-      return result;
+    if (nextCharacter !== comparisonCharacter) return result;
   }
 }

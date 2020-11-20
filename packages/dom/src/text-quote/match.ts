@@ -19,7 +19,8 @@
  */
 
 import type { Matcher, TextQuoteSelector } from '@annotator/selector';
-import { Chunk, Chunker, ChunkRange, TextNodeChunker, EmptyScopeError } from '../chunker';
+import type { Chunk, Chunker, ChunkRange } from '../chunker';
+import { TextNodeChunker, EmptyScopeError } from '../chunker';
 
 export function createTextQuoteSelectorMatcher(
   selector: TextQuoteSelector,
@@ -31,22 +32,25 @@ export function createTextQuoteSelectorMatcher(
     try {
       textChunks = new TextNodeChunker(scope);
     } catch (err) {
-      if (err instanceof EmptyScopeError)
-        return; // An empty range contains no matches.
-      else
-        throw err;
+      if (err instanceof EmptyScopeError) return;
+      // An empty range contains no matches.
+      else throw err;
     }
 
     for await (const abstractMatch of abstractMatcher(textChunks)) {
       yield textChunks.chunkRangeToRange(abstractMatch);
     }
-  }
+  };
 }
 
 export function abstractTextQuoteSelectorMatcher(
   selector: TextQuoteSelector,
-): <TChunk extends Chunk<any>>(scope: Chunker<TChunk>) => AsyncGenerator<ChunkRange<TChunk>, void, void> {
-  return async function* matchAll<TChunk extends Chunk<string>>(textChunks: Chunker<TChunk>) {
+): <TChunk extends Chunk<any>>(
+  scope: Chunker<TChunk>,
+) => AsyncGenerator<ChunkRange<TChunk>, void, void> {
+  return async function* matchAll<TChunk extends Chunk<string>>(
+    textChunks: Chunker<TChunk>,
+  ) {
     const exact = selector.exact;
     const prefix = selector.prefix || '';
     const suffix = selector.suffix || '';
@@ -78,7 +82,8 @@ export function abstractTextQuoteSelectorMatcher(
 
         // If the current chunk contains the start and/or end of the match, record these.
         if (partialMatch.endChunk === undefined) {
-          const charactersUntilMatchEnd = prefix.length + exact.length - charactersMatched;
+          const charactersUntilMatchEnd =
+            prefix.length + exact.length - charactersMatched;
           if (charactersUntilMatchEnd <= chunkValue.length) {
             partialMatch.endChunk = chunk;
             partialMatch.endIndex = charactersUntilMatchEnd;
@@ -87,20 +92,29 @@ export function abstractTextQuoteSelectorMatcher(
         if (partialMatch.startChunk === undefined) {
           const charactersUntilMatchStart = prefix.length - charactersMatched;
           if (
-            charactersUntilMatchStart < chunkValue.length
-            || partialMatch.endChunk !== undefined // handles an edge case: an empty quote at the end of a chunk.
+            charactersUntilMatchStart < chunkValue.length ||
+            partialMatch.endChunk !== undefined // handles an edge case: an empty quote at the end of a chunk.
           ) {
             partialMatch.startChunk = chunk;
             partialMatch.startIndex = charactersUntilMatchStart;
           }
         }
 
-        const charactersUntilSuffixEnd = searchPattern.length - charactersMatched;
+        const charactersUntilSuffixEnd =
+          searchPattern.length - charactersMatched;
         if (charactersUntilSuffixEnd <= chunkValue.length) {
-          if (chunkValue.startsWith(searchPattern.substring(charactersMatched))) {
+          if (
+            chunkValue.startsWith(searchPattern.substring(charactersMatched))
+          ) {
             yield partialMatch as ChunkRange<TChunk>; // all fields are certainly defined now.
           }
-        } else if (chunkValue === searchPattern.substring(charactersMatched, charactersMatched + chunkValue.length)) {
+        } else if (
+          chunkValue ===
+          searchPattern.substring(
+            charactersMatched,
+            charactersMatched + chunkValue.length,
+          )
+        ) {
           // The chunk is too short to complete the match; comparison has to be completed in subsequent chunks.
           partialMatch.charactersMatched += chunkValue.length;
           remainingPartialMatches.push(partialMatch);
@@ -112,12 +126,19 @@ export function abstractTextQuoteSelectorMatcher(
       if (searchPattern.length <= chunkValue.length) {
         let fromIndex = 0;
         while (fromIndex <= chunkValue.length) {
-          const patternStartIndex = chunkValue.indexOf(searchPattern, fromIndex);
+          const patternStartIndex = chunkValue.indexOf(
+            searchPattern,
+            fromIndex,
+          );
           if (patternStartIndex === -1) break;
           fromIndex = patternStartIndex + 1;
 
           // Handle edge case: an empty searchPattern would already have been yielded at the end of the last chunk.
-          if (patternStartIndex === 0 && searchPattern.length === 0 && !isFirstChunk)
+          if (
+            patternStartIndex === 0 &&
+            searchPattern.length === 0 &&
+            !isFirstChunk
+          )
             continue;
 
           yield {
@@ -131,11 +152,15 @@ export function abstractTextQuoteSelectorMatcher(
 
       // 3. Check if this chunk ends with a partial match (or even multiple partial matches).
       let newPartialMatches: number[] = [];
-      const searchStartPoint = Math.max(chunkValue.length - searchPattern.length + 1, 0);
+      const searchStartPoint = Math.max(
+        chunkValue.length - searchPattern.length + 1,
+        0,
+      );
       for (let i = searchStartPoint; i < chunkValue.length; i++) {
         const character = chunkValue[i];
         newPartialMatches = newPartialMatches.filter(
-          partialMatchStartIndex => (character === searchPattern[i - partialMatchStartIndex])
+          (partialMatchStartIndex) =>
+            character === searchPattern[i - partialMatchStartIndex],
         );
         if (character === searchPattern[0]) newPartialMatches.push(i);
       }
@@ -146,11 +171,12 @@ export function abstractTextQuoteSelectorMatcher(
         };
         if (charactersMatched >= prefix.length + exact.length) {
           partialMatch.endChunk = chunk;
-          partialMatch.endIndex = partialMatchStartIndex + prefix.length + exact.length;
+          partialMatch.endIndex =
+            partialMatchStartIndex + prefix.length + exact.length;
         }
         if (
-          charactersMatched > prefix.length
-          || partialMatch.endChunk !== undefined // handles an edge case: an empty quote at the end of a chunk.
+          charactersMatched > prefix.length ||
+          partialMatch.endChunk !== undefined // handles an edge case: an empty quote at the end of a chunk.
         ) {
           partialMatch.startChunk = chunk;
           partialMatch.startIndex = partialMatchStartIndex + prefix.length;

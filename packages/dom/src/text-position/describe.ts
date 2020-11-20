@@ -19,9 +19,10 @@
  */
 
 import type { TextPositionSelector } from '@annotator/selector';
-import { ownerDocument } from '../owner-document';
-import { Chunk, Chunker, ChunkRange, TextNodeChunker } from '../chunker';
+import type { Chunk, Chunker, ChunkRange } from '../chunker';
+import { TextNodeChunker } from '../chunker';
 import { CodePointSeeker } from '../code-point-seeker';
+import { ownerDocument } from '../owner-document';
 import { TextSeeker } from '../seek';
 
 export async function describeTextPosition(

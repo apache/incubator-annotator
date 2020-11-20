@@ -83,7 +83,6 @@ describe('createTextPositionSelectorMatcher', () => {
     // console.log([...textNode.parentNode.childNodes].map(node => node.textContent))
     // → [ '', 'l😃rem ipsum ', '', 'dolor', '', ' am', '', 'et yada yada', '' ]
 
-
     await testMatcher(doc, scope, selector, [
       {
         startContainerXPath: '//b/text()[4]', // "dolor"

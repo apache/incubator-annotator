@@ -18,7 +18,7 @@
  * under the License.
  */
 
-import { ownerDocument } from "./owner-document";
+import { ownerDocument } from './owner-document';
 
 // TextRange is a Range that guarantees to always have Text nodes as its start
 // and end nodes. To ensure the type remains correct, it also restricts usage
@@ -57,19 +57,18 @@ export interface TextRange extends Range {
 // after). If the document does not contain any text nodes, an error is thrown.
 export function normalizeRange(range: Range, scope?: Range): TextRange {
   const document = ownerDocument(range);
-  const walker = document.createTreeWalker(
-    document,
-    NodeFilter.SHOW_TEXT,
-    {
-      acceptNode(node: Text) {
-        return (!scope || scope.intersectsNode(node))
-          ? NodeFilter.FILTER_ACCEPT
-          : NodeFilter.FILTER_REJECT;
-      },
+  const walker = document.createTreeWalker(document, NodeFilter.SHOW_TEXT, {
+    acceptNode(node: Text) {
+      return !scope || scope.intersectsNode(node)
+        ? NodeFilter.FILTER_ACCEPT
+        : NodeFilter.FILTER_REJECT;
     },
-  );
+  });
 
-  let [ startContainer, startOffset ] = snapBoundaryPointToTextNode(range.startContainer, range.startOffset);
+  let [startContainer, startOffset] = snapBoundaryPointToTextNode(
+    range.startContainer,
+    range.startOffset,
+  );
 
   // If we point at the end of a text node, move to the start of the next one.
   // The step is repeated to skip over empty text nodes.
@@ -82,7 +81,10 @@ export function normalizeRange(range: Range, scope?: Range): TextRange {
   // Set the range’s start; note this might move its end too.
   range.setStart(startContainer, startOffset);
 
-  let [ endContainer, endOffset ] = snapBoundaryPointToTextNode(range.endContainer, range.endOffset);
+  let [endContainer, endOffset] = snapBoundaryPointToTextNode(
+    range.endContainer,
+    range.endOffset,
+  );
 
   // If we point at the start of a text node, move to the end of the previous one.
   // The step is repeated to skip over empty text nodes.
@@ -103,9 +105,11 @@ export function normalizeRange(range: Range, scope?: Range): TextRange {
 // - otherwise the first boundary point after it whose node is a text node, if any;
 // - otherwise, the last boundary point before it whose node is a text node.
 // If the document has no text nodes, it throws an error.
-function snapBoundaryPointToTextNode(node: Node, offset: number): [Text, number] {
-  if (isText(node))
-    return [node, offset];
+function snapBoundaryPointToTextNode(
+  node: Node,
+  offset: number,
+): [Text, number] {
+  if (isText(node)) return [node, offset];
 
   // Find the node at or right after the boundary point.
   let curNode: Node;
@@ -116,26 +120,27 @@ function snapBoundaryPointToTextNode(node: Node, offset: number): [Text, number]
   } else {
     curNode = node;
     while (curNode.nextSibling === null) {
-      if (curNode.parentNode === null) // Boundary point is at end of document
+      if (curNode.parentNode === null)
+        // Boundary point is at end of document
         throw new Error('not implemented'); // TODO
       curNode = curNode.parentNode;
     }
     curNode = curNode.nextSibling;
   }
 
-  if (isText(curNode))
-    return [curNode, 0];
+  if (isText(curNode)) return [curNode, 0];
 
   // Walk to the next text node, or the last if there is none.
-  const document = node.ownerDocument ?? node as Document;
+  const document = node.ownerDocument ?? (node as Document);
   const walker = document.createTreeWalker(document, NodeFilter.SHOW_TEXT);
   walker.currentNode = curNode;
-  if (walker.nextNode() !== null)
+  if (walker.nextNode() !== null) {
     return [walker.currentNode as Text, 0];
-  else if (walker.previousNode() !== null)
+  } else if (walker.previousNode() !== null) {
     return [walker.currentNode as Text, (walker.currentNode as Text).length];
-  else
+  } else {
     throw new Error('Document contains no text nodes.');
+  }
 }
 
 function isText(node: Node): node is Text {
@@ -144,8 +149,8 @@ function isText(node: Node): node is Text {
 
 function isCharacterData(node: Node): node is CharacterData {
   return (
-    node.nodeType === Node.PROCESSING_INSTRUCTION_NODE
-    || node.nodeType === Node.COMMENT_NODE
-    || node.nodeType === Node.TEXT_NODE
+    node.nodeType === Node.PROCESSING_INSTRUCTION_NODE ||
+    node.nodeType === Node.COMMENT_NODE ||
+    node.nodeType === Node.TEXT_NODE
   );
 }

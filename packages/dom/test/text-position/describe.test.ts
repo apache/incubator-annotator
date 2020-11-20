@@ -35,7 +35,10 @@ describe('createTextPositionSelectorMatcher', () => {
         const doc = domParser.parseFromString(html, 'text/html');
         const scope = doc.createRange();
         scope.selectNodeContents(doc);
-        const result = await describeTextPosition(hydrateRange(range, doc), scope);
+        const result = await describeTextPosition(
+          hydrateRange(range, doc),
+          scope,
+        );
         assert.deepEqual(result, selector);
       });
     }

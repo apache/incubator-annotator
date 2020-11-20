@@ -109,8 +109,7 @@ export const testCases: {
     ],
   },
   'text inside <head>': {
-    html:
-      '<head><title>l😃rem ipsum dolor amet</title></head><b>yada yada</b>',
+    html: '<head><title>l😃rem ipsum dolor amet</title></head><b>yada yada</b>',
     selector: {
       type: 'TextPositionSelector',
       start: 18,
@@ -132,11 +131,13 @@ export const testCases: {
       start: 3,
       end: 3,
     },
-    expected: [{
-      startContainerXPath: '//b/text()',
-      startOffset: 4,
-      endContainerXPath: '//b/text()',
-      endOffset: 4,
-    }],
+    expected: [
+      {
+        startContainerXPath: '//b/text()',
+        startOffset: 4,
+        endContainerXPath: '//b/text()',
+        endOffset: 4,
+      },
+    ],
   },
 };
