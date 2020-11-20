@@ -19,9 +19,9 @@
  */
 
 import type { Matcher, TextPositionSelector } from '@annotator/selector';
-import { TextSeeker, NonEmptyChunker } from '../seek';
+import { TextSeeker } from '../seek';
 import { CodePointSeeker } from '../code-point-seeker';
-import { Chunk, ChunkRange, TextNodeChunker, PartialTextNode } from '../chunker';
+import { Chunk, ChunkRange, TextNodeChunker, Chunker } from '../chunker';
 
 export function createTextPositionSelectorMatcher(
   selector: TextPositionSelector,
@@ -31,9 +31,7 @@ export function createTextPositionSelectorMatcher(
   return async function* matchAll(scope) {
     const textChunks = new TextNodeChunker(scope);
 
-    if (textChunks.currentChunk === null)
-      throw new RangeError('Range does not contain any Text nodes.');
-    const matches = abstractMatcher(textChunks as NonEmptyChunker<PartialTextNode>);
+    const matches = abstractMatcher(textChunks);
 
     for await (const abstractMatch of matches) {
       yield textChunks.chunkRangeToRange(abstractMatch);
@@ -43,10 +41,10 @@ export function createTextPositionSelectorMatcher(
 
 export function abstractTextPositionSelectorMatcher(
   selector: TextPositionSelector,
-): <TChunk extends Chunk<any>>(scope: NonEmptyChunker<TChunk>) => AsyncGenerator<ChunkRange<TChunk>, void, void> {
+): <TChunk extends Chunk<any>>(scope: Chunker<TChunk>) => AsyncGenerator<ChunkRange<TChunk>, void, void> {
   const { start, end } = selector;
 
-  return async function* matchAll<TChunk extends Chunk<string>>(textChunks: NonEmptyChunker<TChunk>) {
+  return async function* matchAll<TChunk extends Chunk<string>>(textChunks: Chunker<TChunk>) {
     const codeUnitSeeker = new TextSeeker(textChunks);
     const codePointSeeker = new CodePointSeeker(codeUnitSeeker);
 

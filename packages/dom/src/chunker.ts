@@ -53,8 +53,8 @@ export function chunkRangeEquals(range1: ChunkRange<any>, range2: ChunkRange<any
 // It is inspired by, and similar to, the DOM’s NodeIterator. (but unlike
 // NodeIterator, it has no concept of being ‘before’ or ‘after’ a chunk)
 export interface Chunker<TChunk extends Chunk<any>> {
-  // currentChunk is null only if it contains no chunks at all.
-  readonly currentChunk: TChunk | null;
+  // The chunk currently being pointed at.
+  readonly currentChunk: TChunk;
 
   // Move currentChunk to the chunk following it, and return that chunk.
   // If there are no chunks following it, keep currentChunk unchanged and return null.
@@ -74,14 +74,22 @@ export interface PartialTextNode extends Chunk<string> {
   readonly endOffset: number;
 }
 
+export class EmptyScopeError extends TypeError {
+  constructor(message?: string) {
+    super(message || 'Scope contains no text nodes.');
+  }
+}
+
 export class TextNodeChunker implements Chunker<PartialTextNode> {
 
   private iter: NodeIterator;
 
   get currentChunk() {
     const node = this.iter.referenceNode;
-    if (!isText(node))
-      return null;
+
+    // This test should not actually be needed, but it keeps TypeScript happy.
+    if (!isText(node)) throw new EmptyScopeError();
+
     return this.nodeToChunk(node);
   }
 
@@ -131,6 +139,9 @@ export class TextNodeChunker implements Chunker<PartialTextNode> {
     return range;
   }
 
+  /**
+   * @param scope A Range that overlaps with at least one text node.
+   */
   constructor(private scope: Range) {
     this.iter = ownerDocument(scope).createNodeIterator(
       scope.commonAncestorContainer,
@@ -146,9 +157,11 @@ export class TextNodeChunker implements Chunker<PartialTextNode> {
 
     // Move the iterator to after the start (= root) node.
     this.iter.nextNode();
-    // If the start node is not a text node, move it to the first text node (if any).
-    if (!isText(this.iter.referenceNode))
-      this.iter.nextNode();
+    // If the start node is not a text node, move it to the first text node.
+    if (!isText(this.iter.referenceNode)) {
+      const nextNode = this.iter.nextNode();
+      if (nextNode === null) throw new EmptyScopeError();
+    }
   }
 
   nextChunk() {

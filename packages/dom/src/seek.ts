@@ -22,10 +22,6 @@ import { Chunk, Chunker, chunkEquals } from "./chunker";
 
 const E_END = 'Iterator exhausted before seek ended.';
 
-export interface NonEmptyChunker<TChunk extends Chunk<any>> extends Chunker<TChunk> {
-  readonly currentChunk: TChunk;
-}
-
 export interface Seeker<T extends Iterable<any> = string> {
   readonly position: number;
   read(length?: number, roundUp?: boolean): T;
@@ -56,7 +52,7 @@ export class TextSeeker<TChunk extends Chunk<string>> implements ChunkSeeker<TCh
   // The current text position (measured in code units)
   get position() { return this.currentChunkPosition + this.offsetInChunk; }
 
-  constructor(protected chunker: NonEmptyChunker<TChunk>) {
+  constructor(protected chunker: Chunker<TChunk>) {
     // Walk to the start of the first non-empty chunk inside the scope.
     this.seekTo(0);
   }

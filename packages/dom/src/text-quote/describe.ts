@@ -22,7 +22,7 @@ import type { TextQuoteSelector } from '@annotator/selector';
 import { ownerDocument } from '../owner-document';
 import { Chunk, Chunker, ChunkRange, TextNodeChunker, chunkRangeEquals } from '../chunker';
 import { abstractTextQuoteSelectorMatcher } from '.';
-import { TextSeeker, NonEmptyChunker } from '../seek';
+import { TextSeeker } from '../seek';
 
 export async function describeTextQuote(
   range: Range,
@@ -57,7 +57,7 @@ async function abstractDescribeTextQuote<TChunk extends Chunk<string>>(
   target: ChunkRange<TChunk>,
   scope: () => Chunker<TChunk>,
 ): Promise<TextQuoteSelector> {
-  const seeker = new TextSeeker(scope() as NonEmptyChunker<TChunk>);
+  const seeker = new TextSeeker(scope());
 
   // Read the target’s exact text.
   seeker.seekToChunk(target.startChunk, target.startIndex);
@@ -97,8 +97,8 @@ async function abstractDescribeTextQuote<TChunk extends Chunk<string>>(
 
     // We’ll have to add more prefix/suffix to disqualify this unintended match.
     const unintendedMatch = nextMatch.value;
-    const seeker1 = new TextSeeker(scope() as NonEmptyChunker<TChunk>);
-    const seeker2 = new TextSeeker(scope() as NonEmptyChunker<TChunk>);
+    const seeker1 = new TextSeeker(scope());
+    const seeker2 = new TextSeeker(scope());
 
     // Count how many characters we’d need as a prefix to disqualify this match.
     seeker1.seekToChunk(target.startChunk, target.startIndex - prefix.length);

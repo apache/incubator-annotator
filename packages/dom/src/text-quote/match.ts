@@ -19,7 +19,7 @@
  */
 
 import type { Matcher, TextQuoteSelector } from '@annotator/selector';
-import { TextNodeChunker, Chunk, Chunker, ChunkRange, PartialTextNode } from '../chunker';
+import { Chunk, Chunker, ChunkRange, TextNodeChunker, EmptyScopeError } from '../chunker';
 
 export function createTextQuoteSelectorMatcher(
   selector: TextQuoteSelector,
@@ -27,7 +27,15 @@ export function createTextQuoteSelectorMatcher(
   const abstractMatcher = abstractTextQuoteSelectorMatcher(selector);
 
   return async function* matchAll(scope) {
-    const textChunks = new TextNodeChunker(scope);
+    let textChunks;
+    try {
+      textChunks = new TextNodeChunker(scope);
+    } catch (err) {
+      if (err instanceof EmptyScopeError)
+        return; // An empty range contains no matches.
+      else
+        throw err;
+    }
 
     for await (const abstractMatch of abstractMatcher(textChunks)) {
       yield textChunks.chunkRangeToRange(abstractMatch);
