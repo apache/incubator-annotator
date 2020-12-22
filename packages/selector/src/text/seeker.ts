@@ -55,6 +55,8 @@ export interface RelativeSeeker<TData extends Iterable<any> = string> {
    *
    * @param length - The number of characters to pass. A negative number moves
    * backwards in the file.
+   * @throws RangeError if there are not enough characters in the file. The
+   * pointer is left at the end/start of the file.
    */
   seekBy(length: number): void;
 
@@ -69,6 +71,8 @@ export interface RelativeSeeker<TData extends Iterable<any> = string> {
    * characters, read further until the end (or start) of the current chunk.
    * @returns The characters passed (in their normal order, even when moving
    * backwards)
+   * @throws RangeError if there are not enough characters in the file. The
+   * pointer is left at the end/start of the file.
    */
   read(length?: number, roundUp?: boolean): TData;
 }
@@ -87,6 +91,8 @@ export interface AbsoluteSeeker<TData extends Iterable<any> = string> {
    * Move to the given position in the file.
    *
    * @param target - The position to end up at.
+   * @throws RangeError if the given position is beyond the end/start of the
+   * file. The pointer is left at the end/start of the file.
    */
   seekTo(target: number): void;
 
@@ -101,6 +107,8 @@ export interface AbsoluteSeeker<TData extends Iterable<any> = string> {
    * further until the end (or start) of the current chunk.
    * @returns The characters passed (in their normal order, even when moving
    * backwards)
+   * @throws RangeError if the given position is beyond the end/start of the
+   * file. The pointer is left at the end/start of the file.
    */
   readTo(target: number, roundUp?: boolean): TData;
 }
@@ -141,6 +149,7 @@ export interface ChunkSeeker<
    * @param chunk - The chunk of the file to move to.
    * @param offset - The offset to move to, relative to the start of `chunk`.
    * Defaults to zero.
+   * @throws RangeError if the given chunk is not found in the file.
    */
   seekToChunk(chunk: TChunk, offset?: number): void;
 
@@ -152,6 +161,9 @@ export interface ChunkSeeker<
    * @param chunk - The chunk of the file to move to.
    * @param offset - The offset to move to, relative to the start of `chunk`.
    * Defaults to zero.
+   * @returns The characters passed (in their normal order, even when moving
+   * backwards)
+   * @throws RangeError if the given chunk is not found in the file.
    */
   readToChunk(chunk: TChunk, offset?: number): TData;
 }
