@@ -19,15 +19,15 @@
  */
 
 import { assert } from 'chai';
-import type { TextQuoteSelector } from '@annotator/selector';
-import { createTextQuoteSelectorMatcher } from '../../src/text-quote/match';
+import type { TextPositionSelector } from '@annotator/selector';
+import { createTextPositionSelectorMatcher } from '../../src/text-position/match';
 import { evaluateXPath } from '../utils';
 import type { RangeInfo } from '../utils';
 import { testCases } from './match-cases';
 
 const domParser = new window.DOMParser();
 
-describe('createTextQuoteSelectorMatcher', () => {
+describe('createTextPositionSelectorMatcher', () => {
   for (const [name, { html, selector, expected }] of Object.entries(
     testCases,
   )) {
@@ -50,17 +50,16 @@ describe('createTextQuoteSelectorMatcher', () => {
 
     const textNode = evaluateXPath(doc, '//b/text()') as Text;
 
-    for (let index = textNode.length - 1; index > 0; index--)
-      textNode.splitText(index);
+    textNode.splitText(16);
     // console.log([...textNode.parentNode.childNodes].map(node => node.textContent))
-    // → 'l',  'o', 'r', 'e', 'm', …
+    // → [ 'l😃rem ipsum dol', 'or amet yada yada' ]
 
     await testMatcher(doc, scope, selector, [
       {
-        startContainerXPath: '//b/text()[13]',
-        startOffset: 0,
-        endContainerXPath: '//b/text()[20]',
-        endOffset: 1,
+        startContainerXPath: '//b/text()[1]',
+        startOffset: 13,
+        endContainerXPath: '//b/text()[2]',
+        endOffset: 5,
       },
     ]);
   });
@@ -74,22 +73,22 @@ describe('createTextQuoteSelectorMatcher', () => {
 
     const textNode = evaluateXPath(doc, '//b/text()') as Text;
     textNode.splitText(textNode.length);
-    textNode.splitText(20);
-    textNode.splitText(20);
-    textNode.splitText(17);
-    textNode.splitText(17);
-    textNode.splitText(12);
-    textNode.splitText(12);
+    textNode.splitText(21);
+    textNode.splitText(21);
+    textNode.splitText(18);
+    textNode.splitText(18);
+    textNode.splitText(13);
+    textNode.splitText(13);
     textNode.splitText(0);
     // console.log([...textNode.parentNode.childNodes].map(node => node.textContent))
-    // → '', 'lorem ipsum ', '', 'dolor', '', ' am', '', 'et yada yada', ''
+    // → [ '', 'l😃rem ipsum ', '', 'dolor', '', ' am', '', 'et yada yada', '' ]
 
     await testMatcher(doc, scope, selector, [
       {
         startContainerXPath: '//b/text()[4]', // "dolor"
         startOffset: 0,
-        endContainerXPath: '//b/text()[6]', // " am"
-        endOffset: 3,
+        endContainerXPath: '//b/text()[8]', // "et yada yada"
+        endOffset: 0,
       },
     ]);
   });
@@ -119,82 +118,74 @@ describe('createTextQuoteSelectorMatcher', () => {
         startContainerXPath: '//b/text()[2]',
         startOffset: 0,
         endContainerXPath: '//b/text()[2]',
-        endOffset: 11,
+        endOffset: 12,
       },
     ]);
   });
 
   it('works when scope has both ends within one text node', async () => {
-    const { html, selector, expected } = testCases['simple'];
+    const { html, expected } = testCases['simple'];
+
     const doc = domParser.parseFromString(html, 'text/html');
 
     // Use the substring ‘ipsum dolor amet’ as scope.
     const scope = doc.createRange();
-    scope.setStart(evaluateXPath(doc, '//b/text()'), 6);
-    scope.setEnd(evaluateXPath(doc, '//b/text()'), 22);
+    scope.setStart(evaluateXPath(doc, '//b/text()'), 7);
+    scope.setEnd(evaluateXPath(doc, '//b/text()'), 23);
+
+    const selector: TextPositionSelector = {
+      type: 'TextPositionSelector',
+      start: 6,
+      end: 14,
+    };
+
     await testMatcher(doc, scope, selector, expected);
   });
 
   it('works when scope has both ends inside text nodes', async () => {
-    const { html, selector, expected } = testCases['across elements'];
+    const { html, expected } = testCases['across elements'];
     const doc = domParser.parseFromString(html, 'text/html');
 
     // Use the substring ‘sum dolor am’ as scope.
     const scope = doc.createRange();
     scope.setStart(evaluateXPath(doc, '//i/text()'), 2);
     scope.setEnd(evaluateXPath(doc, '//u/text()'), 2);
+
+    const selector: TextPositionSelector = {
+      type: 'TextPositionSelector',
+      start: 4,
+      end: 12,
+    };
+
     await testMatcher(doc, scope, selector, expected);
   });
 
   it('works when scope has both ends inside an element', async () => {
-    const { html, selector, expected } = testCases['across elements'];
+    const { html, expected } = testCases['across elements'];
     const doc = domParser.parseFromString(html, 'text/html');
 
     const scope = doc.createRange();
     scope.setStart(evaluateXPath(doc, '//b'), 1); // before the <i>
     scope.setEnd(evaluateXPath(doc, '//b'), 4); // before the " yada yada"
+    const selector: TextPositionSelector = {
+      type: 'TextPositionSelector',
+      start: 6,
+      end: 14,
+    };
     await testMatcher(doc, scope, selector, expected);
-  });
-
-  it('ignores quote when scope is an empty range', async () => {
-    const { html, selector } = testCases['simple'];
-    const doc = domParser.parseFromString(html, 'text/html');
-
-    const scope = doc.createRange();
-    await testMatcher(doc, scope, selector, []);
-  });
-
-  it('ignores quote extending just beyond scope', async () => {
-    const { html, selector } = testCases['simple'];
-    const doc = domParser.parseFromString(html, 'text/html');
-
-    const scope = doc.createRange();
-    scope.setStart(evaluateXPath(doc, '//b/text()'), 0);
-    scope.setEnd(evaluateXPath(doc, '//b/text()'), 19);
-    await testMatcher(doc, scope, selector, []);
-  });
-
-  it('ignores quote starting just before scope', async () => {
-    const { html, selector } = testCases['simple'];
-    const doc = domParser.parseFromString(html, 'text/html');
-
-    const scope = doc.createRange();
-    scope.setStart(evaluateXPath(doc, '//b/text()'), 13);
-    scope.setEnd(evaluateXPath(doc, '//b/text()'), 32);
-    await testMatcher(doc, scope, selector, []);
   });
 });
 
 async function testMatcher(
   doc: Document,
   scope: Range,
-  selector: TextQuoteSelector,
+  selector: TextPositionSelector,
   expected: RangeInfo[],
 ) {
-  const matcher = createTextQuoteSelectorMatcher(selector);
+  const matcher = createTextPositionSelectorMatcher(selector);
   const matches = [];
   for await (const value of matcher(scope)) matches.push(value);
-  assert.equal(matches.length, expected.length, 'Wrong number of matches.');
+  assert.equal(matches.length, expected.length);
   matches.forEach((match, i) => {
     const expectedRange = expected[i];
     const expectedStartContainer = evaluateXPath(

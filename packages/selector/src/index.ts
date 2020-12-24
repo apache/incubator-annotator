@@ -21,7 +21,13 @@
 import type { Matcher, Selector } from './types';
 
 export type { Matcher, Selector } from './types';
-export type { CssSelector, RangeSelector, TextQuoteSelector } from './types';
+export type {
+  CssSelector,
+  RangeSelector,
+  TextPositionSelector,
+  TextQuoteSelector,
+} from './types';
+export * from './text';
 
 export function makeRefinable<
   // Any subtype of Selector can be made refinable; but note we limit the value

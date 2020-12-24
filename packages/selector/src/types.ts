@@ -34,6 +34,12 @@ export interface TextQuoteSelector extends Selector {
   suffix?: string;
 }
 
+export interface TextPositionSelector extends Selector {
+  type: 'TextPositionSelector';
+  start: number; // more precisely: non-negative integer
+  end: number; // more precisely: non-negative integer
+}
+
 export interface RangeSelector extends Selector {
   type: 'RangeSelector';
   startSelector: Selector;

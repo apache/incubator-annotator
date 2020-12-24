@@ -18,15 +18,15 @@
  * under the License.
  */
 
-import type { TextQuoteSelector } from '@annotator/selector';
-import { describeTextQuote as abstractDescribeTextQuote } from '@annotator/selector';
+import type { TextPositionSelector } from '@annotator/selector';
+import { describeTextPosition as abstractDescribeTextPosition } from '@annotator/selector';
 import { TextNodeChunker } from '../text-node-chunker';
 import { ownerDocument } from '../owner-document';
 
-export async function describeTextQuote(
+export async function describeTextPosition(
   range: Range,
   maybeScope?: Range,
-): Promise<TextQuoteSelector> {
+): Promise<TextPositionSelector> {
   // Default to search in the whole document.
   let scope: Range;
   if (maybeScope !== undefined) {
@@ -37,10 +37,12 @@ export async function describeTextQuote(
     scope.selectNodeContents(document);
   }
 
-  const chunker = new TextNodeChunker(scope);
+  const textChunks = new TextNodeChunker(scope);
+  if (textChunks.currentChunk === null)
+    throw new RangeError('Range does not contain any Text nodes.');
 
-  return await abstractDescribeTextQuote(
-    chunker.rangeToChunkRange(range),
-    () => new TextNodeChunker(scope),
+  return await abstractDescribeTextPosition(
+    textChunks.rangeToChunkRange(range),
+    textChunks,
   );
 }

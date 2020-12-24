@@ -18,12 +18,14 @@
  * under the License.
  */
 
-/* global info, module, source, target */
+/* global info, module, source, target, form */
 
 import {
   makeCreateRangeSelectorMatcher,
   createTextQuoteSelectorMatcher,
   describeTextQuote,
+  createTextPositionSelectorMatcher,
+  describeTextPosition,
   highlightRange,
 } from '@annotator/dom';
 import { makeRefinable } from '@annotator/selector';
@@ -95,6 +97,7 @@ function cleanup() {
 const createMatcher = makeRefinable((selector) => {
   const innerCreateMatcher = {
     TextQuoteSelector: createTextQuoteSelectorMatcher,
+    TextPositionSelector: createTextPositionSelectorMatcher,
     RangeSelector: makeCreateRangeSelectorMatcher(createMatcher),
   }[selector.type];
 
@@ -126,12 +129,16 @@ async function anchor(selector) {
 
 async function onSelectionChange() {
   cleanup();
+  const describeMode = form.describeMode.value;
   const scope = document.createRange();
   scope.selectNodeContents(source);
   const selection = document.getSelection();
   for (let i = 0; i < selection.rangeCount; i++) {
     const range = selection.getRangeAt(i);
-    const selector = await describeTextQuote(range, scope);
+    const selector =
+      describeMode === 'TextPosition'
+        ? await describeTextPosition(range, scope)
+        : await describeTextQuote(range, scope);
     await anchor(selector);
   }
 }
@@ -146,6 +153,7 @@ function onSelectorExampleClick(event) {
 }
 
 document.addEventListener('selectionchange', onSelectionChange);
+form.addEventListener('change', onSelectionChange);
 document.addEventListener('click', onSelectorExampleClick);
 
 if (module.hot) {

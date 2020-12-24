@@ -67,15 +67,24 @@ under the License.
     <div class="columns full-width">
       <div class="column">
         <h2>Select text here</h2>
-        <p id="source">Hello, annotated world! To annotate, or not to annotate, that is the question.</p>
+        <p id="source" contenteditable>Hello, <em>annotated world!</em> 🙂 <b>To annotate, or <em>not</em> to annotate</b>, that is the question.</p>
         <p>Try selecting some text in this paragraph above.
           Upon a change of selection, a
           <a rel="external" href="https://www.w3.org/TR/2017/REC-annotation-model-20170223/#text-quote-selector" target="_blank">TextQuoteSelector</a>
           will be created, that describes what was selected.</p>
+          <form id="form">
+            The selector can work either
+            <br/>
+            <input type="radio" name="describeMode" value="TextQuote" id="describeModeTextQuote" checked>
+            <label for="describeModeTextQuote">by quoting the selected text</label>; or
+            </br>
+            <input type="radio" name="describeMode" value="TextPosition" id="describeModeTextPosition">
+            <label for="describeModeTextPosition">by counting the selected characters’ position in the text</label>.
+          </form>
       </div>
       <div class="column">
         <h2>Text is found here</h2>
-        <p id="target" contenteditable>Hello, annotated world! To annotate, or not to annotate, that is the question.</p>
+        <p id="target" contenteditable><em>Hello, annotated</em> world! 🙂 To annotate, or not to annotate, <b><em>that</em> is the question.</b></p>
         <p>The selector is ‘anchored’ here: the segment it describes is found and highlighted.</p>
       </div>
       <div class="column" style="min-width: 20em;">

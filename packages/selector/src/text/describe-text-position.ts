@@ -18,9 +18,25 @@
  * under the License.
  */
 
-declare module 'dom-seek' {
-  export default function seek(
-    iter: NodeIterator,
-    where: number | Text,
-  ): number;
+import type { TextPositionSelector } from '../types';
+import type { Chunk, Chunker, ChunkRange } from './chunker';
+import { CodePointSeeker } from './code-point-seeker';
+import { TextSeeker } from './seeker';
+
+export async function describeTextPosition<TChunk extends Chunk<string>>(
+  target: ChunkRange<TChunk>,
+  scope: Chunker<TChunk>,
+): Promise<TextPositionSelector> {
+  const codeUnitSeeker = new TextSeeker(scope);
+  const codePointSeeker = new CodePointSeeker(codeUnitSeeker);
+
+  codePointSeeker.seekToChunk(target.startChunk, target.startIndex);
+  const start = codePointSeeker.position;
+  codePointSeeker.seekToChunk(target.endChunk, target.endIndex);
+  const end = codePointSeeker.position;
+  return {
+    type: 'TextPositionSelector',
+    start,
+    end,
+  };
 }

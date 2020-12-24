@@ -18,70 +18,27 @@
  * under the License.
  */
 
-import seek from 'dom-seek';
 import type { Matcher, TextQuoteSelector } from '@annotator/selector';
-import { ownerDocument } from '../owner-document';
+import { textQuoteSelectorMatcher as abstractTextQuoteSelectorMatcher } from '@annotator/selector';
+import { TextNodeChunker, EmptyScopeError } from '../text-node-chunker';
 
 export function createTextQuoteSelectorMatcher(
   selector: TextQuoteSelector,
 ): Matcher<Range, Range> {
+  const abstractMatcher = abstractTextQuoteSelectorMatcher(selector);
+
   return async function* matchAll(scope) {
-    const document = ownerDocument(scope);
-    const scopeText = scope.toString();
+    let textChunks;
+    try {
+      textChunks = new TextNodeChunker(scope);
+    } catch (err) {
+      if (err instanceof EmptyScopeError) return;
+      // An empty range contains no matches.
+      else throw err;
+    }
 
-    const exact = selector.exact;
-    const prefix = selector.prefix || '';
-    const suffix = selector.suffix || '';
-    const searchPattern = prefix + exact + suffix;
-
-    const iter = document.createNodeIterator(
-      scope.commonAncestorContainer,
-      NodeFilter.SHOW_TEXT,
-      {
-        acceptNode(node: Text) {
-          // Only reveal nodes within the range; and skip any empty text nodes.
-          return scope.intersectsNode(node) && node.length > 0
-            ? NodeFilter.FILTER_ACCEPT
-            : NodeFilter.FILTER_REJECT;
-        },
-      },
-    );
-
-    // The index of the first character of iter.referenceNode inside the text.
-    let referenceNodeIndex = isTextNode(scope.startContainer)
-      ? -scope.startOffset
-      : 0;
-
-    let fromIndex = 0;
-    while (fromIndex <= scopeText.length) {
-      // Find the quote with its prefix and suffix in the string.
-      const patternStartIndex = scopeText.indexOf(searchPattern, fromIndex);
-      if (patternStartIndex === -1) return;
-
-      // Correct for the prefix and suffix lengths.
-      const matchStartIndex = patternStartIndex + prefix.length;
-      const matchEndIndex = matchStartIndex + exact.length;
-
-      // Create a range to represent this exact quote in the dom.
-      const match = document.createRange();
-
-      // Seek to the start of the match, make the range start there.
-      referenceNodeIndex += seek(iter, matchStartIndex - referenceNodeIndex);
-      match.setStart(iter.referenceNode, matchStartIndex - referenceNodeIndex);
-
-      // Seek to the end of the match, make the range end there.
-      referenceNodeIndex += seek(iter, matchEndIndex - referenceNodeIndex);
-      match.setEnd(iter.referenceNode, matchEndIndex - referenceNodeIndex);
-
-      // Yield the match.
-      yield match;
-
-      // Advance the search forward to detect multiple occurrences.
-      fromIndex = matchStartIndex + 1;
+    for await (const abstractMatch of abstractMatcher(textChunks)) {
+      yield textChunks.chunkRangeToRange(abstractMatch);
     }
   };
-}
-
-function isTextNode(node: Node): node is Text {
-  return node.nodeType === Node.TEXT_NODE;
 }

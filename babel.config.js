@@ -86,6 +86,7 @@ module.exports = (api) => {
 
   return {
     plugins: [
+      '@babel/plugin-proposal-class-properties',
       ['@babel/transform-runtime', runtimeOptions],
       ...(TEST ? ['istanbul'] : []),
       ['add-import-extension', addImportExtensionOptions],

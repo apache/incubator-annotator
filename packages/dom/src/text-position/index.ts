@@ -18,29 +18,5 @@
  * under the License.
  */
 
-import type { TextQuoteSelector } from '@annotator/selector';
-import { describeTextQuote as abstractDescribeTextQuote } from '@annotator/selector';
-import { TextNodeChunker } from '../text-node-chunker';
-import { ownerDocument } from '../owner-document';
-
-export async function describeTextQuote(
-  range: Range,
-  maybeScope?: Range,
-): Promise<TextQuoteSelector> {
-  // Default to search in the whole document.
-  let scope: Range;
-  if (maybeScope !== undefined) {
-    scope = maybeScope;
-  } else {
-    const document = ownerDocument(range);
-    scope = document.createRange();
-    scope.selectNodeContents(document);
-  }
-
-  const chunker = new TextNodeChunker(scope);
-
-  return await abstractDescribeTextQuote(
-    chunker.rangeToChunkRange(range),
-    () => new TextNodeChunker(scope),
-  );
-}
+export * from './describe';
+export * from './match';
