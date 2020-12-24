@@ -25,21 +25,120 @@ import type { RelativeSeeker } from './seeker';
 import { TextSeeker } from './seeker';
 import { textQuoteSelectorMatcher } from '.';
 
+export interface DescribeTextQuoteOptions {
+  /**
+   * Keep prefix and suffix to the minimum that is necessary to disambiguate
+   * the quote. Use only if robustness against text variations is not required.
+   */
+  minimalContext?: boolean;
+
+  /**
+   * Add prefix and suffix to quotes below this length, such that the total of
+   * prefix + exact + suffix is at least this length.
+   */
+  minimumQuoteLength?: number;
+
+  /**
+   * When attempting to find a whitespace to make the prefix/suffix start/end
+   * (resp.) at a word boundary, give up after this number of characters.
+   */
+  maxWordLength?: number;
+}
+
+/**
+ * Returns a {@link TextQuoteSelector} that points at the target quote in the
+ * given text.
+ *
+ * @remarks
+ * The selector will contain the *exact* target quote, and in case this quote
+ * appears multiple times in the text, sufficient context around the quote will
+ * be included in the selector’s *prefix* and *suffix* attributes to
+ * disambiguate. By default, more prefix and suffix are included than strictly
+ * required; both in order to be robust against slight modifications, and in an
+ * attempt to not end halfway a word (mainly for the sake of human readability).
+ *
+ * @param target - The range of characters that the selector should describe
+ * @param scope - The text containing the target range; or, more accurately, a
+ * function creating {@link Chunker}s that allow walking through the text.
+ * @param options
+ * @returns the {@link TextQuoteSelector} that describes *target*.
+ */
 export async function describeTextQuote<TChunk extends Chunk<string>>(
   target: ChunkRange<TChunk>,
   scope: () => Chunker<TChunk>,
+  {
+    minimalContext = false,
+    minimumQuoteLength = 0,
+    maxWordLength = 50,
+  }: DescribeTextQuoteOptions = {},
 ): Promise<TextQuoteSelector> {
-  const seeker = new TextSeeker(scope());
+  // Create a seeker to read the target quote and the context around it.
+  // TODO Possible optimisation: as it need not be an AbsoluteSeeker, a
+  // different implementation could provide direct ‘jump’ access in seekToChunk
+  // (the scope’s Chunker would of course also have to support this).
+  const seekerAtTarget = new TextSeeker(scope());
+
+  // Create a second seeker so that we will be able to simultaneously read
+  // characters near both the target and an unintended match, if we find any.
+  const seekerAtUnintendedMatch = new TextSeeker(scope());
 
   // Read the target’s exact text.
-  seeker.seekToChunk(target.startChunk, target.startIndex);
-  const exact = seeker.readToChunk(target.endChunk, target.endIndex);
+  seekerAtTarget.seekToChunk(target.startChunk, target.startIndex);
+  const exact = seekerAtTarget.readToChunk(target.endChunk, target.endIndex);
 
-  // Starting with an empty prefix and suffix, we search for matches. At each unintended match
-  // we encounter, we extend the prefix or suffix just enough to ensure it will no longer match.
+  // Start with an empty prefix and suffix.
   let prefix = '';
   let suffix = '';
 
+  // If the quote is below the given minimum length, add some prefix & suffix.
+  const currentQuoteLength = () => prefix.length + exact.length + suffix.length;
+  if (currentQuoteLength() < minimumQuoteLength) {
+    // Expand the prefix, but only to reach halfway towards the desired length.
+    seekerAtTarget.seekToChunk(
+      target.startChunk,
+      target.startIndex - prefix.length,
+    );
+    const length = Math.floor((minimumQuoteLength - currentQuoteLength()) / 2);
+    prefix = seekerAtTarget.read(-length, false, true) + prefix;
+
+    // If needed, expand the suffix to achieve the minimum length.
+    if (currentQuoteLength() < minimumQuoteLength) {
+      seekerAtTarget.seekToChunk(
+        target.endChunk,
+        target.endIndex + suffix.length,
+      );
+      const length = minimumQuoteLength - currentQuoteLength();
+      suffix = suffix + seekerAtTarget.read(length, false, true);
+
+      // We might have to expand the prefix again (if at the end of the scope).
+      if (currentQuoteLength() < minimumQuoteLength) {
+        seekerAtTarget.seekToChunk(
+          target.startChunk,
+          target.startIndex - prefix.length,
+        );
+        const length = minimumQuoteLength - currentQuoteLength();
+        prefix = seekerAtTarget.read(-length, false, true) + prefix;
+      }
+    }
+  }
+
+  // Expand prefix & suffix to avoid them ending somewhere halfway in a word.
+  if (!minimalContext) {
+    seekerAtTarget.seekToChunk(
+      target.startChunk,
+      target.startIndex - prefix.length,
+    );
+    prefix = readUntilWhitespace(seekerAtTarget, maxWordLength, true) + prefix;
+    seekerAtTarget.seekToChunk(
+      target.endChunk,
+      target.endIndex + suffix.length,
+    );
+    suffix = suffix + readUntilWhitespace(seekerAtTarget, maxWordLength, false);
+  }
+
+  // Search for matches of the quote using the current prefix and suffix. At
+  // each unintended match we encounter, we extend the prefix or suffix to
+  // ensure it will no longer match.
   while (true) {
     const tentativeSelector: TextQuoteSelector = {
       type: 'TextQuoteSelector',
@@ -70,42 +169,60 @@ export async function describeTextQuote<TChunk extends Chunk<string>>(
     // We’ll have to add more prefix/suffix to disqualify this unintended match.
     const unintendedMatch = nextMatch.value;
 
-    // Create two seekers to simultaneously read characters near both the target
-    // and the unintended match.
-    // Possible optimisation: as these need not be AbsoluteSeekers, a different
-    // implementation could provide direct ‘jump’ access in seekToChunk (the
-    // scope’s Chunker would of course also have to support this).
-    const seeker1 = new TextSeeker(scope());
-    const seeker2 = new TextSeeker(scope());
-
     // Count how many characters we’d need as a prefix to disqualify this match.
-    seeker1.seekToChunk(target.startChunk, target.startIndex - prefix.length);
-    seeker2.seekToChunk(
+    seekerAtTarget.seekToChunk(
+      target.startChunk,
+      target.startIndex - prefix.length,
+    );
+    seekerAtUnintendedMatch.seekToChunk(
       unintendedMatch.startChunk,
       unintendedMatch.startIndex - prefix.length,
     );
-    const extraPrefix = readUntilDifferent(seeker1, seeker2, true);
+    let extraPrefix = readUntilDifferent(
+      seekerAtTarget,
+      seekerAtUnintendedMatch,
+      true,
+    );
+    if (extraPrefix !== undefined && !minimalContext)
+      extraPrefix =
+        readUntilWhitespace(seekerAtTarget, maxWordLength, true) + extraPrefix;
 
     // Count how many characters we’d need as a suffix to disqualify this match.
-    seeker1.seekToChunk(target.endChunk, target.endIndex + suffix.length);
-    seeker2.seekToChunk(
+    seekerAtTarget.seekToChunk(
+      target.endChunk,
+      target.endIndex + suffix.length,
+    );
+    seekerAtUnintendedMatch.seekToChunk(
       unintendedMatch.endChunk,
       unintendedMatch.endIndex + suffix.length,
     );
-    const extraSuffix = readUntilDifferent(seeker1, seeker2, false);
+    let extraSuffix = readUntilDifferent(
+      seekerAtTarget,
+      seekerAtUnintendedMatch,
+      false,
+    );
+    if (extraSuffix !== undefined && !minimalContext)
+      extraSuffix =
+        extraSuffix + readUntilWhitespace(seekerAtTarget, maxWordLength, false);
 
-    // Use either the prefix or suffix, whichever is shortest.
-    if (
-      extraPrefix !== undefined &&
-      (extraSuffix === undefined || extraPrefix.length <= extraSuffix.length)
-    ) {
-      prefix = extraPrefix + prefix;
-    } else if (extraSuffix !== undefined) {
-      suffix = suffix + extraSuffix;
+    if (minimalContext) {
+      // Use either the prefix or suffix, whichever is shortest.
+      if (
+        extraPrefix !== undefined &&
+        (extraSuffix === undefined || extraPrefix.length <= extraSuffix.length)
+      ) {
+        prefix = extraPrefix + prefix;
+      } else if (extraSuffix !== undefined) {
+        suffix = suffix + extraSuffix;
+      } else {
+        throw new Error(
+          'Target cannot be disambiguated; how could that have happened‽',
+        );
+      }
     } else {
-      throw new Error(
-        'Target cannot be disambiguated; how could that have happened‽',
-      );
+      // For redundancy, expand both prefix and suffix.
+      if (extraPrefix !== undefined) prefix = extraPrefix + prefix;
+      if (extraSuffix !== undefined) suffix = suffix + extraSuffix;
     }
   }
 }
@@ -135,4 +252,34 @@ function readUntilDifferent(
     }
     if (nextCharacter !== comparisonCharacter) return result;
   }
+}
+
+function readUntilWhitespace(
+  seeker: RelativeSeeker,
+  limit = Infinity,
+  reverse = false,
+): string {
+  let result = '';
+  while (result.length < limit) {
+    let nextCharacter: string;
+    try {
+      nextCharacter = seeker.read(reverse ? -1 : 1);
+    } catch (err) {
+      if (!(err instanceof RangeError)) throw err;
+      break; // End/start of text reached.
+    }
+
+    // Stop if we reached whitespace.
+    if (isWhitespace(nextCharacter)) {
+      seeker.seekBy(reverse ? 1 : -1); // ‘undo’ the last read.
+      break;
+    }
+
+    result = reverse ? nextCharacter + result : result + nextCharacter;
+  }
+  return result;
+}
+
+function isWhitespace(s: string): boolean {
+  return /^\s+$/.test(s);
 }

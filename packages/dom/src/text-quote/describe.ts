@@ -18,7 +18,10 @@
  * under the License.
  */
 
-import type { TextQuoteSelector } from '@annotator/selector';
+import type {
+  TextQuoteSelector,
+  DescribeTextQuoteOptions,
+} from '@annotator/selector';
 import { describeTextQuote as abstractDescribeTextQuote } from '@annotator/selector';
 import { ownerDocument } from '../owner-document';
 import { TextNodeChunker } from '../text-node-chunker';
@@ -26,6 +29,7 @@ import { TextNodeChunker } from '../text-node-chunker';
 export async function describeTextQuote(
   range: Range,
   maybeScope?: Range,
+  options: DescribeTextQuoteOptions = {},
 ): Promise<TextQuoteSelector> {
   // Default to search in the whole document.
   let scope: Range;
@@ -42,5 +46,6 @@ export async function describeTextQuote(
   return await abstractDescribeTextQuote(
     chunker.rangeToChunkRange(range),
     () => new TextNodeChunker(scope),
+    options,
   );
 }
