@@ -1,0 +1,3 @@
+{
+  "entryPoints": ["packages/apache-annotator/src/index.ts"]
+}

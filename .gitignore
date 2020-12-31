@@ -2,6 +2,7 @@
 *.d.ts.map
 .nyc_output
 coverage
+docs
 node_modules
 tsconfig.tsbuildinfo
 tsconfig.test.tsbuildinfo

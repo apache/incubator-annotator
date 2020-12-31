@@ -76,6 +76,7 @@
     "prettier": "^2.0.5",
     "resolve": "^1.15.0",
     "rimraf": "^3.0.0",
+    "typedoc": "^0.20.5",
     "typescript": "^3.9.7",
     "web-annotation-tests": "https://github.com/w3c/web-annotation-tests",
     "webpack": "^4.41.5",
