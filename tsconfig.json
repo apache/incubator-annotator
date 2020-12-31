@@ -1,12 +1,9 @@
 {
-  "extends": "./tsconfig.base.json",
-  "include": [
-    "test/**/*",
-    "packages/*/test/**/*",
-  ],
+  "files": [],
   "references": [
     { "path": "packages/apache-annotator" },
     { "path": "packages/dom" },
-    { "path": "packages/selector" }
+    { "path": "packages/selector" },
+    { "path": "tsconfig.test.json"}
   ]
 }

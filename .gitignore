@@ -4,6 +4,7 @@
 coverage
 node_modules
 tsconfig.tsbuildinfo
+tsconfig.test.tsbuildinfo
 /packages/*/DISCLAIMER-WIP
 /packages/*/LICENSE
 /packages/*/NOTICE
