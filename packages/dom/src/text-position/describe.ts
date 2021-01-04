@@ -20,8 +20,8 @@
 
 import type { TextPositionSelector } from '@annotator/selector';
 import { describeTextPosition as abstractDescribeTextPosition } from '@annotator/selector';
-import { TextNodeChunker } from '../text-node-chunker';
 import { ownerDocument } from '../owner-document';
+import { TextNodeChunker } from '../text-node-chunker';
 
 export async function describeTextPosition(
   range: Range,

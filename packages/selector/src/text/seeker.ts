@@ -43,8 +43,10 @@ const E_END = 'Iterator exhausted before seek ended.';
 export interface Seeker<
   TChunk extends Chunk<any>,
   TData extends Iterable<any> = string
-> extends RelativeSeeker<TData>, AbsoluteSeeker<TData>, ChunkSeeker<TChunk, TData> {
-};
+>
+  extends RelativeSeeker<TData>,
+    AbsoluteSeeker<TData>,
+    ChunkSeeker<TChunk, TData> {}
 
 /**
  * Seeks/reads by a given number of characters.
@@ -123,7 +125,7 @@ export interface AbsoluteSeeker<TData extends Iterable<any> = string> {
  */
 export interface ChunkSeeker<
   TChunk extends Chunk<any>,
-  TData extends Iterable<any> = string,
+  TData extends Iterable<any> = string
 > {
   /**
    * The chunk containing the current position.

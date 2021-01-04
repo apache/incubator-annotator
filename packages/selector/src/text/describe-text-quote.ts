@@ -48,9 +48,7 @@ export async function describeTextQuote<TChunk extends Chunk<string>>(
       suffix,
     };
 
-    const matches = textQuoteSelectorMatcher(tentativeSelector)(
-      scope(),
-    );
+    const matches = textQuoteSelectorMatcher(tentativeSelector)(scope());
     let nextMatch = await matches.next();
 
     // If this match is the intended one, no need to act.

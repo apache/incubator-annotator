@@ -20,8 +20,8 @@
 
 import type { TextQuoteSelector } from '@annotator/selector';
 import { describeTextQuote as abstractDescribeTextQuote } from '@annotator/selector';
-import { TextNodeChunker } from '../text-node-chunker';
 import { ownerDocument } from '../owner-document';
+import { TextNodeChunker } from '../text-node-chunker';
 
 export async function describeTextQuote(
   range: Range,
