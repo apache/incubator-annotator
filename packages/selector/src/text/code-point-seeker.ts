@@ -21,10 +21,36 @@
 import type { Chunk } from './chunker';
 import type { Seeker } from './seeker';
 
+/**
+ * Seeks through text counting Unicode *code points* instead of *code units*.
+ *
+ * @remarks
+ * Javascript characters correspond to 16 bits *code units*, hence two such
+ * ‘characters’ might together constitute a single Unicode character (i.e. a
+ * *code point*). The {@link CodePointSeeker} allows to ignore this
+ * variable-length encoding, by counting code points instead.
+ *
+ * It is made to wrap a {@link Seeker} that counts code units (presumably a
+ * {@link TextSeeker}), which must be passed to its {@link this:constructor |
+ * constructor}.
+ *
+ * When reading from the `CodePointSeeker`, the returned values is not a string
+ * but an array of strings, each containing one code point (thus each having a
+ * `length` that is either 1 or 2).
+ *
+ * @public
+ */
 export class CodePointSeeker<TChunk extends Chunk<string>>
   implements Seeker<TChunk, string[]> {
   position = 0;
 
+  /**
+   *
+   * @param raw  The {@link Seeker} to wrap, which counts in code *units* (e.g.
+   * a {@link TextSeeker}). It should have {@link Seeker.position | position}
+   * `0` and its methods must no longer be used directly if the
+   * `CodePointSeeker`’s position is to remain correct.
+   */
   constructor(public readonly raw: Seeker<TChunk>) {}
 
   seekBy(length: number): void {

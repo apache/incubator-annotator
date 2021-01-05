@@ -25,6 +25,9 @@ import type { RelativeSeeker } from './seeker';
 import { TextSeeker } from './seeker';
 import { textQuoteSelectorMatcher } from '.';
 
+/**
+ * @public
+ */
 export interface DescribeTextQuoteOptions {
   /**
    * Keep prefix and suffix to the minimum that is necessary to disambiguate
@@ -34,7 +37,7 @@ export interface DescribeTextQuoteOptions {
 
   /**
    * Add prefix and suffix to quotes below this length, such that the total of
-   * prefix + exact + suffix is at least this length.
+   * `prefix + exact + suffix` is at least this length.
    */
   minimumQuoteLength?: number;
 
@@ -50,28 +53,39 @@ export interface DescribeTextQuoteOptions {
  * given text.
  *
  * @remarks
- * The selector will contain the *exact* target quote, and in case this quote
- * appears multiple times in the text, sufficient context around the quote will
- * be included in the selector’s *prefix* and *suffix* attributes to
- * disambiguate. By default, more prefix and suffix are included than strictly
- * required; both in order to be robust against slight modifications, and in an
- * attempt to not end halfway a word (mainly for the sake of human readability).
+ * The selector will contain the exact target quote. In case this quote appears
+ * multiple times in the text, sufficient context around the quote will be
+ * included in the selector’s `prefix` and `suffix` attributes to disambiguate.
+ * By default, more prefix and suffix are included than strictly required; both
+ * in order to be robust against slight modifications, and in an attempt to not
+ * end halfway a word (mainly for human readability).
+ *
+ * This is an abstract implementation of the function’s logic, which expects a
+ * generic {@link Chunker} to represent the text, and a {@link ChunkRange} to
+ * represent the target.
+ *
+ * See {@link @apache-annotator/dom#describeTextQuote} for a wrapper around this
+ * implementation which applies it to the text of an HTML DOM.
  *
  * @param target - The range of characters that the selector should describe
  * @param scope - The text containing the target range; or, more accurately, a
- * function creating {@link Chunker}s that allow walking through the text.
- * @param options
- * @returns the {@link TextQuoteSelector} that describes *target*.
+ * function that produces {@link Chunker}s corresponding to this text.
+ * @param options - Options to fine-tune the function’s behaviour.
+ * @returns The {@link TextQuoteSelector} that describes `target`.
+ *
+ * @public
  */
 export async function describeTextQuote<TChunk extends Chunk<string>>(
   target: ChunkRange<TChunk>,
   scope: () => Chunker<TChunk>,
-  {
+  options: DescribeTextQuoteOptions = {},
+): Promise<TextQuoteSelector> {
+  const {
     minimalContext = false,
     minimumQuoteLength = 0,
     maxWordLength = 50,
-  }: DescribeTextQuoteOptions = {},
-): Promise<TextQuoteSelector> {
+  } = options;
+
   // Create a seeker to read the target quote and the context around it.
   // TODO Possible optimisation: as it need not be an AbsoluteSeeker, a
   // different implementation could provide direct ‘jump’ access in seekToChunk

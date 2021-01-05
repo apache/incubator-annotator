@@ -39,6 +39,8 @@ const E_END = 'Iterator exhausted before seek ended.';
  * @typeParam TData - Type of data this seeker’s read methods will return (not
  * necessarily the same as the `TData` parameter of {@link Chunk}, see e.g.
  * {@link CodePointSeeker})
+ *
+ * @public
  */
 export interface Seeker<
   TChunk extends Chunk<any>,
@@ -50,6 +52,8 @@ export interface Seeker<
 
 /**
  * Seeks/reads by a given number of characters.
+ *
+ * @public
  */
 export interface RelativeSeeker<TData extends Iterable<any> = string> {
   /**
@@ -83,6 +87,8 @@ export interface RelativeSeeker<TData extends Iterable<any> = string> {
 
 /**
  * Seek/read to absolute positions in the file.
+ *
+ * @public
  */
 export interface AbsoluteSeeker<TData extends Iterable<any> = string> {
   /**
@@ -124,6 +130,8 @@ export interface AbsoluteSeeker<TData extends Iterable<any> = string> {
  * Note that all offset numbers in this interface are representing units of the
  * {@link Chunk.data | data type of `TChunk`}; which might differ from that of
  * `TData`.
+ *
+ * @public
  */
 export interface ChunkSeeker<
   TChunk extends Chunk<any>,
@@ -172,10 +180,25 @@ export interface ChunkSeeker<
   readToChunk(chunk: TChunk, offset?: number): TData;
 }
 
-// The TextSeeker takes a Chunker as input, and lets it be treated as a single
-// string. Seeking to a given numeric position will cause it to pull chunks from
-// the underlying Chunker, counting their lengths until the requested position
-// is reached.
+/**
+ * A TextSeeker is constructed around a {@link Chunker}, to let it be treated as
+ * a continuous sequence of characters.
+ *
+ * @remarks
+ * Seeking to a given numeric position will cause a `TextSeeker` to pull chunks
+ * from the underlying `Chunker`, counting their lengths until the requested
+ * position is reached. `Chunks` are not stored but simply read again when
+ * seeking backwards.
+ *
+ * The `Chunker` is presumed to read an unchanging file. If a chunk’s length
+ * would change while seeking, a TextSeeker’s absolute positioning would be
+ * incorrect.
+ *
+ * See {@link CodePointSeeker} for a {@link Seeker} that counts Unicode *code
+ * points* instead of Javascript’s ‘normal’ characters.
+ *
+ * @public
+ */
 export class TextSeeker<TChunk extends Chunk<string>>
   implements Seeker<TChunk> {
   // The chunk containing our current text position.
@@ -265,7 +288,7 @@ export class TextSeeker<TChunk extends Chunk<string>>
 
     // Now we know where the chunk is, walk to the requested offset.
     // Note we might have started inside the chunk, and the offset could even
-    // point to a position before or after the chunk.
+    // point at a position before or after the chunk.
     const targetPosition = this.currentChunkPosition + offset;
     if (!read) {
       this.seekTo(targetPosition);

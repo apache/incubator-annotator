@@ -21,6 +21,34 @@
 import type { CssSelector, Matcher } from '@apache-annotator/selector';
 import { ownerDocument } from './owner-document';
 
+/**
+ * Find the elements corresponding to the given {@link
+ * @apache-annotator/selector#CssSelector}.
+ *
+ * @remarks
+ * The given CssSelector returns all elements within `scope` that it matches.
+ * However, the selector is evaluated relative to the Document as a whole.
+ * *(XXX is this intentional, a mistake, or compromise?)*
+ *
+ * The function is curried, taking first the selector and then the scope.
+ *
+ * As there may be multiple matches for a given selector, the matcher will
+ * return an (async) generator that produces each match in the order they are
+ * found in the text.
+ *
+ * Each matching element is returned as a {@link https://developer.mozilla.org/en-US/docs/Web/API/Range
+ * | Range} surrounding that element. This in order to make its output reusable
+ * as the scope for any subsequents selectors that {@link
+ * @apache-annotator/selector#Selector.refinedBy | refine} this CssSelector.
+ *
+ * @param selector - The {@link @apache-annotator/selector#CssSelector} to be
+ * anchored
+ * @returns A {@link @apache-annotator/selector#Matcher} function that applies
+ * `selector` to a given {@link https://developer.mozilla.org/en-US/docs/Web/API/Range
+ * | Range}
+ *
+ * @public
+ */
 export function createCssSelectorMatcher(
   selector: CssSelector,
 ): Matcher<Range, Range> {

@@ -18,18 +18,57 @@
  * under the License.
  */
 
-// A Chunk represents a fragment (typically a string) of some document.
-// Subclasses can add further attributes to map the chunk to its position in the
-// data structure it came from (e.g. a DOM node).
+/**
+ * Represents a piece of text in any kind of ‘file’.
+ *
+ * @remarks
+ * Its purpose is to enable generic algorithms to deal with text content of any
+ * type of ‘file’ that consists of many pieces of text (e.g. a DOM, PDF, …).
+ * Each Chunk represents one piece of text ({@link Chunk.data}). An object
+ * implementing this interface would typically have other attributes as well to
+ * map the chunk back to its position in the file (e.g. a Text node in the DOM).
+ *
+ * @typeParam TData - Piece of text, typically `string`
+ *
+ * @public
+ */
 export interface Chunk<TData> {
+  /**
+   * The piece of text this chunk represents.
+   */
   readonly data: TData;
   equals?(otherChunk: this): boolean;
 }
 
+/**
+ * Test two {@link Chunk}s for equality.
+ *
+ * @remarks
+ * Equality here means that both represent the same piece of text (i.e. at the
+ * same position) in the file. It compares using the custom {@link Chunk.equals}
+ * method either chunk defines one, and falls back to checking the objects’
+ * identity (i.e. `chunk1 === chunk2`).
+ *
+ * @public
+ */
 export function chunkEquals(chunk1: Chunk<any>, chunk2: Chunk<any>): boolean {
-  return chunk1.equals ? chunk1.equals(chunk2) : chunk1 === chunk2;
+  if (chunk1.equals) return chunk1.equals(chunk2);
+  if (chunk2.equals) return chunk2.equals(chunk1);
+  return chunk1 === chunk2;
 }
 
+/**
+ * Points at a range of characters between two points inside {@link Chunk}s.
+ *
+ * @remarks
+ * Analogous to the DOM’s ({@link https://developer.mozilla.org/en-US/docs/Web/API/AbstractRange
+ * | Abstract}){@link https://developer.mozilla.org/en-US/docs/Web/API/Range |
+ * Range}. Each index expresses an offset inside the value of the corresponding
+ * {@link Chunk.data}, and can equal the length of that data in order to point
+ * to the position right after the chunk’s last character.
+ *
+ * @public
+ */
 export interface ChunkRange<TChunk extends Chunk<any>> {
   startChunk: TChunk;
   startIndex: number;
@@ -37,6 +76,25 @@ export interface ChunkRange<TChunk extends Chunk<any>> {
   endIndex: number;
 }
 
+/**
+ * Test two {@link ChunkRange}s for equality.
+ *
+ * @remarks
+ * Equality here means equality of each of their four properties (i.e.
+ * {@link ChunkRange.startChunk}, {@link ChunkRange.startIndex},
+ * {@link ChunkRange.endChunk}, and {@link ChunkRange.endIndex}).
+ * For the `startChunk` and `endChunk`, this function uses the custom
+ * {@link Chunk.equals} method if defined.
+ *
+ * Note that if the start/end of one range points at the end of a chunk, and the
+ * other to the start of a subsequent chunk, they are not considered equal, even
+ * though semantically they may be representing the same range of characters. To
+ * test for such semantic equivalence, ensure that both inputs are normalised:
+ * typically this means the range is shrunk to its narrowest equivalent, and (if
+ * it is empty) positioned at its first equivalent.
+ *
+ * @public
+ */
 export function chunkRangeEquals(
   range1: ChunkRange<any>,
   range2: ChunkRange<any>,
@@ -49,21 +107,58 @@ export function chunkRangeEquals(
   );
 }
 
-// A Chunker lets one walk through the chunks of a document.
-// It is inspired by, and similar to, the DOM’s NodeIterator. (but unlike
-// NodeIterator, it has no concept of being ‘before’ or ‘after’ a chunk)
+/**
+ * Presents the pieces of text contained in some underlying ‘file’ as a sequence
+ * of {@link Chunk}s.
+ *
+ * @remarks
+ * Rather than presenting a list of all pieces, the `Chunker` provides methods
+ * to walk through the file piece by piece. This permits implementations to read
+ * and convert the file to `Chunk`s lazily.
+ *
+ * For those familiar with the DOM APIs, it is similar to a NodeIterator (but
+ * unlike NodeIterator, it has no concept of being ‘before’ or ‘after’ a chunk).
+ *
+ * @typeParam TChunk - (sub)type of `Chunk` being used.
+ *
+ * @public
+ */
 export interface Chunker<TChunk extends Chunk<any>> {
-  // The chunk currently being pointed at.
+  /**
+   * The chunk currently being pointed at.
+   *
+   * @remarks
+   * Initially, this should normally be the first chunk in the file.
+   */
   readonly currentChunk: TChunk;
 
-  // Move currentChunk to the chunk following it, and return that chunk.
-  // If there are no chunks following it, keep currentChunk unchanged and return null.
+  /**
+   * Point {@link Chunker.currentChunk} at the chunk following it, and return that chunk.
+   * If there are no chunks following it, keep `currentChunk` unchanged and
+   * return null.
+   */
   nextChunk(): TChunk | null;
 
-  // Move currentChunk to the chunk preceding it, and return that chunk.
-  // If there are no preceding chunks, keep currentChunk unchanged and return null.
+  /**
+   * Point {@link Chunker.currentChunk} at the chunk preceding it, and return that chunk.
+   * If there are no chunks preceding it, keep `currentChunk` unchanged and
+   * return null.
+   */
   previousChunk(): TChunk | null;
 
-  // Test if a given chunk is before the current chunk.
+  /**
+   * Test if a given `chunk` is before the {@link Chunker.currentChunk|current
+   * chunk}.
+   *
+   * @remarks
+   * Returns true if `chunk` is before `this.currentChunk`, false otherwise
+   * (i.e. if `chunk` follows it or is the current chunk).
+   *
+   * The given `chunk` need not necessarily be obtained from the same `Chunker`,
+   * but the chunkers would need to represent the same file. Otherwise behaviour
+   * is unspecified (an implementation might throw or just return `false`).
+   *
+   * @param chunk - A chunk, typically obtained from the same `Chunker`.
+   */
   precedesCurrentChunk(chunk: TChunk): boolean;
 }

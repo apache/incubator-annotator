@@ -23,6 +23,25 @@ import type { Chunk, Chunker, ChunkRange } from './chunker';
 import { CodePointSeeker } from './code-point-seeker';
 import { TextSeeker } from './seeker';
 
+/**
+ * Returns a {@link TextPositionSelector} that points at the target text within
+ * the given scope.
+ *
+ * This is an abstract implementation of the function’s logic, which expects a
+ * generic {@link Chunker} to represent the text, and a {@link ChunkRange} to
+ * represent the target.
+ *
+ * See {@link @apache-annotator/dom#describeTextPosition} for a wrapper around
+ * this implementation which applies it to the text of an HTML DOM.
+ *
+ * @param target - The range of characters that the selector should describe
+ * @param scope - The text, presented as a {@link Chunker}, which contains the
+ * target range, and relative to which its position will be measured
+ * @returns The {@link TextPositionSelector} that describes `target` relative
+ * to `scope`
+ *
+ * @public
+ */
 export async function describeTextPosition<TChunk extends Chunk<string>>(
   target: ChunkRange<TChunk>,
   scope: Chunker<TChunk>,

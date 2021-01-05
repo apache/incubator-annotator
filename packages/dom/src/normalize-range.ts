@@ -20,10 +20,12 @@
 
 import { ownerDocument } from './owner-document';
 
-// TextRange is a Range that guarantees to always have Text nodes as its start
-// and end nodes. To ensure the type remains correct, it also restricts usage
-// of methods that would modify these nodes (note that a user can simply cast
-// the TextRange back to a Range to remove these restrictions).
+/**
+ * TextRange is a Range that guarantees to always have Text nodes as its start
+ * and end nodes. To ensure the type remains correct, it also restricts usage
+ * of methods that would modify these nodes (note that a user can simply cast
+ * the TextRange back to a Range to remove these restrictions).
+ */
 export interface TextRange extends Range {
   readonly startContainer: Text;
   readonly endContainer: Text;
@@ -44,17 +46,25 @@ export interface TextRange extends Range {
   surroundContents(newParent: never): void;
 }
 
-// Normalise a range such that both its start and end are text nodes, and that
-// if there are equivalent text selections it takes the narrowest option (i.e.
-// it prefers the start not to be at the end of a text node, and vice versa).
-//
-// If there is no text between the start and end, they thus collapse onto one a
-// single position; and if there are multiple equivalent positions, it takes the
-// first one; or, if scope is passed, the first equivalent falling within scope.
-//
-// Note that if the given range does not contain non-empty text nodes, it will
-// end up pointing at a text node outside of it (before it if possible, else
-// after). If the document does not contain any text nodes, an error is thrown.
+/**
+ * Normalise a {@link https://developer.mozilla.org/en-US/docs/Web/API/Range |
+ * Range} such that ranges spanning the same text become exact equals.
+ *
+ * @remarks
+ * *Note: in this context ‘text’ means any characters, including whitespace.*
+
+ * Normalises a range such that both its start and end are text nodes, and that
+ * if there are equivalent text selections it takes the narrowest option (i.e.
+ * it prefers the start not to be at the end of a text node, and vice versa).
+ *
+ * If there is no text between the start and end, they thus collapse onto one a
+ * single position; and if there are multiple equivalent positions, it takes the
+ * first one; or, if scope is passed, the first equivalent falling within scope.
+ *
+ * Note that if the given range does not contain non-empty text nodes, it may
+ * end up pointing at a text node outside of it (before it if possible, else
+ * after). If the document does not contain any text nodes, an error is thrown.
+ */
 export function normalizeRange(range: Range, scope?: Range): TextRange {
   const document = ownerDocument(range);
   const walker = document.createTreeWalker(document, NodeFilter.SHOW_TEXT, {

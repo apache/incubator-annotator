@@ -26,6 +26,42 @@ import { describeTextQuote as abstractDescribeTextQuote } from '@apache-annotato
 import { ownerDocument } from '../owner-document';
 import { TextNodeChunker } from '../text-node-chunker';
 
+/**
+ * Create a {@link @apache-annotator/selector#TextQuoteSelector} that
+ * unambiguously describes the given range.
+ *
+ * @remarks
+ * The selector will contain the *exact* target quote, and in case this quote
+ * appears multiple times in the text, sufficient context around the quote will
+ * be included in the selector’s *prefix* and *suffix* attributes to
+ * disambiguate. By default, more prefix and suffix are included than strictly
+ * required; both in order to be robust against slight modifications, and in an
+ * attempt to not end halfway a word (mainly for the sake of human readability).
+ *
+ * @example
+ * ```
+ * const target = window.getSelection().getRangeAt(0);
+ * const selector = await describeTextQuote(target);
+ * console.log(selector);
+ * // {
+ * //   type: 'TextQuoteSelector',
+ * //   exact: 'ipsum',
+ * //   prefix: 'Lorem ',
+ * //   suffix: ' dolor'
+ * // }
+ * ```
+ *
+ * @param range - The {@link https://developer.mozilla.org/en-US/docs/Web/API/Range
+ * | Range} whose text content will be described
+ * @param maybeScope - A {@link https://developer.mozilla.org/en-US/docs/Web/API/Range
+ * | Range} that serves as the ‘document’ for purposes of finding occurrences
+ * and determining prefix and suffix. Defaults to span the full Document
+ * containing the range.
+ * @param options - Options to fine-tune the function’s behaviour.
+ * @returns The selector unambiguously describing the `range` in `scope`.
+ *
+ * @public
+ */
 export async function describeTextQuote(
   range: Range,
   maybeScope?: Range,

@@ -18,15 +18,48 @@
  * under the License.
  */
 
+/**
+ * A {@link https://www.w3.org/TR/2017/REC-annotation-model-20170223/#selectors
+ * | Selector} object of the Web Annotation Data Model.
+ *
+ * Corresponds to RDF class {@link http://www.w3.org/ns/oa#Selector}
+ *
+ * @public
+ */
 export interface Selector {
+  /**
+   * A Selector can be refined by another Selector.
+   *
+   * @remarks
+   * See {@link https://www.w3.org/TR/2017/REC-annotation-model-20170223/#refinement-of-selection
+   * | §4.2.9 Refinement of Selection} in the Web Annotation Data Model.
+   *
+   * Corresponds to RDF property {@link http://www.w3.org/ns/oa#refinedBy}
+   */
   refinedBy?: Selector;
 }
 
+/**
+ * The {@link https://www.w3.org/TR/2017/REC-annotation-model-20170223/#css-selector
+ * | CssSelector} of the Web Annotation Data Model.
+ *
+ * Corresponds to RDF class {@link http://www.w3.org/ns/oa#CssSelector}
+ *
+ * @public
+ */
 export interface CssSelector extends Selector {
   type: 'CssSelector';
   value: string;
 }
 
+/**
+ * The {@link https://www.w3.org/TR/2017/REC-annotation-model-20170223/#text-quote-selector
+ * | TextQuoteSelector} of the Web Annotation Data Model.
+ *
+ * Corresponds to RDF class {@link http://www.w3.org/ns/oa#TextQuoteSelector}
+ *
+ * @public
+ */
 export interface TextQuoteSelector extends Selector {
   type: 'TextQuoteSelector';
   exact: string;
@@ -34,18 +67,40 @@ export interface TextQuoteSelector extends Selector {
   suffix?: string;
 }
 
+/**
+ * The {@link https://www.w3.org/TR/2017/REC-annotation-model-20170223/#text-position-selector
+ * | TextPositionSelector} of the Web Annotation Data Model.
+ *
+ * Corresponds to RDF class {@link http://www.w3.org/ns/oa#TextPositionSelector}
+ *
+ * @public
+ */
 export interface TextPositionSelector extends Selector {
   type: 'TextPositionSelector';
   start: number; // more precisely: non-negative integer
   end: number; // more precisely: non-negative integer
 }
 
+/**
+ * The {@link https://www.w3.org/TR/2017/REC-annotation-model-20170223/#range-selector
+ * | RangeSelector} of the Web Annotation Data Model.
+ *
+ * Corresponds to RDF class {@link http://www.w3.org/ns/oa#RangeSelector}
+ *
+ * @public
+ */
 export interface RangeSelector extends Selector {
   type: 'RangeSelector';
   startSelector: Selector;
   endSelector: Selector;
 }
 
+/**
+ * A function that finds the match(es) in the given (sub)document (the ‘scope’)
+ * corresponding to some (prespecified) selector(s).
+ *
+ * @public
+ */
 export interface Matcher<TScope, TMatch> {
   (scope: TScope): AsyncGenerator<TMatch, void, void>;
 }

@@ -21,6 +21,45 @@
 import type { TextQuoteSelector } from '../types';
 import type { Chunk, Chunker, ChunkRange } from './chunker';
 
+/**
+ * Find occurrences in a text matching the given {@link TextQuoteSelector}.
+ *
+ * @remarks
+ * This performs an exact search the selector’s quote (including prefix and
+ * suffix) within the given text.
+ *
+ * Note the match is based on strict character-by-character equivalence, i.e.
+ * it is sensitive to whitespace, capitalisation, etc.
+ *
+ * This is an abstract implementation of the function’s logic, which expects a
+ * generic {@link Chunker} to represent the text, and returns an (async)
+ * generator of {@link ChunkRange}s to represent the matches.
+ *
+ * See {@link @apache-annotator/dom#createTextQuoteSelectorMatcher} for a
+ * wrapper around this implementation which applies it to the text of an HTML
+ * DOM.
+ *
+ * The function is curried, taking first the selector and then the text.
+ *
+ * As there may be multiple matches for a given selector (when its prefix and
+ * suffix attributes are not sufficient to disambiguate it), the matcher will
+ * return an (async) generator that produces each match in the order they are
+ * found in the text.
+ *
+ * @example
+ * ```
+ * const selector = { type: 'TextQuoteSelector', exact: 'banana' };
+ * const matches = textQuoteSelectorMatcher(selector)(textChunks);
+ * for await (match of matches) console.log(match);
+ * // ⇒ { startChunk: { … }, startIndex: 187, endChunk: { … }, endIndex: 193 }
+ * // ⇒ { startChunk: { … }, startIndex: 631, endChunk: { … }, endIndex: 637 }
+ * ```
+ *
+ * @param selector - The {@link TextQuoteSelector} to be anchored
+ * @returns a {@link Matcher} function that applies `selector` to a given text
+ *
+ * @public
+ */
 export function textQuoteSelectorMatcher(
   selector: TextQuoteSelector,
 ): <TChunk extends Chunk<any>>(
@@ -34,7 +73,9 @@ export function textQuoteSelectorMatcher(
     const suffix = selector.suffix || '';
     const searchPattern = prefix + exact + suffix;
 
-    // The code below runs a loop with three steps:
+    // The code below essentially just performs string.indexOf(searchPattern),
+    // but on a string that is chopped up in multiple chunks. It runs a loop
+    // containing three steps:
     // 1. Continue checking any partial matches from the previous chunk(s).
     // 2. Try find the whole pattern in the chunk (possibly multiple times).
     // 3. Check if this chunk ends with a partial match (or even multiple partial matches).

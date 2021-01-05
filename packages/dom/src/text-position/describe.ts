@@ -23,6 +23,37 @@ import { describeTextPosition as abstractDescribeTextPosition } from '@apache-an
 import { ownerDocument } from '../owner-document';
 import { TextNodeChunker } from '../text-node-chunker';
 
+/**
+ * Returns a {@link @apache-annotator/selector#TextPositionSelector} that points
+ * at the target text within the given scope.
+ *
+ * When no scope is given, the position is described relative to the document
+ * as a whole. Note this means all the characters in all Text nodes are counted
+ * to determine the target’s position, including those in the `<head>` and
+ * whitespace, hence even a minor modification could make the selector point to
+ * a different text than its original target.
+ *
+ * @example
+ * ```
+ * const target = window.getSelection().getRangeAt(0);
+ * const selector = await describeTextPosition(target);
+ * console.log(selector);
+ * // {
+ * //   type: 'TextPositionSelector',
+ * //   start: 702,
+ * //   end: 736
+ * // }
+ * ```
+ *
+ * @param range - The range of characters that the selector should describe
+ * @param maybeScope - A {@link https://developer.mozilla.org/en-US/docs/Web/API/Range
+ * | Range} that serves as the ‘document’ for purposes of finding occurrences
+ * and determining prefix and suffix. Defaults to span the full Document
+ * containing the range.
+ * @returns The selector describing the `range` relative to `scope`
+ *
+ * @public
+ */
 export async function describeTextPosition(
   range: Range,
   maybeScope?: Range,
