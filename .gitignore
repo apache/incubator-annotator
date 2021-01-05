@@ -9,4 +9,5 @@ tsconfig.tsbuildinfo
 /packages/*/NOTICE
 /packages/*/README.md
 /packages/*/lib
+/packages/*/docs/api
 /web/dist
