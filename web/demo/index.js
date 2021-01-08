@@ -138,7 +138,7 @@ async function onSelectionChange() {
     const selector =
       describeMode === 'TextPosition'
         ? await describeTextPosition(range, scope)
-        : await describeTextQuote(range, scope);
+        : await describeTextQuote(range, scope, { minimumQuoteLength: 10 });
     await anchor(selector);
   }
 }

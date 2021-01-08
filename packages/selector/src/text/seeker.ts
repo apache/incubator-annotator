@@ -71,12 +71,14 @@ export interface RelativeSeeker<TData extends Iterable<any> = string> {
    * backwards in the file.
    * @param roundUp - If true, then, after reading the given number of
    * characters, read further until the end (or start) of the current chunk.
+   * @param lessIsFine - If true, and there are not enough characters in the
+   * file, return the result so far instead of throwing an error.
    * @returns The characters passed (in their normal order, even when moving
    * backwards)
-   * @throws RangeError if there are not enough characters in the file. The
-   * pointer is left at the end/start of the file.
+   * @throws RangeError if there are not enough characters in the file (unless
+   * `lessIsFine` is true). The pointer is left at the end/start of the file.
    */
-  read(length?: number, roundUp?: boolean): TData;
+  read(length?: number, roundUp?: boolean, lessIsFine?: boolean): TData;
 }
 
 /**
@@ -197,8 +199,13 @@ export class TextSeeker<TChunk extends Chunk<string>>
     this.seekTo(0);
   }
 
-  read(length: number, roundUp = false): string {
-    return this.readTo(this.position + length, roundUp);
+  read(length: number, roundUp = false, lessIsFine = false): string {
+    return this._readOrSeekTo(
+      true,
+      this.position + length,
+      roundUp,
+      lessIsFine,
+    );
   }
 
   readTo(target: number, roundUp = false): string {
@@ -279,12 +286,23 @@ export class TextSeeker<TChunk extends Chunk<string>>
     }
   }
 
-  private _readOrSeekTo(read: true, target: number, roundUp?: boolean): string;
-  private _readOrSeekTo(read: false, target: number, roundUp?: boolean): void;
+  private _readOrSeekTo(
+    read: true,
+    target: number,
+    roundUp?: boolean,
+    lessIsFine?: boolean,
+  ): string;
+  private _readOrSeekTo(
+    read: false,
+    target: number,
+    roundUp?: boolean,
+    lessIsFine?: boolean,
+  ): void;
   private _readOrSeekTo(
     read: boolean,
     target: number,
     roundUp = false,
+    lessIsFine = false,
   ): string | void {
     let result = '';
 
@@ -300,7 +318,7 @@ export class TextSeeker<TChunk extends Chunk<string>>
           const [data, nextChunk] = this._readToNextChunk();
           if (read) result += data;
           if (nextChunk === null) {
-            if (this.position === target) break;
+            if (this.position === target || lessIsFine) break;
             else throw new RangeError(E_END);
           }
         } else {
@@ -337,7 +355,10 @@ export class TextSeeker<TChunk extends Chunk<string>>
         } else {
           const [data, previousChunk] = this._readToPreviousChunk();
           if (read) result = data + result;
-          if (previousChunk === null) throw new RangeError(E_END);
+          if (previousChunk === null) {
+            if (lessIsFine) break;
+            else throw new RangeError(E_END);
+          }
         }
       }
     }
