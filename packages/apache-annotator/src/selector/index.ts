@@ -1,1 +1,1 @@
-export * from '@annotator/selector';
+export * from '@apache-annotator/selector';

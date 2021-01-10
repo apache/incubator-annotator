@@ -18,7 +18,7 @@
  * under the License.
  */
 
-import type { Chunk, Chunker, ChunkRange } from '@annotator/selector';
+import type { Chunk, Chunker, ChunkRange } from '@apache-annotator/selector';
 import { normalizeRange } from './normalize-range';
 import { ownerDocument } from './owner-document';
 

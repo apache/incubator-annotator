@@ -18,7 +18,11 @@
  * under the License.
  */
 
-import type { Matcher, RangeSelector, Selector } from '@annotator/selector';
+import type {
+  Matcher,
+  RangeSelector,
+  Selector,
+} from '@apache-annotator/selector';
 import { ownerDocument } from '../owner-document';
 import { cartesian } from './cartesian';
 

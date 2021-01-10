@@ -19,7 +19,7 @@
  */
 
 import { assert } from 'chai';
-import type { TextPositionSelector } from '@annotator/selector';
+import type { TextPositionSelector } from '@apache-annotator/selector';
 import { createTextPositionSelectorMatcher } from '../../src/text-position/match';
 import { evaluateXPath } from '../utils';
 import type { RangeInfo } from '../utils';

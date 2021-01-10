@@ -1,5 +1,5 @@
 {
-  "name": "@annotator/dom",
+  "name": "@apache-annotator/dom",
   "version": "0.1.0",
   "description": "Utilities for annotation of the Document Object Model.",
   "homepage": "https://annotator.apache.org",
@@ -21,7 +21,7 @@
     "@babel/runtime-corejs3": "^7.8.7"
   },
   "devDependencies": {
-    "@annotator/selector": "^0.1.0"
+    "@apache-annotator/selector": "^0.1.0"
   },
   "engines": {
     "node": "^10 || ^11 || ^12 || >=13.7"

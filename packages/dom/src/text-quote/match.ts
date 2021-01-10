@@ -18,8 +18,8 @@
  * under the License.
  */
 
-import type { Matcher, TextQuoteSelector } from '@annotator/selector';
-import { textQuoteSelectorMatcher as abstractTextQuoteSelectorMatcher } from '@annotator/selector';
+import type { Matcher, TextQuoteSelector } from '@apache-annotator/selector';
+import { textQuoteSelectorMatcher as abstractTextQuoteSelectorMatcher } from '@apache-annotator/selector';
 import { TextNodeChunker, EmptyScopeError } from '../text-node-chunker';
 
 export function createTextQuoteSelectorMatcher(

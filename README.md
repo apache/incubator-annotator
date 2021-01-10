@@ -11,26 +11,27 @@ compiled and distributed in CommonJS and ECMAScript Module formats.
 
 The project is made up of multiple packages. Install the `apache-annotator`
 package, which includes all sub-packages, or install individual packages from
-the `@annotator` scope.
+the `@apache-annotator` scope.
 
-Import packages from either `apache-annotator/package` or `@annotator/package`.
+Import packages from either `apache-annotator/package` or
+`@apache-annotator/package`.
 
 Currently, the following sub-packages are part of the project:
 
-### `@annotator/dom`
+### `@apache-annotator/dom`
 
 This package contains functions for creating and resolving Web Annotation
 Selectors in DOM environments.
 
-### `@annotator/selector`
+### `@apache-annotator/selector`
 
 This package contains generic utilities for composing functions that create
 and resolve Web Annotation Selectors.
 
 ## Getting Involved
 
-* Join the [mailing list]. Send an email to dev-subscribe@annotator.apache.org
-  to subscribe.
+* Join the [mailing list]. Send an email to
+  dev-subscribe@apache-annotator.apache.org to subscribe.
 * Browse the [issue tracker] and file new issues if you encounter problems.
 * Read or contribute to the [wiki].
 

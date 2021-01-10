@@ -18,8 +18,8 @@
  * under the License.
  */
 
-import type { TextPositionSelector } from '@annotator/selector';
-import { describeTextPosition as abstractDescribeTextPosition } from '@annotator/selector';
+import type { TextPositionSelector } from '@apache-annotator/selector';
+import { describeTextPosition as abstractDescribeTextPosition } from '@apache-annotator/selector';
 import { ownerDocument } from '../owner-document';
 import { TextNodeChunker } from '../text-node-chunker';
 

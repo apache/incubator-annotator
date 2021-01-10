@@ -19,7 +19,7 @@
  */
 
 import { assert } from 'chai';
-import type { TextQuoteSelector } from '@annotator/selector';
+import type { TextQuoteSelector } from '@apache-annotator/selector';
 import { createTextQuoteSelectorMatcher } from '../../src/text-quote/match';
 import { evaluateXPath } from '../utils';
 import type { RangeInfo } from '../utils';
