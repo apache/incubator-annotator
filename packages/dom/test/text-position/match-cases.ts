@@ -18,7 +18,7 @@
  * under the License.
  */
 
-import type { TextPositionSelector } from '@annotator/selector';
+import type { TextPositionSelector } from '@apache-annotator/selector';
 import type { RangeInfo } from '../utils';
 
 export const testCases: {

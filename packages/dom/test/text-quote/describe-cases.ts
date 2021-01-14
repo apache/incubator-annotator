@@ -21,7 +21,7 @@
 import type {
   TextQuoteSelector,
   DescribeTextQuoteOptions,
-} from '@annotator/selector';
+} from '@apache-annotator/selector';
 import type { RangeInfo } from '../utils';
 
 export interface DescribeTextQuoteTestCases {

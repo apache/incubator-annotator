@@ -1,1 +1,1 @@
-export * from '@annotator/dom';
+export * from '@apache-annotator/dom';

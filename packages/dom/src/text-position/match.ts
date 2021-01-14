@@ -18,8 +18,8 @@
  * under the License.
  */
 
-import type { Matcher, TextPositionSelector } from '@annotator/selector';
-import { textPositionSelectorMatcher as abstractTextPositionSelectorMatcher } from '@annotator/selector';
+import type { Matcher, TextPositionSelector } from '@apache-annotator/selector';
+import { textPositionSelectorMatcher as abstractTextPositionSelectorMatcher } from '@apache-annotator/selector';
 import { TextNodeChunker } from '../text-node-chunker';
 
 export function createTextPositionSelectorMatcher(

@@ -56,7 +56,7 @@ module.exports = (api) => {
     alias: {
       ...(DEV || TEST
         ? {
-            '^@annotator/([^/]+)$': path.join(
+            '^@apache-annotator/([^/]+)$': path.join(
               __dirname,
               'packages/\\1/src/index.ts',
             ),

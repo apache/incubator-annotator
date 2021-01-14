@@ -21,8 +21,8 @@
 import type {
   TextQuoteSelector,
   DescribeTextQuoteOptions,
-} from '@annotator/selector';
-import { describeTextQuote as abstractDescribeTextQuote } from '@annotator/selector';
+} from '@apache-annotator/selector';
+import { describeTextQuote as abstractDescribeTextQuote } from '@apache-annotator/selector';
 import { ownerDocument } from '../owner-document';
 import { TextNodeChunker } from '../text-node-chunker';
 

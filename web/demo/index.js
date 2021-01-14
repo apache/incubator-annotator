@@ -27,8 +27,8 @@ import {
   createTextPositionSelectorMatcher,
   describeTextPosition,
   highlightRange,
-} from '@annotator/dom';
-import { makeRefinable } from '@annotator/selector';
+} from '@apache-annotator/dom';
+import { makeRefinable } from '@apache-annotator/selector';
 
 const EXAMPLE_SELECTORS = [
   {
