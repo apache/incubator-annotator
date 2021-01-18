@@ -62,15 +62,6 @@ module.exports = (api) => {
             ),
           }
         : null),
-      // TODO: Remove after babel/babel#8462 ships.
-      '^@babel/runtime-corejs3/core-js/(.+)$':
-        '@babel/runtime-corejs3/core-js/\\1.js',
-      '^@babel/runtime-corejs3/core-js-stable/(.+)$':
-        '@babel/runtime-corejs3/core-js-stable/\\1.js',
-      '^@babel/runtime-corejs3/helpers/(.+)$':
-        '@babel/runtime-corejs3/helpers/\\1.js',
-      '^@babel/runtime-corejs3/regenerator$':
-        '@babel/runtime-corejs3/regenerator/index.js',
     },
     extensions: ['.ts', '.tsx', ...DEFAULT_EXTENSIONS],
   };
@@ -80,8 +71,7 @@ module.exports = (api) => {
     // Use corejs version 3.
     corejs: { version: 3 },
     // Use helpers formatted for the target environment.
-    // TODO: Re-enable after babel/babel#8462 ships.
-    // useESModules: !CJS && !TEST,
+    useESModules: !CJS && !TEST,
   };
 
   return {
