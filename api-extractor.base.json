@@ -6,7 +6,7 @@
   },
   "docModel": {
     "enabled": true,
-    "apiJsonFilePath": "<projectFolder>/temp/<unscopedPackageName>.api.json"
+    "apiJsonFilePath": "api_extractor_temp/<unscopedPackageName>.api.json"
   },
   "dtsRollup": {
     "enabled": false

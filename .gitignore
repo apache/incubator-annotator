@@ -4,10 +4,10 @@
 coverage
 node_modules
 tsconfig.tsbuildinfo
+/docs/api
 /packages/*/DISCLAIMER-WIP
 /packages/*/LICENSE
 /packages/*/NOTICE
 /packages/*/README.md
 /packages/*/lib
-/packages/*/docs/api
 /web/dist
