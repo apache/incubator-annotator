@@ -1,7 +1,0 @@
-{
-  "extends": "../../api-extractor.base.json",
-  "bundledPackages": [
-    // "@apache-annotator/dom",
-    // "@apache-annotator/selector"
-  ]
-}

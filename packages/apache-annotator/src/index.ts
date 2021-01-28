@@ -1,4 +1,2 @@
-import * as dom from '@apache-annotator/dom';
-export { dom };
-import * as selector from '@apache-annotator/selector';
-export { selector };
+export * as dom from '@apache-annotator/dom';
+export * as selector from '@apache-annotator/selector';
