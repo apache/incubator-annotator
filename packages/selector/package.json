@@ -18,7 +18,7 @@
   "module": "./lib/index.mjs",
   "types": "./lib/index.d.ts",
   "dependencies": {
-    "@babel/runtime-corejs3": "^7.8.7"
+    "@babel/runtime-corejs3": "^7.12.5"
   },
   "engines": {
     "node": "^10 || ^11 || ^12 || >=13.7"

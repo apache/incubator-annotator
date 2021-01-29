@@ -18,7 +18,7 @@
   "module": "./lib/index.mjs",
   "types": "./lib/index.d.ts",
   "dependencies": {
-    "@babel/runtime-corejs3": "^7.8.7"
+    "@babel/runtime-corejs3": "^7.12.5"
   },
   "devDependencies": {
     "@apache-annotator/selector": "^0.1.0"
