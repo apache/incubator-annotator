@@ -1,5 +1,6 @@
 *.d.ts
 *.d.ts.map
+.npmrc
 .nyc_output
 coverage
 node_modules
