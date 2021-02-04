@@ -21,6 +21,7 @@
     "build:lib:esm": "cross-env BABEL_ENV=esm yarn build:lib --out-file-extension .mjs",
     "build:lib:types": "tsc --build",
     "build:misc": "lerna exec --parallel -- cp ../../DISCLAIMER-WIP ../../LICENSE ../../NOTICE ../../README.md .",
+    "canary": "lerna publish --canary --dist-tag dev --no-git-tag-version --preid dev --yes",
     "clean": "tsc --build --clean && lerna exec -- rimraf DISCLAIMER-WIP LICENSE NOTICE README.md lib",
     "lint": "tsc --build && eslint .",
     "prepare": "yarn run build:lib:types && lerna run prepare",
