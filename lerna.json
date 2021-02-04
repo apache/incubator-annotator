@@ -11,8 +11,8 @@
       "preid": "dev"
     },
     "version": {
-      "noGitTagVersion": true,
-      "noPush": true
+      "gitTagVersion": false,
+      "push": false
     }
   }
 }
