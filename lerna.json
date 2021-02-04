@@ -6,10 +6,13 @@
     "packages/*"
   ],
   "command": {
+    "publish": {
+      "preDistTag": "dev",
+      "preid": "dev"
+    },
     "version": {
       "noGitTagVersion": true,
-      "noPush": true,
-      "preid": "dev"
+      "noPush": true
     }
   }
 }
