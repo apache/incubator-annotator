@@ -1,6 +1,6 @@
 {
   "name": "apache-annotator",
-  "version": "0.2.0-dev.0",
+  "version": "0.1.0",
   "description": "Apache Annotator provides annotation enabling code for browsers, servers, and humans.",
   "homepage": "https://annotator.apache.org",
   "repository": {
@@ -28,8 +28,8 @@
   "module": "./lib/index.mjs",
   "types": "./lib/index.d.ts",
   "dependencies": {
-    "@apache-annotator/dom": "^0.2.0-dev.0",
-    "@apache-annotator/selector": "^0.2.0-dev.0",
+    "@apache-annotator/dom": "^0.1.0",
+    "@apache-annotator/selector": "^0.1.0",
     "@babel/runtime-corejs3": "^7.12.5"
   },
   "engines": {
