@@ -7,9 +7,9 @@
   ],
   "command": {
     "version": {
+      "noGitTagVersion": true,
+      "noPush": true,
       "preid": "dev",
-      "signGitCommit": true,
-      "signGitTag": true
     }
   }
 }
