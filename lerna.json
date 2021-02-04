@@ -7,6 +7,7 @@
   ],
   "command": {
     "version": {
+      "preid": "dev",
       "signGitCommit": true,
       "signGitTag": true
     }
