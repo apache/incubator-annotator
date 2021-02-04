@@ -1,6 +1,6 @@
 {
   "name": "@apache-annotator/selector",
-  "version": "0.1.0",
+  "version": "0.2.0-dev.0",
   "description": "Web Annotation selector for engine.",
   "homepage": "https://annotator.apache.org",
   "repository": {
