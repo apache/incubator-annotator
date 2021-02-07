@@ -7,6 +7,7 @@ node_js:
   - "14"
 
 before_deploy:
+  - git fetch --unshallow
   - git checkout master
 
 jobs:
