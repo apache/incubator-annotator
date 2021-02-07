@@ -25,7 +25,6 @@ jobs:
         edge: true
         api_token:
           secure: kjnHYXAsaqKFX9tYWRC4Zp/k9e8RQ79jVdjBNKlFExmPL5AvocYz/YeCbA/hZSnR02IjVHDAgWxVKCSDcIpDmhs0Bd7fOuyNmNm+ET0aFF6emtAMnw4RfmS0z0ZcQ8gDk3EhQ+c59VTe6s3TexBxXXUhEclKghF/iRFrcHtPBxmqTuo1rH9Nyp9Kk7QLFHMC2y1AWeTpjCdKA5ooxPb353oXRHS985sirnYkzUphTkMSFkK27hupbDpDSfiHYOZEZzGWUrgT7YYALqcck22Jqy7MdWhZgoAOFr0R26oz7wVssnvt2PNc8hFgK4oLBRwKloNjBKMBChRoJ257yGM2ak+z844xFx36u1x/MOS6NhC15UOdyZLKm6gyGFvNOUVuPmLpNhwh/0DkZ+N56FevOWoAT7+fg3Op67KnGKk3TZfEPKOixqF4w6TfhJCEQfEvZg/6618SfoxuI5SidBqweRNT9B+iTo3QDR4JzP6vtCa1/Kc6yzLmx2EQpJIICWI90ZDOuqd1/aC39tLostpzrbQD64vDfQvGTXAd0WZT8lEvtQ4UIQA/MDJBW5OCDDMazlZlv3nvH0rGsv48vKHDzUYlz6VAt9E2F65h1oHfwa2YYHtKHV+J9/Vdof7psz7CBfkemlRsaPPiknDpXv0Y4kpq/75wtAZzpNho8j5LGf8=
-        cleanup: true
         run_script: publish -- --canary --exact --force-publish "*" --yes minor
         on:
           branch: master
