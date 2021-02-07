@@ -66,6 +66,7 @@ dist:
         --config advice.detachedHead=false \
         --config versionsort.suffix=-rc \
         --depth 1 \
+        --no-tags \
         --quiet \
         file://"$(shell git rev-parse --show-toplevel)" \
         apache-annotator-$(annotator_vsn)-incubating
