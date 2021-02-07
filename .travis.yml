@@ -1,5 +1,4 @@
 dist: focal
-virt: lxd
 language: node_js
 node_js:
   - "10"
