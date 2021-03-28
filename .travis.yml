@@ -6,16 +6,15 @@ node_js:
   - "13"
   - "14"
 
-before_deploy:
-  - git fetch --unshallow
-  - git checkout master
-
 jobs:
   include:
     - stage: deploy
       if: branch = master
       node_js: node
       script: skip
+      before_deploy:
+        - git fetch --unshallow
+        - git checkout master
       deploy:
         provider: npm
         edge: true
