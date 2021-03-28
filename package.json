@@ -26,6 +26,7 @@
     "prepare": "yarn run build:lib:types && lerna run prepare",
     "prepublishOnly": "yarn run build",
     "publish": "lerna publish",
+    "publish:ci": "yarn run publish --canary --exact --force-publish '*' --yes minor",
     "start": "yarn run web:server",
     "test": "cross-env BABEL_ENV=test nyc mocha packages/**/*.test.ts",
     "validate": "cross-env BABEL_ENV=test mocha test/**/*.test.ts",
