@@ -19,7 +19,7 @@ jobs:
         provider: npm
         edge: true
         api_token:
-          secure: kjnHYXAsaqKFX9tYWRC4Zp/k9e8RQ79jVdjBNKlFExmPL5AvocYz/YeCbA/hZSnR02IjVHDAgWxVKCSDcIpDmhs0Bd7fOuyNmNm+ET0aFF6emtAMnw4RfmS0z0ZcQ8gDk3EhQ+c59VTe6s3TexBxXXUhEclKghF/iRFrcHtPBxmqTuo1rH9Nyp9Kk7QLFHMC2y1AWeTpjCdKA5ooxPb353oXRHS985sirnYkzUphTkMSFkK27hupbDpDSfiHYOZEZzGWUrgT7YYALqcck22Jqy7MdWhZgoAOFr0R26oz7wVssnvt2PNc8hFgK4oLBRwKloNjBKMBChRoJ257yGM2ak+z844xFx36u1x/MOS6NhC15UOdyZLKm6gyGFvNOUVuPmLpNhwh/0DkZ+N56FevOWoAT7+fg3Op67KnGKk3TZfEPKOixqF4w6TfhJCEQfEvZg/6618SfoxuI5SidBqweRNT9B+iTo3QDR4JzP6vtCa1/Kc6yzLmx2EQpJIICWI90ZDOuqd1/aC39tLostpzrbQD64vDfQvGTXAd0WZT8lEvtQ4UIQA/MDJBW5OCDDMazlZlv3nvH0rGsv48vKHDzUYlz6VAt9E2F65h1oHfwa2YYHtKHV+J9/Vdof7psz7CBfkemlRsaPPiknDpXv0Y4kpq/75wtAZzpNho8j5LGf8=
+          secure: 536H8eHmJx60Ke+aOJkkFig6qA1Mim2lsEUzx5ue3dyMSkOI56WBVFG2iKOMxwzh4fSnyR1aZD1mUGyDjl8yt95OfDx+BFkV/HRES5F1xLldczXpUR5Wyy2oLozBNnIuvEr6JVSWyKhAszNQ4404JztN6NnliQb3Cr+J6K1/GAhptjd7nYMuzqlGLI02hX8IBSSx/ZojEUS0Mg3XNH1B8dQA6IgNQx45AO02UtdvHMoEAUsb4WjMjtRa8TDtEX1uOqqihy0yBJXn4lLrScT2wkDK8z+FUhKlS6QCmAmS1dk2mpPuzInZ89kXv8ABX0bSI2ccx8dypFfwT3Sl7JXJ4TX116J5n3R3rZ2ndXFZoI+v6YVDvfsI4neQbAeessLX794Rol1HFiKTc4xFD4h0yB16Z9s7L2RhHciNtRoUkBPCVFPe34PSQpW5AA/jX2lIDmPyvmau7x1GCOPQNXljjc50w9FueFeSb/4j6ogMlywxGm+gmB4F846lGqHZ7/fj++jbNRVwvtSBnWyP0aJEf1boo6lTNubQ3uj+aR4v/rdGecoWT9+5AXdgIXrB6azWxLnV2iDedYVDhFF1MHL2WciJYZ+4Qun2aV5oQvwE+4FiSygSozsNPaDDh54LytijlScPhvvJ/y0hGQz9Vd+ObUPFKW3vs4XBwGz3cpgi/As=
         run_script: publish -- --canary --exact --force-publish "*" --yes minor
         on:
           branch: master
