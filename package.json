@@ -25,7 +25,7 @@
     "lint": "tsc --build && eslint .",
     "prepare": "yarn run build:lib:types && lerna run prepare",
     "prepublishOnly": "yarn run build",
-    "publish": "lerna publish",
+    "publish": "stat ~/.npmrc && npm whoami && lerna publish",
     "publish:ci": "yarn run publish --canary --exact --force-publish '*' --yes minor",
     "start": "yarn run web:server",
     "test": "cross-env BABEL_ENV=test nyc mocha packages/**/*.test.ts",
