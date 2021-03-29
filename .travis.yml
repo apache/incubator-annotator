@@ -1,21 +1,13 @@
 dist: focal
 language: node_js
-node_js:
- - "10"
- - "12"
- - "13"
- - "14"
 
-jobs:
-  include:
-    - stage: deploy
-      if: branch = master
-      language: node_js
-      script: skip
-      before_deploy:
-        - git fetch --unshallow
-        - git checkout master
-      deploy:
-        provider: npm
-        edge: true
-        run_script: publish:ci
+before_deploy:
+  - git fetch --unshallow
+  - git checkout master
+
+deploy:
+  provider: npm
+  edge: true
+  run_script: publish:ci
+  on:
+    branch: master
