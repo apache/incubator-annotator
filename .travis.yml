@@ -16,10 +16,6 @@ jobs:
         - git fetch --unshallow
         - git checkout master
       deploy:
-        - provider: npm
-          edge:
-            branch: master
-          access: public
-          api_key:
-            secure: PYG3VVJa5/kunE0uxMTsNLl8Gg/Bjv6/wwKCTFs8EfW29nLJPRtKssl9sSmmwwYvSPSnTOjLV3CIgudJGYekeuzNvJgB+pUhKWCeGmz1N2i6K1XNeS0oJ3KBTCKi7PbyyIMLs33O7jHijJ5vBoPbDKaD9iDv9vNgyslkp07bcYp7dnyzR64RzzOsk6jrkJiohr9Gqbh4MXt1CUS0FDxTcKpXetGve4IMMQfzn8c2N9SavCUANAXVjUnaRGcsbAgYAhl6W2fQu/5+n6I07g0d9IDXD3WHHPxSNOTQ4AwP2kmS3sk9Zmh1HWWbdVIhWTGQMO8xnB5G6S1wWaOuZkU/GuwiVFu2RJ4liQ6cy+R7mD+2YM+kJ1Fy/Y9BFdLkliCSeRLT65wrVNaT0clR3v8itfhK2+jXYZyL+C8MBs3nzVBIID9TXAqDZJLsGNbw09Xf7+cHG0ovEbKWGCZXKk5e1O68tdafMeom2J09t0XHYkx64CfKGrEk2I2h14bnUV2Ki32Lk9E/AbAK0umgHSq6rRB2YrSYsOXQXFeYT0HqOkxOdhuClpfd8kmz/HfFRy7xuqdF0yj+41Pd7GwndoykEdIq+IC3k5+KUvmJupuQl5SyGZG2A9Ew9SyKkvyLYcc81TsF567lm//VF07ok+57S7QUm0IqHhDinkymNYSztus=
-          run_script: publish:ci
+        provider: npm
+        edge: true
+        run_script: publish:ci
