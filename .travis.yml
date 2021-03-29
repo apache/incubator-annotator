@@ -1,10 +1,10 @@
 dist: focal
 language: node_js
 node_js:
-  - "10"
-  - "12"
-  - "13"
-  - "14"
+ - "10"
+ - "12"
+ - "13"
+ - "14"
 
 jobs:
   include:
@@ -18,6 +18,8 @@ jobs:
       deploy:
         provider: npm
         edge: true
-        api_token:
-          secure: "536H8eHmJx60Ke+aOJkkFig6qA1Mim2lsEUzx5ue3dyMSkOI56WBVFG2iKOMxwzh4fSnyR1aZD1mUGyDjl8yt95OfDx+BFkV/HRES5F1xLldczXpUR5Wyy2oLozBNnIuvEr6JVSWyKhAszNQ4404JztN6NnliQb3Cr+J6K1/GAhptjd7nYMuzqlGLI02hX8IBSSx/ZojEUS0Mg3XNH1B8dQA6IgNQx45AO02UtdvHMoEAUsb4WjMjtRa8TDtEX1uOqqihy0yBJXn4lLrScT2wkDK8z+FUhKlS6QCmAmS1dk2mpPuzInZ89kXv8ABX0bSI2ccx8dypFfwT3Sl7JXJ4TX116J5n3R3rZ2ndXFZoI+v6YVDvfsI4neQbAeessLX794Rol1HFiKTc4xFD4h0yB16Z9s7L2RhHciNtRoUkBPCVFPe34PSQpW5AA/jX2lIDmPyvmau7x1GCOPQNXljjc50w9FueFeSb/4j6ogMlywxGm+gmB4F846lGqHZ7/fj++jbNRVwvtSBnWyP0aJEf1boo6lTNubQ3uj+aR4v/rdGecoWT9+5AXdgIXrB6azWxLnV2iDedYVDhFF1MHL2WciJYZ+4Qun2aV5oQvwE+4FiSygSozsNPaDDh54LytijlScPhvvJ/y0hGQz9Vd+ObUPFKW3vs4XBwGz3cpgi/As="
         run_script: publish:ci
+
+env:
+  global:
+    secure: tDGkexlwhJMnrRaOR+CeECIvvT7uD/4hfyYwdt3QA8si7DflTulmDy7kGKNBwUCml7GxLGNyHw71R3NcLKwh5lKoNz8JBjFQRudm/LwLMMkKvxMczvMdUmkA7R3btoFgHDFypbOjvvMtxRcfaSWhCe1IGPkQ5a9GGSO/Ded2C1jsmD7CIel9XnC4UX/xgD4oZZ5NiPPs1kdmxB5NlwbTst8VpGXW+KTCSl7AwP9U/KQrKolKOkqy1RDqtlvKQn9EaWCgpJvTjmq1ElrYcpG+Mx0CqCm0h5MPvm9rmdYbvwBPGBE/tuDTCr4OZJs8Zla/exTdTt91NHfjJ8zMk24a9iHsPJoTLYAiioIkI/FUGRXpJnvwwbOzD+4Cfj4iK9VnOLLw+MAnoqsuwhtQmhHU02K0Lx28Dyx9eviMJmB29Qhc5pc6P2MXCWGKwcNzJ7xCNdV2ePm/TCrVsxfhUhCR5ViufZOsGAI3G7y/qW+AInHNMHT97fYpCuuDE5/4WNjW4DhwfC8p8rKYdIvJAxRBdx/mXFj3XhkVAxuWiFFfodcU8fODWuBFJsS6uV15X39MpX55pdBYPCP6TYBzoopn2Fkzu9IjcPswQ/fkLKH27WmZhdTW6YKMQXoMM9OrDp5W4+26N0bNoidn1LLYA6+TRcbrLYTcx9tRr0f204RU2pU=
