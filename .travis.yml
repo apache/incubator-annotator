@@ -10,8 +10,6 @@ jobs:
   include:
     - stage: deploy
       if: branch = master
-      env:
-        - secure: b7GX8bn6gp8ajOUkXQ1pO67XhyrwzsuN3FlD2M7zyA54CG8+xoYWfa4IYfwO/mX2JTeq8Kr2PJAwhzSINYeVoXnCXqjGxSFJI7rEBVBotOFmhANmKiR7kw/9wW3b4ka0lx4Am7am8CVI3LHhKSah/P49HnlbQHaCMvY78jIBEudS3bnvM3jdsWKlmW41e/Q3gsGqtn2HBkmvwe8W1BU4GA1U66UbJRIy6L+3m0xZ689fuFB5YL9GCUkiEQF51nhyPXL5JJxKt4BXGxwwVKAOZeyS/W8i/UWhZV4KF+3PYet0nzPgTIDbk1O7k4NpX4b6jmDjOWUIdRpb0R2tN/JZ3cGIjmwP5c35jwvIOU+oRVkU1f1HhZ10LZbCStwnSlsFt3n+xLQ6LBlaRMY4CnBmSu88k9gfQDIvo4FXDUVSRhpDfCggEeHQwyQprZcgqCSADpoYlwZauxELoFTC/nhm4Bx+tH9AQsIoQ+PMSZQuubaaaJuoap7zF7lJbfx89D5K27QQ3SoYYC5BZV0Nv1RM9cdCIGcwan51Ky1+BYs8Xq4Qf28bWhh9Y9pYQhD2bEIGOF4aP8kJPPa05MsAJsm0UKH3cQHYOR0+7oXs9yzljpMyr7s2+drtenCy8dvrJrLp9UA9OMr7gJV9wA9w6zzyT+zWnhvm6H95sq+zszwn7jQ=
       node_js: node
       script: skip
       before_deploy:
@@ -20,4 +18,6 @@ jobs:
       deploy:
         provider: npm
         edge: true
+        api_key:
+          secure: o0X1FD3qhMvWbYMREcd6OPaIPBnh/BulH4Hly1zccYgLv/MPWC++5usv/5Xxm3AuNDR5GF8fniUohZ8hUYfB/4Sf2VOCwtwKacQ9xNxYgaM5YPYb41W4ycpBXNfHwSf0iKc69qUWCrbUBBoQQsfIA4WnK/F7UkYJu1RWmC/7xEDCpkZ3QdoahdSiJDRxidOq6VV/qiTnIS5frst7nzu9xR+7CxchFCHNoUwvpLoUEw5IsU/aYfaYc7pvdsW0uzzC147runEPXWoRTuPmqNdLssOeKXsai7xBOBm2s6S/jTzEgIHZXz8sMxgNoQX6mwePSB4sAqeRvwuEnxyEAp9iCehpNRyJezmFe3ZHa4lwlmrcgLqvxNaTFNOzLt+s04G4Tt4qMD8g3EZDfzxWE4Ftao9Gurkm3ZEIxEywq3b9l973uk8pFnfmNAZQSBOKp548uZr43+KPxMob4va93CEdk9T5S8yM9ILE8m0MKNC7IamFzXCcpldKYOSHzfc3bh/aLnI93rOjofLKfcyIIIbN/1b5izKaQIQOXjKv5YgGqjM/5oj1k727Yufhl5oZPKgFwnAFBaIpTR6N1FqL+zNa6Uc08t5/YRvw12IlQQ2VJcCs2mqvy8T0Ju2I/OIg0/IbReit2cc1GKGbRknXa5sFp+HBQ/Ge9LdBsa7W0QptMKM=
         run_script: publish:ci
