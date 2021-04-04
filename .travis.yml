@@ -5,6 +5,7 @@ node_js: node
 before_deploy:
   - git fetch --unshallow
   - git checkout master
+  - echo "${NPM_API_TOKEN:3:8}"
 
 deploy:
   provider: npm
