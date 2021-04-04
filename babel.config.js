@@ -76,10 +76,10 @@ module.exports = (api) => {
     plugins: [
       '@babel/plugin-proposal-class-properties',
       ['@babel/transform-runtime', runtimeOptions],
-      ...(TEST ? ['istanbul'] : []),
       ['add-import-extension', addImportExtensionOptions],
       ['module-resolver', resolverOptions],
       'preserve-comment-header',
+      ...(TEST ? ['istanbul'] : []),
     ],
     presets: [
       ['@babel/env', envOptions],
