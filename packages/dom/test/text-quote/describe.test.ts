@@ -30,7 +30,7 @@ import {
 } from './describe-cases';
 import { testCases as testMatchCases } from './match-cases';
 
-const domParser = new window.DOMParser();
+const domParser = new DOMParser();
 
 function runTestCases(testCases: DescribeTextQuoteTestCases) {
   for (const [name, { html, range, expected, options }] of Object.entries(

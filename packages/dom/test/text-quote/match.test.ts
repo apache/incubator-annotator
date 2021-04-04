@@ -25,7 +25,7 @@ import { evaluateXPath } from '../utils';
 import type { RangeInfo } from '../utils';
 import { testCases } from './match-cases';
 
-const domParser = new window.DOMParser();
+const domParser = new DOMParser();
 
 describe('createTextQuoteSelectorMatcher', () => {
   for (const [name, { html, selector, expected }] of Object.entries(

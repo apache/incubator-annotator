@@ -23,7 +23,7 @@ import { highlightRange } from '../../src/highlight-range';
 import type { RangeInfo } from '../utils';
 import { hydrateRange, evaluateXPath } from '../utils';
 
-const domParser = new window.DOMParser();
+const domParser = new DOMParser();
 
 const testCases: {
   [name: string]: {

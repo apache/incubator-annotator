@@ -23,7 +23,7 @@ import { describeTextPosition } from '../../src/text-position/describe';
 import { hydrateRange } from '../utils';
 import { testCases } from './match-cases';
 
-const domParser = new window.DOMParser();
+const domParser = new DOMParser();
 
 describe('createTextPositionSelectorMatcher', () => {
   describe('inverts test cases of text position matcher', () => {
