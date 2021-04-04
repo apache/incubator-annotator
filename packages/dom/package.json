@@ -24,7 +24,7 @@
     "@apache-annotator/selector": "^0.1.0"
   },
   "engines": {
-    "node": "^10 || ^11 || ^12 || >=13.7"
+    "node": "^12.20 || ^14.15 || ^15.4"
   },
   "publishConfig": {
     "access": "public"

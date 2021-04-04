@@ -44,7 +44,7 @@ and resolve Web Annotation Selectors.
 We use [Lerna](https://lernajs.io/) to juggle the various Apache Annotator
 libraries. If you'd like to contribute, you'll need the following:
 
-- [node](https://nodejs.org) ^10 || ^11 || ^12 || >=13.7
+- [node](https://nodejs.org) ^12.20 || ^14.15 || ^15.4
 - [yarn](https://www.yarnpkg.com/) ^1.5
 
 #### Setup
