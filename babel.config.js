@@ -34,8 +34,6 @@ module.exports = (api) => {
     bugfixes: true,
     // Transform module syntax if necessary.
     modules: CJS || TEST ? 'commonjs' : false,
-    // Set target environment to default browsers.
-    targets: TEST ? { node: 'current' } : 'defaults',
   };
 
   // Options for the @babel/typescript preset.
@@ -85,5 +83,6 @@ module.exports = (api) => {
       ['@babel/env', envOptions],
       ['@babel/typescript', typescriptOptions],
     ],
+    targets: TEST ? { node: 'current' } : 'defaults',
   };
 };
