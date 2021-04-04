@@ -7,6 +7,6 @@
   },
   "references": [
     { "path": "../dom" },
-    { "path": "../selector" },
+    { "path": "../selector" }
   ]
 }
