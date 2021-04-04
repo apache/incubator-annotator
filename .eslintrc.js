@@ -98,10 +98,6 @@ module.exports = {
     },
     {
       files: ['**/*.ts'],
-      env: {
-        es2020: true,
-        'shared-node-browser': true,
-      },
       extends: [
         'plugin:@typescript-eslint/recommended',
         'plugin:@typescript-eslint/recommended-requiring-type-checking',
@@ -133,12 +129,6 @@ module.exports = {
     },
     {
       files: ['packages/*/test/**/*.ts', 'test/**/*.ts'],
-      env: {
-        mocha: true,
-      },
-      globals: {
-        assert: true,
-      },
       rules: {
         'import/no-relative-parent-imports': 'off',
       },
