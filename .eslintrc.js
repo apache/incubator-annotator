@@ -85,6 +85,9 @@ module.exports = {
         es2017: true,
         node: true,
       },
+      parserOptions: {
+        ecmaVersion: 2019,
+      },
       plugins: ['node'],
       rules: {
         'no-console': 'off',
@@ -106,6 +109,7 @@ module.exports = {
         'prettier/@typescript-eslint',
       ],
       parserOptions: {
+        ecmaVersion: 2020,
         project: ['./tsconfig.test.json', './packages/*/tsconfig.json'],
         tsconfigRootDir: __dirname,
       },
@@ -146,6 +150,7 @@ module.exports = {
         es2020: true,
       },
       parserOptions: {
+        ecmaVersion: 2020,
         sourceType: 'module',
       },
     },
