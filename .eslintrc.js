@@ -140,12 +140,6 @@ module.exports = {
       },
     },
     {
-      files: ['packages/dom/**/*.js'],
-      env: {
-        browser: true,
-      },
-    },
-    {
       files: ['web/demo/**/*.js'],
       env: {
         browser: true,
