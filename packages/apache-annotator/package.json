@@ -11,22 +11,11 @@
   "license": "Apache-2.0",
   "author": "Apache Software Foundation",
   "exports": {
-    ".": {
-      "import": "./lib/index.mjs",
-      "require": "./lib/index.js"
-    },
-    "./dom": {
-      "import": "./lib/dom/index.mjs",
-      "require": "./lib/dom/index.js"
-    },
-    "./selector": {
-      "import": "./lib/selector/index.mjs",
-      "require": "./lib/selector/index.js"
+    "./*": {
+      "import": "./lib/*.mjs",
+      "require": "./lib/*.js"
     }
   },
-  "main": "./lib/index.js",
-  "module": "./lib/index.mjs",
-  "types": "./lib/index.d.ts",
   "dependencies": {
     "@apache-annotator/dom": "^0.1.0",
     "@apache-annotator/selector": "^0.1.0",
