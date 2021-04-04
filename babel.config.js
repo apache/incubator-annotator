@@ -56,14 +56,8 @@ module.exports = (api) => {
     alias: {
       ...(DEV || TEST
         ? {
-            '^@apache-annotator/([^/]+)$': ([, name]) => {
-              return path.join(
-                __dirname,
-                'packages',
-                name,
-                '/src/index.ts'
-              )
-            },
+            '^@apache-annotator/([^/]+)$': ([, name]) =>
+              path.join(__dirname, 'packages', name, '/src/index.ts'),
           }
         : null),
     },
