@@ -21,6 +21,6 @@
 module.exports = {
   extension: ['.ts'],
   ignore: ['node_modules'],
-  require: ['./babel-register.js', 'global-jsdom/lib/register'],
+  require: ['./babel-register.js', 'global-jsdom/register'],
   timeout: 5000,
 };

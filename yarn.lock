@@ -5364,10 +5364,10 @@ glob@7.1.6, glob@^7.0.0, glob@^7.0.3, glob@^7.0.5, glob@^7.1.1, glob@^7.1.3, glo
     once "^1.3.0"
     path-is-absolute "^1.0.0"
 
-global-jsdom@^6.1.0:
-  version "6.1.0"
-  resolved "https://registry.yarnpkg.com/global-jsdom/-/global-jsdom-6.1.0.tgz#a911ec57c51cf72e93a2ce97925a02a6427aed76"
-  integrity sha512-zaNNWr7hpov5SgF21fVtvnliRcRMYSZGc47nSipUOw5Ktft+2njD4hjzN1OXWQzlBFnRU/W+MBN6OvaPMTawKQ==
+global-jsdom@^8.0.0:
+  version "8.0.0"
+  resolved "https://registry.yarnpkg.com/global-jsdom/-/global-jsdom-8.0.0.tgz#334501e24e24880c7687518826af0d38da6c2be5"
+  integrity sha512-fvOtNsQ4Ip1zkj7yZUzBhE/5pO8Iz6eb30niikooxjwQsQJS2XL6e8f0QlqfpJFBTfuM3dPK7XHUQmptjWJcuw==
 
 global-modules@2.0.0:
   version "2.0.0"
