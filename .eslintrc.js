@@ -85,6 +85,9 @@ module.exports = {
         es2017: true,
         node: true,
       },
+      globals: {
+        globalThis: 'readonly',
+      },
       parserOptions: {
         ecmaVersion: 2019,
       },
