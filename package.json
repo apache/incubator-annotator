@@ -15,14 +15,14 @@
     ]
   },
   "scripts": {
-    "build": "concurrently yarn:build:lib:* yarn:build:misc yarn:build:docs",
-    "build:docs": "typedoc",
+    "build": "concurrently yarn:build:lib:* yarn:build:misc",
     "build:lib": "lerna exec --parallel -- babel -d lib -s inline -x .ts --root-mode upward src",
     "build:lib:cjs": "cross-env BABEL_ENV=cjs yarn build:lib",
     "build:lib:esm": "cross-env BABEL_ENV=esm yarn build:lib --out-file-extension .mjs",
     "build:lib:types": "tsc --build",
     "build:misc": "lerna exec --parallel -- cp ../../DISCLAIMER-WIP ../../LICENSE ../../NOTICE ../../README.md .",
     "clean": "tsc --build --clean && lerna exec -- rimraf DISCLAIMER-WIP LICENSE NOTICE README.md lib && rimraf docs",
+    "docs": "tsc --build && typedoc",
     "lint": "tsc --build && eslint .",
     "prepare": "yarn run build:lib:types && lerna run prepare",
     "prepublishOnly": "yarn run build",
