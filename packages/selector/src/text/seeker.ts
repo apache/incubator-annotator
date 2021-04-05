@@ -27,7 +27,6 @@ const E_END = 'Iterator exhausted before seek ended.';
  * Abstraction to seek (jump) or read to a position inside a ‘file’ consisting of a
  * sequence of data chunks.
  *
- * @remarks
  * This interface is a combination of three interfaces in one: for seeking to a
  * relative position, an absolute position, or a specific chunk. These three are
  * defined separately for clarity and flexibility, but normally used together.
@@ -69,7 +68,7 @@ export interface RelativeSeeker<TData extends Iterable<any> = string> {
   /**
    * Read forward or backward by a number of characters.
    *
-   * @remarks Equal to {@link seekBy}, but returning the characters passed.
+   * Equal to {@link seekBy}, but returning the characters passed.
    *
    * @param length - The number of characters to read. A negative number moves
    * backwards in the file.
@@ -110,7 +109,7 @@ export interface AbsoluteSeeker<TData extends Iterable<any> = string> {
    * Read forward or backward from the current to the given position in the
    * file, returning the characters that have been passed.
    *
-   * @remarks Equal to {@link seekTo}, but returning the characters passed.
+   * Equal to {@link seekTo}, but returning the characters passed.
    *
    * @param target - The position to end up at.
    * @param roundUp - If true, then, after reading to the target position, read
@@ -140,7 +139,6 @@ export interface ChunkSeeker<
   /**
    * The chunk containing the current position.
    *
-   * @remarks
    * When the position falls at the edge between two chunks, `currentChunk` is
    * always the later one (thus {@link offsetInChunk} would be zero). Note that
    * an empty chunk (for which position zero is at both its edges) can
@@ -168,7 +166,7 @@ export interface ChunkSeeker<
   /**
    * Read to the start of a given chunk, or to an offset relative to that.
    *
-   * @remarks Equal to {@link seekToChunk}, but returning the characters passed.
+   * Equal to {@link seekToChunk}, but returning the characters passed.
    *
    * @param chunk - The chunk of the file to move to.
    * @param offset - The offset to move to, relative to the start of `chunk`.
@@ -184,7 +182,6 @@ export interface ChunkSeeker<
  * A TextSeeker is constructed around a {@link Chunker}, to let it be treated as
  * a continuous sequence of characters.
  *
- * @remarks
  * Seeking to a given numeric position will cause a `TextSeeker` to pull chunks
  * from the underlying `Chunker`, counting their lengths until the requested
  * position is reached. `Chunks` are not stored but simply read again when

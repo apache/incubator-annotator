@@ -26,13 +26,12 @@ import { TextSeeker } from './seeker';
 /**
  * Find the range of text corresponding to the given {@link TextPositionSelector}.
  *
- * @remarks
  * This is an abstract implementation of the function’s logic, which expects a
  * generic {@link Chunker} to represent the text, and returns an (async)
  * generator producing a single {@link ChunkRange} to represent the match.
  * (unlike e.g. TextQuoteSelector, it cannot result in multiple matches).
  *
- * See {@link @apache-annotator/dom#createTextPositionSelectorMatcher} for a
+ * See {@link dom.createTextPositionSelectorMatcher} for a
  * wrapper around this implementation which applies it to the text of an HTML
  * DOM.
  *

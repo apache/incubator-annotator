@@ -24,9 +24,8 @@ import { TextNodeChunker, EmptyScopeError } from '../text-node-chunker';
 
 /**
  * Find occurrences in a text matching the given {@link
- * @apache-annotator/selector#TextQuoteSelector}.
+ * TextQuoteSelector}.
  *
- * @remarks
  * This performs an exact search for the selector’s quote (including prefix and
  * suffix) within the text contained in the given scope (a  {@link
  * https://developer.mozilla.org/en-US/docs/Web/API/Range | Range}).
@@ -59,9 +58,9 @@ import { TextNodeChunker, EmptyScopeError } from '../text-node-chunker';
  * //   endOffset: 637, … }
  * ```
  *
- * @param selector - The {@link @apache-annotator/selector#TextQuoteSelector}
+ * @param selector - The {@link TextQuoteSelector}
  * to be anchored
- * @returns a {@link @apache-annotator/selector#Matcher} function that applies
+ * @returns a {@link Matcher} function that applies
  * `selector` to a given {@link https://developer.mozilla.org/en-US/docs/Web/API/Range
  * | Range}
  *

@@ -27,10 +27,9 @@ import { ownerDocument } from '../owner-document';
 import { TextNodeChunker } from '../text-node-chunker';
 
 /**
- * Create a {@link @apache-annotator/selector#TextQuoteSelector} that
+ * Create a {@link TextQuoteSelector} that
  * unambiguously describes the given range.
  *
- * @remarks
  * The selector will contain the *exact* target quote, and in case this quote
  * appears multiple times in the text, sufficient context around the quote will
  * be included in the selector’s *prefix* and *suffix* attributes to

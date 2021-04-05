@@ -30,7 +30,6 @@ export interface Selector {
   /**
    * A Selector can be refined by another Selector.
    *
-   * @remarks
    * See {@link https://www.w3.org/TR/2017/REC-annotation-model-20170223/#refinement-of-selection
    * | §4.2.9 Refinement of Selection} in the Web Annotation Data Model.
    *

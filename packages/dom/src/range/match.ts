@@ -28,7 +28,7 @@ import { cartesian } from './cartesian';
 
 /**
  * Find the range(s) corresponding to the given {@link
- * @apache-annotator/selector#RangeSelector}.
+ * RangeSelector}.
  *
  * As a RangeSelector itself nests two further selectors, one needs to pass a
  * `createMatcher` function that will be used to process those nested selectors.
@@ -45,7 +45,7 @@ import { cartesian } from './cartesian';
  * matches for RangeSelectors)*
  *
  * @example
- * By using a matcher for {@link @apache-annotator/selector#TextQuoteSelector}s, one
+ * By using a matcher for {@link TextQuoteSelector}s, one
  * could create a matcher for text quotes with ellipsis to select a phrase
  * “ipsum … amet,”:
  * ```
@@ -87,7 +87,7 @@ import { cartesian } from './cartesian';
  *
  * @param createMatcher - The function used to process nested selectors.
  * @returns A function that, given a RangeSelector, creates a {@link
- * @apache-annotator/selector#Matcher} function that applies it to a given {@link https://developer.mozilla.org/en-US/docs/Web/API/Range
+ * Matcher} function that applies it to a given {@link https://developer.mozilla.org/en-US/docs/Web/API/Range
  * | Range}
  *
  * @public

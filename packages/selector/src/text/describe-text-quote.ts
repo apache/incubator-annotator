@@ -52,7 +52,6 @@ export interface DescribeTextQuoteOptions {
  * Returns a {@link TextQuoteSelector} that points at the target quote in the
  * given text.
  *
- * @remarks
  * The selector will contain the exact target quote. In case this quote appears
  * multiple times in the text, sufficient context around the quote will be
  * included in the selector’s `prefix` and `suffix` attributes to disambiguate.
@@ -64,7 +63,7 @@ export interface DescribeTextQuoteOptions {
  * generic {@link Chunker} to represent the text, and a {@link ChunkRange} to
  * represent the target.
  *
- * See {@link @apache-annotator/dom#describeTextQuote} for a wrapper around this
+ * See {@link dom.describeTextQuote} for a wrapper around this
  * implementation which applies it to the text of an HTML DOM.
  *
  * @param target - The range of characters that the selector should describe

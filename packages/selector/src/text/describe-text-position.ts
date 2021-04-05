@@ -31,7 +31,7 @@ import { TextSeeker } from './seeker';
  * generic {@link Chunker} to represent the text, and a {@link ChunkRange} to
  * represent the target.
  *
- * See {@link @apache-annotator/dom#describeTextPosition} for a wrapper around
+ * See {@link dom.describeTextPosition} for a wrapper around
  * this implementation which applies it to the text of an HTML DOM.
  *
  * @param target - The range of characters that the selector should describe

@@ -24,7 +24,7 @@ import { ownerDocument } from '../owner-document';
 import { TextNodeChunker } from '../text-node-chunker';
 
 /**
- * Returns a {@link @apache-annotator/selector#TextPositionSelector} that points
+ * Returns a {@link TextPositionSelector} that points
  * at the target text within the given scope.
  *
  * When no scope is given, the position is described relative to the document

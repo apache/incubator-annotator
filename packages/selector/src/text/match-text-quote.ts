@@ -24,7 +24,6 @@ import type { Chunk, Chunker, ChunkRange } from './chunker';
 /**
  * Find occurrences in a text matching the given {@link TextQuoteSelector}.
  *
- * @remarks
  * This performs an exact search the selector’s quote (including prefix and
  * suffix) within the given text.
  *
@@ -35,7 +34,7 @@ import type { Chunk, Chunker, ChunkRange } from './chunker';
  * generic {@link Chunker} to represent the text, and returns an (async)
  * generator of {@link ChunkRange}s to represent the matches.
  *
- * See {@link @apache-annotator/dom#createTextQuoteSelectorMatcher} for a
+ * See {@link dom.createTextQuoteSelectorMatcher} for a
  * wrapper around this implementation which applies it to the text of an HTML
  * DOM.
  *

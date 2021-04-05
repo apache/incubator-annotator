@@ -50,7 +50,6 @@ export interface TextRange extends Range {
  * Normalise a {@link https://developer.mozilla.org/en-US/docs/Web/API/Range |
  * Range} such that ranges spanning the same text become exact equals.
  *
- * @remarks
  * *Note: in this context ‘text’ means any characters, including whitespace.*
 
  * Normalises a range such that both its start and end are text nodes, and that

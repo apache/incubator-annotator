@@ -23,7 +23,6 @@ import { ownerDocument } from './owner-document';
 /**
  * Wrap each text node in a given DOM Range with a `<mark>` or other element.
  *
- * @remarks
  * If the Range start and/or ends within a Text node, that node will be split
  * in order to only wrap the contained part in the mark element.
  *

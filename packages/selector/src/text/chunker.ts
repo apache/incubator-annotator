@@ -21,7 +21,6 @@
 /**
  * Represents a piece of text in any kind of ‘file’.
  *
- * @remarks
  * Its purpose is to enable generic algorithms to deal with text content of any
  * type of ‘file’ that consists of many pieces of text (e.g. a DOM, PDF, …).
  * Each Chunk represents one piece of text ({@link Chunk.data}). An object
@@ -43,10 +42,9 @@ export interface Chunk<TData> {
 /**
  * Test two {@link Chunk}s for equality.
  *
- * @remarks
  * Equality here means that both represent the same piece of text (i.e. at the
  * same position) in the file. It compares using the custom {@link Chunk.equals}
- * method either chunk defines one, and falls back to checking the objects’
+ * method if either chunk defines one, and falls back to checking the objects’
  * identity (i.e. `chunk1 === chunk2`).
  *
  * @public
@@ -60,7 +58,6 @@ export function chunkEquals(chunk1: Chunk<any>, chunk2: Chunk<any>): boolean {
 /**
  * Points at a range of characters between two points inside {@link Chunk}s.
  *
- * @remarks
  * Analogous to the DOM’s ({@link https://developer.mozilla.org/en-US/docs/Web/API/AbstractRange
  * | Abstract}){@link https://developer.mozilla.org/en-US/docs/Web/API/Range |
  * Range}. Each index expresses an offset inside the value of the corresponding
@@ -79,11 +76,10 @@ export interface ChunkRange<TChunk extends Chunk<any>> {
 /**
  * Test two {@link ChunkRange}s for equality.
  *
- * @remarks
  * Equality here means equality of each of their four properties (i.e.
- * {@link ChunkRange.startChunk}, {@link ChunkRange.startIndex},
- * {@link ChunkRange.endChunk}, and {@link ChunkRange.endIndex}).
- * For the `startChunk` and `endChunk`, this function uses the custom
+ * {@link startChunk}, {@link startIndex},
+ * {@link endChunk}, and {@link endIndex}).
+ * For the `startChunk`s and `endChunk`s, this function uses the custom
  * {@link Chunk.equals} method if defined.
  *
  * Note that if the start/end of one range points at the end of a chunk, and the
@@ -111,7 +107,6 @@ export function chunkRangeEquals(
  * Presents the pieces of text contained in some underlying ‘file’ as a sequence
  * of {@link Chunk}s.
  *
- * @remarks
  * Rather than presenting a list of all pieces, the `Chunker` provides methods
  * to walk through the file piece by piece. This permits implementations to read
  * and convert the file to `Chunk`s lazily.
@@ -127,30 +122,28 @@ export interface Chunker<TChunk extends Chunk<any>> {
   /**
    * The chunk currently being pointed at.
    *
-   * @remarks
    * Initially, this should normally be the first chunk in the file.
    */
   readonly currentChunk: TChunk;
 
   /**
-   * Point {@link Chunker.currentChunk} at the chunk following it, and return that chunk.
+   * Point {@link currentChunk} at the chunk following it, and return that chunk.
    * If there are no chunks following it, keep `currentChunk` unchanged and
    * return null.
    */
   nextChunk(): TChunk | null;
 
   /**
-   * Point {@link Chunker.currentChunk} at the chunk preceding it, and return that chunk.
+   * Point {@link currentChunk} at the chunk preceding it, and return that chunk.
    * If there are no chunks preceding it, keep `currentChunk` unchanged and
    * return null.
    */
   previousChunk(): TChunk | null;
 
   /**
-   * Test if a given `chunk` is before the {@link Chunker.currentChunk|current
+   * Test if a given `chunk` is before the {@link currentChunk|current
    * chunk}.
    *
-   * @remarks
    * Returns true if `chunk` is before `this.currentChunk`, false otherwise
    * (i.e. if `chunk` follows it or is the current chunk).
    *

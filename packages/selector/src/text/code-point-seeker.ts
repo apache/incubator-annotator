@@ -24,15 +24,13 @@ import type { Seeker } from './seeker';
 /**
  * Seeks through text counting Unicode *code points* instead of *code units*.
  *
- * @remarks
  * Javascript characters correspond to 16 bits *code units*, hence two such
  * ‘characters’ might together constitute a single Unicode character (i.e. a
  * *code point*). The {@link CodePointSeeker} allows to ignore this
  * variable-length encoding, by counting code points instead.
  *
  * It is made to wrap a {@link Seeker} that counts code units (presumably a
- * {@link TextSeeker}), which must be passed to its {@link this:constructor |
- * constructor}.
+ * {@link TextSeeker}), which must be passed to its {@link constructor}.
  *
  * When reading from the `CodePointSeeker`, the returned values is not a string
  * but an array of strings, each containing one code point (thus each having a

@@ -24,9 +24,8 @@ import { TextNodeChunker } from '../text-node-chunker';
 
 /**
  * Find the range of text corresponding to the given {@link
- * @apache-annotator/selector#TextPositionSelector}.
+ * TextPositionSelector}.
  *
- * @remarks
  * The start and end positions are measured relative to the first text character
  * in the given scope.
  *
@@ -34,7 +33,7 @@ import { TextNodeChunker } from '../text-node-chunker';
  *
  * Its end result is an (async) generator producing a single {@link https://developer.mozilla.org/en-US/docs/Web/API/Range
  * | Range} to represent the match. (unlike a {@link
- * @apache-annotator/selector#TextQuoteSelector}, a TextPositionSelector cannot have
+ * TextQuoteSelector}, a TextPositionSelector cannot have
  * multiple matches).
  *
  * @example
@@ -52,9 +51,9 @@ import { TextNodeChunker } from '../text-node-chunker';
  * //   endOffset: 98, … }
  * ```
  *
- * @param selector - The {@link @apache-annotator/selector#TextPositionSelector}
+ * @param selector - The {@link TextPositionSelector}
  * to be anchored
- * @returns A {@link @apache-annotator/selector#Matcher} function that applies
+ * @returns A {@link Matcher} function that applies
  * `selector` to a given {@link https://developer.mozilla.org/en-US/docs/Web/API/Range
  * | Range}
  *

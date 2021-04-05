@@ -32,7 +32,6 @@ export * from './text';
 /**
  * Wrap a matcher creation function so that it supports refinement of selection.
  *
- * @remarks
  * See {@link https://www.w3.org/TR/2017/REC-annotation-model-20170223/#refinement-of-selection
  * | §4.2.9 Refinement of Selection} in the Web Annotation Data Model.
  *

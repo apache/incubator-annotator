@@ -23,9 +23,8 @@ import { ownerDocument } from './owner-document';
 
 /**
  * Find the elements corresponding to the given {@link
- * @apache-annotator/selector#CssSelector}.
+ * CssSelector}.
  *
- * @remarks
  * The given CssSelector returns all elements within `scope` that it matches.
  * However, the selector is evaluated relative to the Document as a whole.
  * *(XXX is this intentional, a mistake, or compromise?)*
@@ -39,11 +38,11 @@ import { ownerDocument } from './owner-document';
  * Each matching element is returned as a {@link https://developer.mozilla.org/en-US/docs/Web/API/Range
  * | Range} surrounding that element. This in order to make its output reusable
  * as the scope for any subsequents selectors that {@link
- * @apache-annotator/selector#Selector.refinedBy | refine} this CssSelector.
+ * Selector.refinedBy | refine} this CssSelector.
  *
- * @param selector - The {@link @apache-annotator/selector#CssSelector} to be
+ * @param selector - The {@link CssSelector} to be
  * anchored
- * @returns A {@link @apache-annotator/selector#Matcher} function that applies
+ * @returns A {@link Matcher} function that applies
  * `selector` to a given {@link https://developer.mozilla.org/en-US/docs/Web/API/Range
  * | Range}
  *
