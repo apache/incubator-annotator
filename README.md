@@ -30,14 +30,10 @@ and resolve Web Annotation Selectors.
 
 ## Getting Involved
 
-* Join the [mailing list]. Send an email to
+* Join the [mailing list](http://mail-archives.apache.org/mod_mbox/incubator-annotator-dev/). Send an email to
   dev-subscribe@apache-annotator.apache.org to subscribe.
-* Browse the [issue tracker] and file new issues if you encounter problems.
-* Read or contribute to the [wiki].
-
-[mailing list]: http://mail-archives.apache.org/mod_mbox/incubator-annotator-dev/
-[issue tracker](https://github.com/apache/incubator-annotator/issues)
-[wiki](https://github.com/apache/incubator-annotator/wiki)
+* Browse the [issue tracker](https://github.com/apache/incubator-annotator/issues) and file new issues if you encounter problems.
+* Read or contribute to the [wiki](https://github.com/apache/incubator-annotator/wiki).
 
 ### Requirements
 
