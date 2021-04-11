@@ -1,2 +1,3 @@
-src
-test
+*.d.ts.map
+/src
+/test
