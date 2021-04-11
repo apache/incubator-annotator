@@ -10,11 +10,9 @@
   },
   "license": "Apache-2.0",
   "author": "Apache Software Foundation",
+  "type": "module",
   "exports": {
-    "./*": {
-      "import": "./lib/*.mjs",
-      "require": "./lib/*.js"
-    }
+    "./*": "./lib/*.js"
   },
   "dependencies": {
     "@apache-annotator/dom": "^0.1.0",

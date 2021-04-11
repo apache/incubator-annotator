@@ -25,7 +25,6 @@ module.exports = (api) => {
   const ENV = api.env();
   const DEV = ENV === 'development';
   const TEST = ENV === 'test';
-  const CJS = ENV === 'cjs';
 
   // Options for the @babel/env preset.
   const envOptions = {
@@ -33,7 +32,7 @@ module.exports = (api) => {
     // Note: This setting may become the default in Babel 8.
     bugfixes: true,
     // Transform module syntax if necessary.
-    modules: CJS || TEST ? 'commonjs' : false,
+    modules: TEST ? 'commonjs' : false,
   };
 
   // Options for the @babel/typescript preset.
@@ -45,7 +44,7 @@ module.exports = (api) => {
   };
 
   const addImportExtensionOptions = {
-    extension: DEV || TEST ? 'ts' : CJS ? 'js' : 'mjs',
+    extension: DEV || TEST ? 'ts' : 'js',
   };
 
   // Options for the module-resolver plugin.
@@ -67,7 +66,7 @@ module.exports = (api) => {
     // Use corejs version 3.
     corejs: { version: 3, proposals: true },
     // Use helpers formatted for the target environment.
-    useESModules: !CJS && !TEST,
+    useESModules: !TEST,
   };
 
   return {

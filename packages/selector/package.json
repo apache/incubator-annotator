@@ -10,12 +10,9 @@
   },
   "license": "Apache-2.0",
   "author": "Apache Software Foundation",
-  "exports": {
-    "import": "./lib/index.mjs",
-    "require": "./lib/index.js"
-  },
+  "type": "module",
+  "exports": "./lib/index.js",
   "main": "./lib/index.js",
-  "module": "./lib/index.mjs",
   "dependencies": {
     "@babel/runtime-corejs3": "^7.13.10"
   },
