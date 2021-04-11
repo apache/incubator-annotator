@@ -139,7 +139,7 @@ module.exports = {
       },
     },
     {
-      files: ['web/demo/**/*.js'],
+      files: ['web/**/*.js'],
       env: {
         browser: true,
         es2020: true,

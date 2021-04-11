@@ -22,16 +22,86 @@ under the License.
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Apache Annotator (incubating)</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Apache Annotator (incubating) demo</title>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    a[data-run-example]:before {
+      content: '📌 ';
+    }
+
+    #source, #target {
+      padding: 1em;
+      border: 1px solid lightgrey;
+      background: white;
+    }
+
+    #info {
+      height: 15em;
+      overflow: scroll;
+      background: white;
+      color: #666666;
+      resize: vertical;
+    }
+
+    .columns {
+      background: aliceblue;
+    }
+  </style>
+  <script defer src="main.js"></script>
 </head>
 <body>
+  <header>
+    <h1>Apache Annotator <small>(incubating)</small></h1>
+  </header>
+  <nav>
+    <a href="../">← Back</a>
+  </nav>
   <main>
-    <h1>Welcome to Apache Annotator (incubating)</h1>
-    <h2>Getting Started</h2>
+    <h1>Selector Demonstration</h1>
+
+    <p>This page demonstrates Web Annotation
+      <a href="https://www.w3.org/TR/2017/REC-annotation-model-20170223/#selectors" target="_blank">Selectors</a>,
+      standardised JSON objects that describe a selection inside a document with sufficient information to find it back.</p>
+      <p>This demo’s source code can be found <a href="https://gitbox.apache.org/repos/asf?p=incubator-annotator.git;a=tree;hb=HEAD;f=web/demo">in the project repo</a> (also mirrored <a href="https://github.com/apache/incubator-annotator/tree/master/web">on GitHub</a>)</p>
+
+    <div class="columns full-width">
+      <div class="column">
+        <h2>Select text here</h2>
+        <p id="source" contenteditable>Hello, <em>annotated world!</em> 🙂 <b>To annotate, or <em>not</em> to annotate</b>, that is the question.</p>
+        <p>Try selecting some text in this paragraph above.
+          Upon a change of selection, a
+          <a rel="external" href="https://www.w3.org/TR/2017/REC-annotation-model-20170223/#text-quote-selector" target="_blank">TextQuoteSelector</a>
+          will be created, that describes what was selected.</p>
+          <form id="form">
+            The selector can work either
+            <br/>
+            <input type="radio" name="describeMode" value="TextQuote" id="describeModeTextQuote" checked>
+            <label for="describeModeTextQuote">by quoting the selected text</label>; or
+            </br>
+            <input type="radio" name="describeMode" value="TextPosition" id="describeModeTextPosition">
+            <label for="describeModeTextPosition">by counting the selected characters’ position in the text</label>.
+          </form>
+      </div>
+      <div class="column">
+        <h2>Text is found here</h2>
+        <p id="target" contenteditable><em>Hello, annotated</em> world! 🙂 To annotate, or not to annotate, <b><em>that</em> is the question.</b></p>
+        <p>The selector is ‘anchored’ here: the segment it describes is found and highlighted.</p>
+      </div>
+      <div class="column" style="min-width: 20em;">
+        <h2>The selector as JSON:</h2>
+        <pre id="info"></pre>
+      </div>
+    </div>
+    <p>Here are other selectors you can anchor in the text above:</p>
     <ul>
-      <li>Visit the <a href="demo/index.html">demonstration page</a>.
-      <li>Run the <a href="test/index.html">test suite</a>.
+      <li><a href="#" data-run-example="0">An ambiguous selector (i.e. with multiple matches)</a>
+      <li>
+        <a href="#" data-run-example="1">RangeSelector</a>
+        (<a href="https://www.w3.org/TR/2017/REC-annotation-model-20170223/#range-selector" target="_blank">spec</a>)
+      <li>
+        <a href="#" data-run-example="2">Refining a selector using another selector</a>
+        (<a href="https://www.w3.org/TR/2017/REC-annotation-model-20170223/#refinement-of-selection" target="blank">spec</a>)
+      <li><a href="#" data-run-example="3">Any deeper nesting of the above</a>
     </ul>
   </main>
 </body>

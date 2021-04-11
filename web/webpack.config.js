@@ -18,24 +18,9 @@
  * under the License.
  */
 
-/* eslint-env node */
-
-const path = require('path');
-
 module.exports = {
-  context: path.resolve(__dirname),
-  entry: {
-    index: ['./index.html', './style.css'],
-    demo: ['./demo/index.html', './demo/index.js'],
-    test: [
-      './test/index.html',
-      'mocha-loader!multi-entry-loader?include=./packages/*/test/**/*.test.[jt]s!',
-    ],
-  },
-  resolve: {
-    extensions: ['.ts', '.js'],
-  },
-  devtool: 'inline-source-map',
+  context: __dirname,
+  entry: './index.js',
   module: {
     rules: [
       {
@@ -43,24 +28,9 @@ module.exports = {
         exclude: /node_modules/,
         use: 'babel-loader',
       },
-      {
-        exclude: /\.[jt]s$/,
-        use: [
-          {
-            loader: 'file-loader',
-            options: {
-              name: '[path][name].[ext]',
-            },
-          },
-        ],
-      },
     ],
   },
-  output: {
-    path: path.resolve(__dirname, 'dist'),
-    filename: '[name]/index.js',
-  },
   devServer: {
-    contentBase: false,
+    contentBase: __dirname,
   },
 };
