@@ -23,4 +23,9 @@ module.exports = {
   ignore: ['node_modules'],
   require: ['./babel-register.js', 'global-jsdom/register'],
   timeout: 5000,
+  watchFiles: [
+    './test/**/*.ts',
+    './packages/*/src/**/*.ts',
+    './packages/*/test/**/*.ts',
+  ],
 };
