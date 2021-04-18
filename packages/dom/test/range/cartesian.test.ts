@@ -56,4 +56,34 @@ describe('cartesian', () => {
 
     assert.sameDeepMembers(actual, expected, 'yields the expected items');
   });
+
+  it.only('re-raises exceptions and closes iterators', async () => {
+    let didClose = false;
+    const error = new Error();
+
+
+    async function* throws() {
+      yield 1;
+      throw error;
+    }
+
+    async function* works() {
+      try {
+        yield 2;
+        yield 3;
+      } finally {
+        didClose = true;
+      }
+    }
+
+    try {
+      // eslint-disable-next-line
+      const cart = cartesian(throws(), works());
+      await cart.next();
+      await cart.next();
+    } catch (e) {
+      assert.strictEqual(error, e, 're-raises an error from an iterable');
+      assert.isTrue(didClose, 'closes the iterators');
+    }
+  });
 });

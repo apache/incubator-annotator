@@ -38,46 +38,51 @@ export async function* cartesian<T>(
     return generator();
   });
 
-  // Track the number of non-exhausted iterators.
-  let active = iterators.length;
+  try {
+    // Track the number of non-exhausted iterators.
+    let active = iterators.length;
 
-  // Track all the values of each iterator in a log.
-  const logs = iterators.map(() => []) as T[][];
+    // Track all the values of each iterator in a log.
+    const logs = iterators.map(() => []) as T[][];
 
-  // Track the promise of the next value of each iterator.
-  const nexts = iterators.map((it) => it.next());
+    // Track the promise of the next value of each iterator.
+    const nexts = iterators.map((it) => it.next());
 
-  // Iterate the values of all the iterators in parallel and yield tuples from
-  // the partial product of each new value and the existing logs of the other
-  // iterators.
-  while (active) {
-    // Wait for the next result.
-    const result = await Promise.race(nexts);
-    const { index } = result.value;
+    // Iterate the values of all the iterators in parallel and yield tuples from
+    // the partial product of each new value and the existing logs of the other
+    // iterators.
+    while (active) {
+      // Wait for the next result.
+      const result = await Promise.race(nexts);
+      const { index } = result.value;
 
-    // If the iterator has exhausted all the values, set the promise
-    // of its next value to never resolve.
-    if (result.done) {
-      active--;
-      nexts[index] = new Promise(() => undefined);
-      continue;
+      // If the iterator has exhausted all the values, set the promise
+      // of its next value to never resolve.
+      if (result.done) {
+        active--;
+        nexts[index] = new Promise(() => undefined);
+        continue;
+      }
+
+      // Append the new value to the log.
+      const { value } = result.value;
+      logs[index].push(value);
+
+      // Record the promise of the next value.
+      nexts[index] = iterators[index].next();
+
+      // Create a scratch input for computing a partial product.
+      const scratch = [...logs];
+      scratch[index] = [value];
+
+      // Synchronously compute and yield tuples of the partial product.
+      yield* scratch.reduce(
+        (acc, next) => acc.flatMap((v) => next.map((w) => [...v, w])),
+        [[]] as T[][],
+      );
     }
-
-    // Append the new value to the log.
-    const { value } = result.value;
-    logs[index].push(value);
-
-    // Record the promise of the next value.
-    nexts[index] = iterators[index].next();
-
-    // Create a scratch input for computing a partial product.
-    const scratch = [...logs];
-    scratch[index] = [value];
-
-    // Synchronously compute and yield tuples of the partial product.
-    yield* scratch.reduce(
-      (acc, next) => acc.flatMap((v) => next.map((w) => [...v, w])),
-      [[]] as T[][],
-    );
+  } finally {
+    const closeAll = iterators.map((it, index) => it.return({ index }));
+    await Promise.all(closeAll);
   }
 }
