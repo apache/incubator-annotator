@@ -60,6 +60,7 @@
     "eslint-plugin-import": "^2.22.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^3.1.4",
+    "file-loader": "^6.0.0",
     "global-jsdom": "^8.0.0",
     "husky": "^4.2.1",
     "jsdom": "^16.2.2",

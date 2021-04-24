@@ -18,9 +18,11 @@
  * under the License.
  */
 
+const path = require('path');
+
 module.exports = {
   context: __dirname,
-  entry: './index.js',
+  entry: ['./index.html', './index.js', './style.css'],
   module: {
     rules: [
       {
@@ -28,9 +30,24 @@ module.exports = {
         exclude: /node_modules/,
         use: 'babel-loader',
       },
+      {
+        exclude: /\.[jt]s$/,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              name: '[path][name].[ext]',
+            },
+          },
+        ],
+      },
     ],
   },
+  output: {
+    // Note this directory is imported by the annotator website
+    path: path.resolve(__dirname, 'dist'),
+  },
   devServer: {
-    contentBase: __dirname,
+    contentBase: false,
   },
 };
