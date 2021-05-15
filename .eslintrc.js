@@ -18,15 +18,6 @@
  * under the License.
  */
 
-const babel = require('@babel/core');
-
-// Use the root babel.config.js for module resolution.
-// Relevant issue: tleunen/eslint-import-resolver-babel-module#89
-const babelConfig = babel.loadPartialConfig({ cwd: __dirname });
-const babelModuleResolver = babelConfig.options.plugins.find(
-  (item) => item.file.request === 'module-resolver',
-);
-
 module.exports = {
   root: true,
   extends: ['eslint:recommended', 'plugin:import/recommended', 'prettier'],
@@ -67,7 +58,11 @@ module.exports = {
   settings: {
     'import/internal-regex': '^@apache-annotator/',
     'import/resolver': {
-      'babel-module': babelModuleResolver.options,
+      'babel-module': {
+        babelOptions: {
+          root: __dirname,
+        },
+      },
     },
   },
   overrides: [
