@@ -61,7 +61,6 @@ describe('cartesian', () => {
     let didClose = false;
     const error = new Error();
 
-
     async function* throws() {
       yield 1;
       throw error;
