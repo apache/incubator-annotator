@@ -83,11 +83,13 @@ const EXAMPLE_SELECTORS = [
   },
 ];
 
-const cleanupFunctions = [];
+let moduleState = {
+  cleanupFunctions: [],
+};
 
 function cleanup() {
   let removeHighlight;
-  while ((removeHighlight = cleanupFunctions.shift())) {
+  while ((removeHighlight = moduleState.cleanupFunctions.shift())) {
     removeHighlight();
   }
   target.normalize();
@@ -121,7 +123,7 @@ async function anchor(selector) {
 
   for (const range of ranges) {
     const removeHighlight = highlightRange(range);
-    cleanupFunctions.push(removeHighlight);
+    moduleState.cleanupFunctions.push(removeHighlight);
   }
 
   info.innerText += JSON.stringify(selector, null, 2) + '\n\n';
@@ -152,14 +154,26 @@ function onSelectorExampleClick(event) {
   event.preventDefault();
 }
 
-document.addEventListener('selectionchange', onSelectionChange);
-form.addEventListener('change', onSelectionChange);
-document.addEventListener('click', onSelectorExampleClick);
+function addEventListeners() {
+  document.addEventListener('selectionchange', onSelectionChange);
+  form.addEventListener('change', onSelectionChange);
+  document.addEventListener('click', onSelectorExampleClick);
+}
+addEventListeners();
+
+function removeEventListeners() {
+  document.removeEventListener('selectionchange', onSelectionChange);
+  form.removeEventListener('change', onSelectionChange);
+  document.removeEventListener('click', onSelectorExampleClick);
+}
 
 if (module.hot) {
   module.hot.accept();
-  module.hot.dispose(() => {
-    document.removeEventListener('selectionchange', onSelectionChange);
-    document.removeEventListener('click', onSelectorExampleClick);
+  module.hot.dispose((data) => {
+    removeEventListeners();
+    data.state = moduleState;
   });
+  if (module.hot.data?.state) {
+    moduleState = module.hot.data.state;
+  }
 }
