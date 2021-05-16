@@ -18,4 +18,16 @@
  * under the License.
  */
 
+/**
+ * This module provides types and generic functions for handling {@link https://www.w3.org/TR/2017/REC-annotation-model-20170223/#selectors
+ * | Selector}s.
+ *
+ * Annotation tool developers should not need most of the functions contained
+ * in this module, but would instead mainly use the module made for the specific
+ * context (document type) they are dealing with. See {@link dom}, currently the
+ * only such module.
+ *
+ * @module
+ */
+
 export * from '@apache-annotator/selector';
