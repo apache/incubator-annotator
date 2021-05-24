@@ -7463,6 +7463,11 @@ opn@^5.5.0:
   dependencies:
     is-wsl "^1.1.0"
 
+optimal-select@^4.0.1:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/optimal-select/-/optimal-select-4.0.1.tgz#47de7da7a39bb0949fd9af54c6f03571548f04c9"
+  integrity sha1-R959p6ObsJSf2a9UxvA1cVSPBMk=
+
 optionator@^0.8.1:
   version "0.8.3"
   resolved "https://registry.yarnpkg.com/optionator/-/optionator-0.8.3.tgz#84fa1d036fe9d3c7e21d99884b601167ec8fb495"

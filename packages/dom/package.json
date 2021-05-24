@@ -14,7 +14,8 @@
   "exports": "./lib/index.js",
   "main": "./lib/index.js",
   "dependencies": {
-    "@babel/runtime-corejs3": "^7.13.10"
+    "@babel/runtime-corejs3": "^7.13.10",
+    "optimal-select": "^4.0.1"
   },
   "devDependencies": {
     "@apache-annotator/selector": "^0.1.0"

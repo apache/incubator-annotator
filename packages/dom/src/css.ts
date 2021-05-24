@@ -18,6 +18,7 @@
  * under the License.
  */
 
+import optimalSelect from 'optimal-select';
 import type { CssSelector, Matcher } from '@apache-annotator/selector';
 import { ownerDocument } from './owner-document';
 
@@ -32,18 +33,25 @@ import { ownerDocument } from './owner-document';
  * The function is curried, taking first the selector and then the scope.
  *
  * As there may be multiple matches for a given selector, the matcher will
- * return an (async) generator that produces each match in the order they are
- * found in the text.
+ * return an (async) iterable that produces each match in the order they are
+ * found in the document.
+ *
+ * Note that the Web Annotation specification does not mention whether an
+ * ‘ambiguous’ CssSelector should indeed match all elements that match the
+ * selector value, or perhaps only the first. This implementation returns all
+ * matches to give users the freedom to follow either interpretation. This is
+ * also in line with more clearly defined behaviour of the TextQuoteSelector:
+ *
+ * > “If […] the user agent discovers multiple matching text sequences, then the
+ * > selection SHOULD be treated as matching all of the matches.”
  *
  * Each matching element is returned as a {@link https://developer.mozilla.org/en-US/docs/Web/API/Range
  * | Range} surrounding that element. This in order to make its output reusable
  * as the scope for any subsequents selectors that {@link
  * Selector.refinedBy | refine} this CssSelector.
  *
- * @param selector - The {@link CssSelector} to be
- * anchored
- * @returns A {@link Matcher} function that applies
- * `selector` to a given {@link https://developer.mozilla.org/en-US/docs/Web/API/Range
+ * @param selector - The {@link CssSelector} to be anchored
+ * @returns A {@link Matcher} function that applies `selector` to a given {@link https://developer.mozilla.org/en-US/docs/Web/API/Range
  * | Range}
  *
  * @public
@@ -64,5 +72,16 @@ export function createCssSelectorMatcher(
         yield range;
       }
     }
+  };
+}
+
+export async function describeCss(
+  element: HTMLElement,
+  scope?: HTMLElement,
+): Promise<CssSelector> {
+  const selector = optimalSelect(element, { root: scope ?? element.ownerDocument.body });
+  return {
+    type: 'CssSelector',
+    value: selector,
   };
 }
