@@ -57,13 +57,15 @@ import { cartesian } from './cartesian';
  *   },
  *   endSelector: {
  *     type: 'TextQuoteSelector',
- *     // Because the end of a RangeSelector is *exclusive*, we’ll present the
- *     // latter part of the quote as the *prefix* so it will part of the match.
+ *     // Because the end of a RangeSelector is *exclusive*, we will present the
+ *     // latter part of the quote as the *prefix* so it will be part of the
+ *     // match.
  *     exact: '',
  *     prefix: ' amet,',
  *   }
- * }}
- * const createRangeSelectorMatcher = makeCreateRangeSelectorMatcher(createTextQuoteMatcher);
+ * };
+ * const createRangeSelectorMatcher =
+ *   makeCreateRangeSelectorMatcher(createTextQuoteMatcher);
  * const match = createRangeSelectorMatcher(selector)(document.body);
  * console.log(match)
  * // ⇒ Range { startContainer: #text, startOffset: 6, endContainer: #text,
