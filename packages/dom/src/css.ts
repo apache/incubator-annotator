@@ -21,6 +21,7 @@
 import optimalSelect from 'optimal-select';
 import type { CssSelector, Matcher } from '@apache-annotator/selector';
 import { ownerDocument } from './owner-document';
+import { toRange } from './range-node-conversion';
 
 /**
  * Find the elements corresponding to the given {@link
@@ -45,16 +46,17 @@ import { ownerDocument } from './owner-document';
  * > “If […] the user agent discovers multiple matching text sequences, then the
  * > selection SHOULD be treated as matching all of the matches.”
  *
- * @param selector - The {@link CssSelector} to be anchored
- * @returns A {@link Matcher} function that applies `selector` to a given {@link https://developer.mozilla.org/en-US/docs/Web/API/Range
- * | Range}
+ * @param selector - The {@link CssSelector} to be anchored.
+ * @returns A {@link Matcher} function that applies `selector` to a given
+ * `scope`.
  *
  * @public
  */
 export function createCssSelectorMatcher(
   selector: CssSelector,
-): Matcher<Range, Element> {
+): Matcher<Node | Range, Element> {
   return async function* matchAll(scope) {
+    scope = toRange(scope);
     const document = ownerDocument(scope);
     for (const element of document.querySelectorAll(selector.value)) {
       const range = document.createRange();

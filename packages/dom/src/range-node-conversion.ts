@@ -18,17 +18,26 @@
  * under the License.
  */
 
+import { ownerDocument } from "./owner-document";
+
 /**
- * Get the ownerDocument for either a range or a node.
+ * Returns a range that exactly selects the contents of the given node.
  *
- * @param nodeOrRange the node or range for which to get the owner document.
+ * This function is idempotent: If the given argument is already a range, it
+ * simply returns that range.
+ *
+ * @param nodeOrRange The node/range to convert to a range if it is not already
+ * a range.
  */
-export function ownerDocument(nodeOrRange: Node | Range): Document {
-  const node = isRange(nodeOrRange)
-    ? nodeOrRange.startContainer
-    : nodeOrRange;
-  // node.ownerDocument is null iff node is itself a Document.
-  return node.ownerDocument ?? (node as Document);
+export function toRange(nodeOrRange: Node | Range): Range {
+  if (isRange(nodeOrRange)) {
+    return nodeOrRange;
+  } else {
+    const node = nodeOrRange;
+    const range = ownerDocument(node).createRange();
+    range.selectNodeContents(node);
+    return range;
+  }
 }
 
 function isRange(nodeOrRange: Node | Range): nodeOrRange is Range {
