@@ -77,9 +77,9 @@ export function createCssSelectorMatcher(
 
 export async function describeCss(
   element: HTMLElement,
-  scope?: HTMLElement,
+  scope: Node = element.ownerDocument,
 ): Promise<CssSelector> {
-  const selector = optimalSelect(element, { root: scope ?? element.ownerDocument.body });
+  const selector = optimalSelect(element, { root: scope });
   return {
     type: 'CssSelector',
     value: selector,
