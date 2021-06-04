@@ -57,7 +57,7 @@ describe('cartesian', () => {
     assert.sameDeepMembers(actual, expected, 'yields the expected items');
   });
 
-  it.only('re-raises exceptions and closes iterators', async () => {
+  it('re-raises exceptions and closes iterators', async () => {
     let didClose = false;
     const error = new Error();
 
