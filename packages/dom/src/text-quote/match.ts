@@ -44,10 +44,7 @@ import { TextNodeChunker, EmptyScopeError } from '../text-node-chunker';
  * ```
  * // Find the word ‘banana’.
  * const selector = { type: 'TextQuoteSelector', exact: 'banana' };
- *
- * // Search in the document body.
- * const scope = document.createRange();
- * scope.selectNodeContents(document.body);
+ * const scope = document.body;
  *
  * // Read all matches.
  * const matches = textQuoteSelectorMatcher(selector)(scope);
@@ -58,17 +55,15 @@ import { TextNodeChunker, EmptyScopeError } from '../text-node-chunker';
  * //   endOffset: 637, … }
  * ```
  *
- * @param selector - The {@link TextQuoteSelector}
- * to be anchored
- * @returns a {@link Matcher} function that applies
- * `selector` to a given {@link https://developer.mozilla.org/en-US/docs/Web/API/Range
- * | Range}
+ * @param selector - The {@link TextQuoteSelector} to be anchored.
+ * @returns A {@link Matcher} function that applies `selector` within a given
+ * `scope`.
  *
  * @public
  */
 export function createTextQuoteSelectorMatcher(
   selector: TextQuoteSelector,
-): Matcher<Range, Range> {
+): Matcher<Node | Range, Range> {
   const abstractMatcher = abstractTextQuoteSelectorMatcher(selector);
 
   return async function* matchAll(scope) {

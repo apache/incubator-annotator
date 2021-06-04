@@ -21,6 +21,7 @@
 import type { TextPositionSelector } from '@apache-annotator/selector';
 import { describeTextPosition as abstractDescribeTextPosition } from '@apache-annotator/selector';
 import { ownerDocument } from '../owner-document';
+import { toRange } from '../range-node-conversion';
 import { TextNodeChunker } from '../text-node-chunker';
 
 /**
@@ -45,32 +46,24 @@ import { TextNodeChunker } from '../text-node-chunker';
  * // }
  * ```
  *
- * @param range - The range of characters that the selector should describe
- * @param maybeScope - A {@link https://developer.mozilla.org/en-US/docs/Web/API/Range
- * | Range} that serves as the ‘document’ for purposes of finding occurrences
- * and determining prefix and suffix. Defaults to span the full Document
- * containing the range.
+ * @param range - The {@link https://developer.mozilla.org/en-US/docs/Web/API/Range
+ * | Range} whose text content will be described.
+ * @param scope - A Node or Range that serves as the ‘document’ for purposes of
+ * finding occurrences and determining prefix and suffix. Defaults to span the
+ * full Document that contains the range.
  * @returns The selector describing `range` within `scope`.
  *
  * @public
  */
 export async function describeTextPosition(
   range: Range,
-  maybeScope?: Range,
+  scope?: Node | Range,
 ): Promise<TextPositionSelector> {
-  // Default to search in the whole document.
-  let scope: Range;
-  if (maybeScope !== undefined) {
-    scope = maybeScope;
-  } else {
-    const document = ownerDocument(range);
-    scope = document.createRange();
-    scope.selectNodeContents(document);
-  }
+  scope = toRange(scope ?? ownerDocument(range))
 
   const textChunks = new TextNodeChunker(scope);
   if (textChunks.currentChunk === null)
-    throw new RangeError('Range does not contain any Text nodes.');
+    throw new RangeError('Scope does not contain any Text nodes.');
 
   return await abstractDescribeTextPosition(
     textChunks.rangeToChunkRange(range),

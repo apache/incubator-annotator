@@ -39,29 +39,22 @@ import { TextNodeChunker } from '../text-node-chunker';
  * @example
  * ```
  * const selector = { type: 'TextPositionSelector', start: 702, end: 736 };
- *
- * // Search in the whole document.
- * const scope = document.createRange();
- * scope.selectNodeContents(document);
- *
+ * const scope = document.body;
  * const matches = textQuoteSelectorMatcher(selector)(scope);
  * const match = (await matches.next()).value;
- *
  * // ⇒ Range { startContainer: #text, startOffset: 64, endContainer: #text,
  * //   endOffset: 98, … }
  * ```
  *
- * @param selector - The {@link TextPositionSelector}
- * to be anchored
- * @returns A {@link Matcher} function that applies
- * `selector` to a given {@link https://developer.mozilla.org/en-US/docs/Web/API/Range
- * | Range}
+ * @param selector - The {@link TextPositionSelector} to be anchored.
+ * @returns A {@link Matcher} function that applies `selector` within a given
+ * `scope`.
  *
  * @public
  */
 export function createTextPositionSelectorMatcher(
   selector: TextPositionSelector,
-): Matcher<Range, Range> {
+): Matcher<Node | Range, Range> {
   const abstractMatcher = abstractTextPositionSelectorMatcher(selector);
 
   return async function* matchAll(scope) {
