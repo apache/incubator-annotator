@@ -24,8 +24,8 @@ import { ownerDocument } from '../owner-document';
 import { TextNodeChunker } from '../text-node-chunker';
 
 /**
- * Returns a {@link TextPositionSelector} that points
- * at the target text within the given scope.
+ * Returns a {@link TextPositionSelector} that points at the target text within
+ * the given scope.
  *
  * When no scope is given, the position is described relative to the document
  * as a whole. Note this means all the characters in all Text nodes are counted
@@ -50,7 +50,7 @@ import { TextNodeChunker } from '../text-node-chunker';
  * | Range} that serves as the ‘document’ for purposes of finding occurrences
  * and determining prefix and suffix. Defaults to span the full Document
  * containing the range.
- * @returns The selector describing the `range` relative to `scope`
+ * @returns The selector describing `range` within `scope`.
  *
  * @public
  */

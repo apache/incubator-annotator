@@ -75,6 +75,27 @@ export function createCssSelectorMatcher(
   };
 }
 
+/**
+ * Returns a {@link CssSelector} that unambiguously describes the given
+ * element, within the given scope.
+ *
+ * @example
+ * ```
+ * const target = document.getElementById('targetelement').firstElementChild;
+ * const selector = await describeCss(target);
+ * console.log(selector);
+ * // {
+ * //   type: 'CssSelector',
+ * //   value: '#targetelement > :nth-child(1)'
+ * // }
+ * ```
+ *
+ * @param element - The element that the selector should describe.
+ * @param scope - The node that serves as the ‘document’ for purposes of finding
+ * a unique selector. Defaults to span the full Document that contains the
+ * `element`.
+ * @returns The selector unambiguously describing `element` within `scope`.
+ */
 export async function describeCss(
   element: HTMLElement,
   scope: Node = element.ownerDocument,

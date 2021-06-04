@@ -27,8 +27,8 @@ import { ownerDocument } from '../owner-document';
 import { TextNodeChunker } from '../text-node-chunker';
 
 /**
- * Create a {@link TextQuoteSelector} that
- * unambiguously describes the given range.
+ * Returns a {@link TextQuoteSelector} that unambiguously describes the given
+ * range of text, within the given scope.
  *
  * The selector will contain the *exact* target quote, and in case this quote
  * appears multiple times in the text, sufficient context around the quote will
@@ -57,7 +57,7 @@ import { TextNodeChunker } from '../text-node-chunker';
  * and determining prefix and suffix. Defaults to span the full Document
  * containing the range.
  * @param options - Options to fine-tune the function’s behaviour.
- * @returns The selector unambiguously describing the `range` in `scope`.
+ * @returns The selector unambiguously describing `range` within `scope`.
  *
  * @public
  */
