@@ -54,9 +54,6 @@ async function testMatcher(
   assert.equal(matches.length, expected.length, 'Unexpected number of matches');
   matches.forEach((match, i) => {
     const expectedElement = evaluateXPath(doc, expected[i]);
-    // The match should be a Range that exactly contains the expected element.
-    assert.equal(match.startContainer.childNodes[match.startOffset], expectedElement);
-    assert.equal(match.endContainer, match.startContainer);
-    assert.equal(match.endOffset, match.startOffset + 1);
+    assert.equal(match, expectedElement);
   });
 }

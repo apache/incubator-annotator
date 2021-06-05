@@ -21,6 +21,7 @@
 import type { Chunk, Chunker, ChunkRange } from '@apache-annotator/selector';
 import { normalizeRange } from './normalize-range';
 import { ownerDocument } from './owner-document';
+import { toRange } from './to-range';
 
 export interface PartialTextNode extends Chunk<string> {
   readonly node: Text;
@@ -44,6 +45,7 @@ export class OutOfScopeError extends TypeError {
 }
 
 export class TextNodeChunker implements Chunker<PartialTextNode> {
+  private scope: Range;
   private iter: NodeIterator;
 
   get currentChunk(): PartialTextNode {
@@ -116,13 +118,14 @@ export class TextNodeChunker implements Chunker<PartialTextNode> {
   /**
    * @param scope A Range that overlaps with at least one text node.
    */
-  constructor(private scope: Range) {
+  constructor(scope: Node | Range) {
+    this.scope = toRange(scope);
     this.iter = ownerDocument(scope).createNodeIterator(
-      scope.commonAncestorContainer,
+      this.scope.commonAncestorContainer,
       NodeFilter.SHOW_TEXT,
       {
-        acceptNode(node: Text) {
-          return scope.intersectsNode(node)
+        acceptNode: (node: Text) => {
+          return this.scope.intersectsNode(node)
             ? NodeFilter.FILTER_ACCEPT
             : NodeFilter.FILTER_REJECT;
         },

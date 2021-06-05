@@ -24,6 +24,7 @@ import type {
 } from '@apache-annotator/selector';
 import { describeTextQuote as abstractDescribeTextQuote } from '@apache-annotator/selector';
 import { ownerDocument } from '../owner-document';
+import { toRange } from '../to-range';
 import { TextNodeChunker } from '../text-node-chunker';
 
 /**
@@ -52,10 +53,9 @@ import { TextNodeChunker } from '../text-node-chunker';
  *
  * @param range - The {@link https://developer.mozilla.org/en-US/docs/Web/API/Range
  * | Range} whose text content will be described
- * @param maybeScope - A {@link https://developer.mozilla.org/en-US/docs/Web/API/Range
- * | Range} that serves as the ‘document’ for purposes of finding occurrences
- * and determining prefix and suffix. Defaults to span the full Document
- * containing the range.
+ * @param scope - A Node or Range that serves as the ‘document’ for purposes of
+ * finding occurrences and determining prefix and suffix. Defaults to span the
+ * full Document that contains the range.
  * @param options - Options to fine-tune the function’s behaviour.
  * @returns The selector unambiguously describing `range` within `scope`.
  *
@@ -63,24 +63,16 @@ import { TextNodeChunker } from '../text-node-chunker';
  */
 export async function describeTextQuote(
   range: Range,
-  maybeScope?: Range,
+  scope?: Node | Range,
   options: DescribeTextQuoteOptions = {},
 ): Promise<TextQuoteSelector> {
-  // Default to search in the whole document.
-  let scope: Range;
-  if (maybeScope !== undefined) {
-    scope = maybeScope;
-  } else {
-    const document = ownerDocument(range);
-    scope = document.createRange();
-    scope.selectNodeContents(document);
-  }
+  const scopeAsRange = toRange(scope ?? ownerDocument(range));
 
-  const chunker = new TextNodeChunker(scope);
+  const chunker = new TextNodeChunker(scopeAsRange);
 
   return await abstractDescribeTextQuote(
     chunker.rangeToChunkRange(range),
-    () => new TextNodeChunker(scope),
+    () => new TextNodeChunker(scopeAsRange),
     options,
   );
 }

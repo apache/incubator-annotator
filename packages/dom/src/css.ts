@@ -21,6 +21,7 @@
 import optimalSelect from 'optimal-select';
 import type { CssSelector, Matcher } from '@apache-annotator/selector';
 import { ownerDocument } from './owner-document';
+import { toRange } from './to-range';
 
 /**
  * Find the elements corresponding to the given {@link
@@ -45,21 +46,17 @@ import { ownerDocument } from './owner-document';
  * > “If […] the user agent discovers multiple matching text sequences, then the
  * > selection SHOULD be treated as matching all of the matches.”
  *
- * Each matching element is returned as a {@link https://developer.mozilla.org/en-US/docs/Web/API/Range
- * | Range} surrounding that element. This in order to make its output reusable
- * as the scope for any subsequents selectors that {@link
- * Selector.refinedBy | refine} this CssSelector.
- *
- * @param selector - The {@link CssSelector} to be anchored
- * @returns A {@link Matcher} function that applies `selector` to a given {@link https://developer.mozilla.org/en-US/docs/Web/API/Range
- * | Range}
+ * @param selector - The {@link CssSelector} to be anchored.
+ * @returns A {@link Matcher} function that applies `selector` to a given
+ * `scope`.
  *
  * @public
  */
 export function createCssSelectorMatcher(
   selector: CssSelector,
-): Matcher<Range, Range> {
+): Matcher<Node | Range, Element> {
   return async function* matchAll(scope) {
+    scope = toRange(scope);
     const document = ownerDocument(scope);
     for (const element of document.querySelectorAll(selector.value)) {
       const range = document.createRange();
@@ -69,7 +66,7 @@ export function createCssSelectorMatcher(
         scope.isPointInRange(range.startContainer, range.startOffset) &&
         scope.isPointInRange(range.endContainer, range.endOffset)
       ) {
-        yield range;
+        yield element;
       }
     }
   };
