@@ -24,7 +24,7 @@ import type {
   Selector,
 } from '@apache-annotator/selector';
 import { ownerDocument } from '../owner-document';
-import { toRange } from '../range-node-conversion';
+import { toRange } from '../to-range';
 import { cartesian } from './cartesian';
 
 /**

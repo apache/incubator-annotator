@@ -21,7 +21,7 @@
 import type { TextPositionSelector } from '@apache-annotator/selector';
 import { describeTextPosition as abstractDescribeTextPosition } from '@apache-annotator/selector';
 import { ownerDocument } from '../owner-document';
-import { toRange } from '../range-node-conversion';
+import { toRange } from '../to-range';
 import { TextNodeChunker } from '../text-node-chunker';
 
 /**
