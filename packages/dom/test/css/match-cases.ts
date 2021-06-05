@@ -28,7 +28,7 @@ export const testCases: {
     expected: string[];
   };
 } = {
-  'simple': {
+  simple: {
     html: '<b>lorem <i>ipsum</i> dolor <i>amet</i> yada <i>yada</i></b>',
     selector: {
       type: 'CssSelector',
@@ -42,11 +42,7 @@ export const testCases: {
       type: 'CssSelector',
       value: 'i',
     },
-    expected: [
-      '//b/i[1]',
-      '//b/i[2]',
-      '//b/i[3]',
-    ],
+    expected: ['//b/i[1]', '//b/i[2]', '//b/i[3]'],
   },
   'with scope': {
     html: '<b>lorem <i>ipsum</i> dolor <u><i>amet</i> yada <i>yada</i></u></b>',
@@ -55,9 +51,6 @@ export const testCases: {
       value: 'i',
     },
     scopeXPath: '//u',
-    expected: [
-      '//u/i[1]',
-      '//u/i[2]',
-    ],
+    expected: ['//u/i[1]', '//u/i[2]'],
   },
 };

@@ -93,8 +93,9 @@ import { cartesian } from './cartesian';
  * @public
  */
 export function makeCreateRangeSelectorMatcher(
-  createMatcher: <T extends Selector, TMatch extends Node | Range>(selector: T)
-    => Matcher<Node | Range, TMatch>,
+  createMatcher: <T extends Selector, TMatch extends Node | Range>(
+    selector: T,
+  ) => Matcher<Node | Range, TMatch>,
 ): (selector: RangeSelector) => Matcher<Node | Range, Range> {
   return function createRangeSelectorMatcher(selector) {
     const startMatcher = createMatcher(selector.startSelector);

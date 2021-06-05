@@ -20,8 +20,8 @@
 
 import { assert } from 'chai';
 import { describeCss } from '../../src/css';
-import { testCases } from './match-cases';
 import { evaluateXPath } from '../utils';
+import { testCases } from './match-cases';
 
 const domParser = new DOMParser();
 
@@ -32,21 +32,24 @@ describe('describeCss', () => {
     )) {
       for (let i = 0; i < expected.length; i++) {
         const elementXPath = expected[i];
-        it(`case: '${name}' (${i+1}/${expected.length})`, async () => {
+        it(`case: '${name}' (${i + 1}/${expected.length})`, async () => {
           const doc = domParser.parseFromString(html, 'text/html');
           const element = evaluateXPath(doc, elementXPath) as HTMLElement;
           const scopeElement = scopeXPath
-            ? evaluateXPath(doc, scopeXPath) as HTMLElement
+            ? (evaluateXPath(doc, scopeXPath) as HTMLElement)
             : undefined;
-          const cssSelector = await describeCss(
-            element,
-            scopeElement,
-          );
+          const cssSelector = await describeCss(element, scopeElement);
 
           // We do not require a specific value for the selector, just
           // that it uniquely matches the same element again.
-          const matchingElements = (scopeElement ?? doc).querySelectorAll(cssSelector.value);
-          assert.equal(matchingElements.length, 1, 'Expected a selector with a single match');
+          const matchingElements = (scopeElement ?? doc).querySelectorAll(
+            cssSelector.value,
+          );
+          assert.equal(
+            matchingElements.length,
+            1,
+            'Expected a selector with a single match',
+          );
           assert.equal(matchingElements[0], element);
         });
       }

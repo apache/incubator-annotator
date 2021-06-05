@@ -21,8 +21,8 @@
 import { assert } from 'chai';
 import type { CssSelector } from '@apache-annotator/selector';
 import { createCssSelectorMatcher } from '../../src/css';
-import { testCases } from './match-cases';
 import { evaluateXPath } from '../utils';
+import { testCases } from './match-cases';
 
 const domParser = new DOMParser();
 

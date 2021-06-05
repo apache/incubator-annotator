@@ -21,8 +21,8 @@
 import type { TextPositionSelector } from '@apache-annotator/selector';
 import { describeTextPosition as abstractDescribeTextPosition } from '@apache-annotator/selector';
 import { ownerDocument } from '../owner-document';
-import { toRange } from '../to-range';
 import { TextNodeChunker } from '../text-node-chunker';
+import { toRange } from '../to-range';
 
 /**
  * Returns a {@link TextPositionSelector} that points at the target text within
@@ -59,7 +59,7 @@ export async function describeTextPosition(
   range: Range,
   scope?: Node | Range,
 ): Promise<TextPositionSelector> {
-  scope = toRange(scope ?? ownerDocument(range))
+  scope = toRange(scope ?? ownerDocument(range));
 
   const textChunks = new TextNodeChunker(scope);
   if (textChunks.currentChunk === null)
