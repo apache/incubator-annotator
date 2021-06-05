@@ -1,4 +1,5 @@
 *.d.ts
+!/packages/**/@types/**/*.d.ts
 *.d.ts.map
 .nyc_output
 coverage
