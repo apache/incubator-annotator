@@ -111,13 +111,10 @@ const createMatcher = makeRefinable((selector) => {
 });
 
 async function anchor(selector) {
-  const scope = document.createRange();
-  scope.selectNodeContents(target);
-
   const matchAll = createMatcher(selector);
   const ranges = [];
 
-  for await (const range of matchAll(scope)) {
+  for await (const range of matchAll(target)) {
     ranges.push(range);
   }
 
@@ -132,15 +129,13 @@ async function anchor(selector) {
 async function onSelectionChange() {
   cleanup();
   const describeMode = form.describeMode.value;
-  const scope = document.createRange();
-  scope.selectNodeContents(source);
   const selection = document.getSelection();
   for (let i = 0; i < selection.rangeCount; i++) {
     const range = selection.getRangeAt(i);
     const selector =
       describeMode === 'TextPosition'
-        ? await describeTextPosition(range, scope)
-        : await describeTextQuote(range, scope, { minimumQuoteLength: 10 });
+        ? await describeTextPosition(range, source)
+        : await describeTextQuote(range, source, { minimumQuoteLength: 10 });
     await anchor(selector);
   }
 }
