@@ -49,8 +49,8 @@ import { toRange } from '../to-range';
  * @param range - The {@link https://developer.mozilla.org/en-US/docs/Web/API/Range
  * | Range} whose text content will be described.
  * @param scope - A Node or Range that serves as the ‘document’ for purposes of
- * finding occurrences and determining prefix and suffix. Defaults to span the
- * full Document that contains the range.
+ * finding occurrences and determining prefix and suffix. Defaults to the full
+ * Document that contains `range`.
  * @returns The selector describing `range` within `scope`.
  *
  * @public

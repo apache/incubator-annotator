@@ -32,9 +32,8 @@ import { TextNodeChunker } from '../text-node-chunker';
  * The function is curried, taking first the selector and then the scope.
  *
  * Its end result is an (async) generator producing a single {@link https://developer.mozilla.org/en-US/docs/Web/API/Range
- * | Range} to represent the match. (unlike a {@link
- * TextQuoteSelector}, a TextPositionSelector cannot have
- * multiple matches).
+ * | Range} to represent the match (unlike e.g. a {@link TextQuoteSelector}, a
+ * TextPositionSelector cannot have multiple matches).
  *
  * @example
  * ```

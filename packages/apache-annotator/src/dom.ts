@@ -20,14 +20,11 @@
 
 /**
  * This module provides functions for handling annotations in the context of an
- * HTML DOM; in other words, a web page.
+ * HTML DOM; in other words, a web page.
  *
- * The main functionality is finding which selection of the web page a {@link https://www.w3.org/TR/2017/REC-annotation-model-20170223/#selectors
- * | Selector} refers to; and, vice versa, describing a selection of the page as
- * a Selector.
- *
- * The primary way to express selections in the web page is by {@link https://developer.mozilla.org/en-US/docs/Web/API/Range
- * | Range} objects.
+ * The module’s main functionality is *matching* (or *‘anchoring’*) a {@link https://www.w3.org/TR/2017/REC-annotation-model-20170223/#selectors
+ * | Selector} to the DOM, i.e. finding which piece of a web page it refers to;
+ * and, vice versa, *describing* a selection of the page as a Selector.
  *
  * @module
  */

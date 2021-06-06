@@ -89,8 +89,7 @@ export function createCssSelectorMatcher(
  *
  * @param element - The element that the selector should describe.
  * @param scope - The node that serves as the ‘document’ for purposes of finding
- * a unique selector. Defaults to span the full Document that contains the
- * `element`.
+ * a unique selector. Defaults to the full Document that contains `element`.
  * @returns The selector unambiguously describing `element` within `scope`.
  */
 export async function describeCss(
