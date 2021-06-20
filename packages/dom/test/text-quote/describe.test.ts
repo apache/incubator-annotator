@@ -19,31 +19,65 @@
  */
 
 import { assert } from 'chai';
-
 import { describeTextQuote } from '../../src/text-quote/describe';
 import { hydrateRange, evaluateXPath } from '../utils';
-
-import { testCases } from './describe-cases';
+import type { DescribeTextQuoteTestCases } from './describe-cases';
+import {
+  testCasesWithMinimumQuoteLength,
+  testCasesWithMaxWordLength,
+  testCasesWithMinimalContext,
+  testCasesWithoutOptions,
+} from './describe-cases';
 import { testCases as testMatchCases } from './match-cases';
 
-const domParser = new window.DOMParser();
+const domParser = new DOMParser();
 
-describe('describeTextQuote', () => {
-  for (const [name, { html, range, expected }] of Object.entries(testCases)) {
+function runTestCases(testCases: DescribeTextQuoteTestCases) {
+  for (const [name, { html, range, expected, options }] of Object.entries(
+    testCases,
+  )) {
     it(`works for case: ${name}`, async () => {
       const doc = domParser.parseFromString(html, 'text/html');
-      const result = await describeTextQuote(hydrateRange(range, doc), doc);
+      const result = await describeTextQuote(
+        hydrateRange(range, doc),
+        doc,
+        options,
+      );
       assert.deepEqual(result, expected);
     });
   }
+}
+
+describe('describeTextQuote', () => {
+  describe('without options', () => {
+    runTestCases(testCasesWithoutOptions);
+  });
+
+  describe('with minimal context', () => {
+    runTestCases(testCasesWithMinimalContext);
+  });
+
+  describe('with minimum quote length', () => {
+    runTestCases(testCasesWithMinimumQuoteLength);
+  });
+
+  describe('with max word length', () => {
+    runTestCases(testCasesWithMaxWordLength);
+  });
 
   it('works with custom scope', async () => {
-    const { html, range } = testCases['minimal prefix'];
+    const { html, range, options } = testCasesWithMinimalContext[
+      'minimal prefix'
+    ];
     const doc = domParser.parseFromString(html, 'text/html');
     const scope = doc.createRange();
     scope.setStart(evaluateXPath(doc, '//b/text()'), 15);
     scope.setEnd(evaluateXPath(doc, '//b/text()'), 30); // "not to annotate"
-    const result = await describeTextQuote(hydrateRange(range, doc), scope);
+    const result = await describeTextQuote(
+      hydrateRange(range, doc),
+      scope,
+      options,
+    );
     assert.deepEqual(result, {
       type: 'TextQuoteSelector',
       exact: 'anno',
@@ -53,12 +87,16 @@ describe('describeTextQuote', () => {
   });
 
   it('strips part of the range outside the scope', async () => {
-    const { html, range } = testCases['simple'];
+    const { html, range, options } = testCasesWithMinimalContext['no context'];
     const doc = domParser.parseFromString(html, 'text/html');
     const scope = doc.createRange();
     scope.setStart(evaluateXPath(doc, '//b/text()'), 6);
     scope.setEnd(evaluateXPath(doc, '//b/text()'), 17); // "ipsum dolor"
-    const result = await describeTextQuote(hydrateRange(range, doc), scope);
+    const result = await describeTextQuote(
+      hydrateRange(range, doc),
+      scope,
+      options,
+    );
     assert.deepEqual(result, {
       type: 'TextQuoteSelector',
       exact: 'dolor',
@@ -68,13 +106,30 @@ describe('describeTextQuote', () => {
   });
 
   it('works if the range equals the scope', async () => {
-    const { html, range, expected } = testCases['simple'];
+    const { html, range, expected, options } = testCasesWithMinimalContext[
+      'no context'
+    ];
     const doc = domParser.parseFromString(html, 'text/html');
     const result = await describeTextQuote(
       hydrateRange(range, doc),
       hydrateRange(range, doc),
+      options,
     );
     assert.deepEqual(result, expected);
+  });
+
+  it('works if range does not contain Text nodes', async () => {
+    const html = `<b>Try quoting this image: <img/> — would that work?</b>`
+    const doc = domParser.parseFromString(html, 'text/html');
+    const range = document.createRange();
+    range.selectNode(evaluateXPath(doc, '//img'));
+    const result = await describeTextQuote(range, doc);
+    assert.deepEqual(result, {
+      type: 'TextQuoteSelector',
+      exact: '',
+      prefix: 'image: ',
+      suffix: ' —',
+    });
   });
 
   describe('inverts test cases of text quote matcher', () => {

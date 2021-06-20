@@ -18,8 +18,17 @@
  * under the License.
  */
 
-import type { Matcher } from '@annotator/selector';
+/**
+ * Get the ownerDocument for either a range or a node.
+ *
+ * @param nodeOrRange the node or range for which to get the owner document.
+ */
+export function ownerDocument(nodeOrRange: Node | Range): Document {
+  const node = isRange(nodeOrRange) ? nodeOrRange.startContainer : nodeOrRange;
+  // node.ownerDocument is null iff node is itself a Document.
+  return node.ownerDocument ?? (node as Document);
+}
 
-export type DomScope = Node | Range;
-
-export type DomMatcher = Matcher<DomScope, Range>;
+function isRange(nodeOrRange: Node | Range): nodeOrRange is Range {
+  return 'startContainer' in nodeOrRange;
+}

@@ -20,6 +20,7 @@
 
 import type { Matcher, Selector, SelectorType, MatcherCreator, Plugin } from './types';
 
+export * from './text';
 export * from './types';
 
 interface TypeToMatcherCreatorMap<TScope, TMatch> {
@@ -68,7 +69,14 @@ export function mapSelectorTypes<TScope, TMatch extends TScope>(
   }
 }
 
-// A plugin to support the Selector’s refinedBy field .
+/**
+ * A plugin to support the Selector’s refinedBy field.
+ *
+ * See {@link https://www.w3.org/TR/2017/REC-annotation-model-20170223/#refinement-of-selection
+ * | §4.2.9 Refinement of Selection} in the Web Annotation Data Model.
+ *
+ * @public
+ */
 export const supportRefinement: Plugin<any, any> =
   function supportRefinementPlugin<TScope, TMatch extends TScope>(
     next: MatcherCreator<TScope, TMatch>,

@@ -18,182 +18,61 @@
  * under the License.
  */
 
-import seek from 'dom-seek';
-import type { TextQuoteSelector } from '@annotator/selector';
+import type {
+  TextQuoteSelector,
+  DescribeTextQuoteOptions,
+} from '@apache-annotator/selector';
+import { describeTextQuote as abstractDescribeTextQuote } from '@apache-annotator/selector';
+import { ownerDocument } from '../owner-document';
+import { TextNodeChunker } from '../text-node-chunker';
+import { toRange } from '../to-range';
 
-import type { DomScope } from '../types';
-import { ownerDocument, rangeFromScope } from '../scope';
-
+/**
+ * Returns a {@link TextQuoteSelector} that unambiguously describes the given
+ * range of text, within the given scope.
+ *
+ * The selector will contain the *exact* target quote, and in case this quote
+ * appears multiple times in the text, sufficient context around the quote will
+ * be included in the selector’s *prefix* and *suffix* attributes to
+ * disambiguate. By default, more prefix and suffix are included than strictly
+ * required; both in order to be robust against slight modifications, and in an
+ * attempt to not end halfway a word (mainly for the sake of human readability).
+ *
+ * @example
+ * ```
+ * const target = window.getSelection().getRangeAt(0);
+ * const selector = await describeTextQuote(target);
+ * console.log(selector);
+ * // {
+ * //   type: 'TextQuoteSelector',
+ * //   exact: 'ipsum',
+ * //   prefix: 'Lorem ',
+ * //   suffix: ' dolor'
+ * // }
+ * ```
+ *
+ * @param range - The {@link https://developer.mozilla.org/en-US/docs/Web/API/Range
+ * | Range} whose text content will be described
+ * @param scope - A Node or Range that serves as the ‘document’ for purposes of
+ * finding occurrences and determining prefix and suffix. Defaults to the full
+ * Document that contains `range`.
+ * @param options - Options to fine-tune the function’s behaviour.
+ * @returns The selector unambiguously describing `range` within `scope`.
+ *
+ * @public
+ */
 export async function describeTextQuote(
   range: Range,
-  scope: DomScope = ownerDocument(range).documentElement,
+  scope?: Node | Range,
+  options: DescribeTextQuoteOptions = {},
 ): Promise<TextQuoteSelector> {
-  range = range.cloneRange();
+  const scopeAsRange = toRange(scope ?? ownerDocument(range));
 
-  // Take the part of the range that falls within the scope.
-  const scopeAsRange = rangeFromScope(scope);
-  if (!scopeAsRange.isPointInRange(range.startContainer, range.startOffset))
-    range.setStart(scopeAsRange.startContainer, scopeAsRange.startOffset);
-  if (!scopeAsRange.isPointInRange(range.endContainer, range.endOffset))
-    range.setEnd(scopeAsRange.endContainer, scopeAsRange.endOffset);
+  const chunker = new TextNodeChunker(scopeAsRange);
 
-  const exact = range.toString();
-
-  const result: TextQuoteSelector = { type: 'TextQuoteSelector', exact };
-
-  const { prefix, suffix } = calculateContextForDisambiguation(
-    range,
-    result,
-    scope,
+  return await abstractDescribeTextQuote(
+    chunker.rangeToChunkRange(range),
+    () => new TextNodeChunker(scopeAsRange),
+    options,
   );
-  result.prefix = prefix;
-  result.suffix = suffix;
-
-  return result;
-}
-
-function calculateContextForDisambiguation(
-  range: Range,
-  selector: TextQuoteSelector,
-  scope: DomScope,
-): { prefix?: string; suffix?: string } {
-  const exactText = selector.exact;
-  const scopeText = rangeFromScope(scope).toString();
-  const targetStartIndex = getRangeTextPosition(range, scope);
-  const targetEndIndex = targetStartIndex + exactText.length;
-
-  // Find all matches of the text in the scope.
-  const stringMatches: number[] = [];
-  let fromIndex = 0;
-  while (fromIndex <= scopeText.length) {
-    const matchIndex = scopeText.indexOf(exactText, fromIndex);
-    if (matchIndex === -1) break;
-    stringMatches.push(matchIndex);
-    fromIndex = matchIndex + 1;
-  }
-
-  // Count for each undesired match the required prefix and suffix lengths, such that either of them
-  // would have invalidated the match.
-  const affixLengthPairs: Array<[number, number]> = [];
-  for (const matchStartIndex of stringMatches) {
-    const matchEndIndex = matchStartIndex + exactText.length;
-
-    // Skip the found match if it is the actual target.
-    if (matchStartIndex === targetStartIndex) continue;
-
-    // Count how many characters before & after them the false match and target have in common.
-    const sufficientPrefixLength = charactersNeededToBeUnique(
-      scopeText.substring(0, targetStartIndex),
-      scopeText.substring(0, matchStartIndex),
-      true,
-    );
-    const sufficientSuffixLength = charactersNeededToBeUnique(
-      scopeText.substring(targetEndIndex),
-      scopeText.substring(matchEndIndex),
-      false,
-    );
-    affixLengthPairs.push([sufficientPrefixLength, sufficientSuffixLength]);
-  }
-
-  // Find the prefix and suffix that would invalidate all mismatches, using the minimal characters
-  // for prefix and suffix combined.
-  const [prefixLength, suffixLength] = minimalSolution(affixLengthPairs);
-  const prefix = scopeText.substring(
-    targetStartIndex - prefixLength,
-    targetStartIndex,
-  );
-  const suffix = scopeText.substring(
-    targetEndIndex,
-    targetEndIndex + suffixLength,
-  );
-  return { prefix, suffix };
-}
-
-function charactersNeededToBeUnique(
-  target: string,
-  impostor: string,
-  reverse = false,
-) {
-  // Count how many characters the two strings have in common.
-  let overlap = 0;
-  const charAt = (s: string, i: number) =>
-    reverse ? s[s.length - 1 - i] : s[overlap];
-  while (
-    overlap < target.length &&
-    charAt(target, overlap) === charAt(impostor, overlap)
-  )
-    overlap++;
-  if (overlap === target.length) return Infinity;
-  // (no substring of target can make it distinguishable from its impostor)
-  else return overlap + 1;
-}
-
-function minimalSolution(
-  requirements: Array<[number, number]>,
-): [number, number] {
-  // Ensure we try solutions with an empty prefix or suffix.
-  requirements.push([0, 0]);
-
-  // Build all the pairs and order them by their sums.
-  const pairs = requirements.flatMap((l) =>
-    requirements.map<[number, number]>((r) => [l[0], r[1]]),
-  );
-  pairs.sort((a, b) => a[0] + a[1] - (b[0] + b[1]));
-
-  // Find the first pair that satisfies every requirement.
-  for (const pair of pairs) {
-    const [p0, p1] = pair;
-    if (requirements.every(([r0, r1]) => r0 <= p0 || r1 <= p1)) {
-      return pair;
-    }
-  }
-
-  // Return the largest pairing (unreachable).
-  return pairs[pairs.length - 1];
-}
-
-// Get the index of the first character of range within the text of scope.
-function getRangeTextPosition(range: Range, scope: DomScope): number {
-  const scopeAsRange = rangeFromScope(scope);
-  const iter = document.createNodeIterator(
-    scopeAsRange.commonAncestorContainer,
-    NodeFilter.SHOW_TEXT,
-    {
-      acceptNode(node: Text) {
-        // Only reveal nodes within the range
-        return scopeAsRange.intersectsNode(node)
-          ? NodeFilter.FILTER_ACCEPT
-          : NodeFilter.FILTER_REJECT;
-      },
-    },
-  );
-  const scopeOffset = isTextNode(scopeAsRange.startContainer)
-    ? scopeAsRange.startOffset
-    : 0;
-  if (isTextNode(range.startContainer))
-    return seek(iter, range.startContainer) + range.startOffset - scopeOffset;
-  else return seek(iter, firstTextNodeInRange(range)) - scopeOffset;
-}
-
-function firstTextNodeInRange(range: Range): Text {
-  // Find the first text node inside the range.
-  const iter = document.createNodeIterator(
-    range.commonAncestorContainer,
-    NodeFilter.SHOW_TEXT,
-    {
-      acceptNode(node: Text) {
-        // Only reveal nodes within the range; and skip any empty text nodes.
-        return range.intersectsNode(node) && node.length > 0
-          ? NodeFilter.FILTER_ACCEPT
-          : NodeFilter.FILTER_REJECT;
-      },
-    },
-  );
-  const node = iter.nextNode() as Text | null;
-  if (node === null) throw new Error('Range contains no text nodes');
-  return node;
-}
-
-function isTextNode(node: Node): node is Text {
-  return node.nodeType === Node.TEXT_NODE;
 }

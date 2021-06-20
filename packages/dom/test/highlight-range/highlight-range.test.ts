@@ -19,11 +19,11 @@
  */
 
 import { assert } from 'chai';
-
 import { highlightRange } from '../../src/highlight-range';
-import { RangeInfo, hydrateRange, evaluateXPath } from '../utils';
+import type { RangeInfo } from '../utils';
+import { hydrateRange, evaluateXPath } from '../utils';
 
-const domParser = new window.DOMParser();
+const domParser = new DOMParser();
 
 const testCases: {
   [name: string]: {
@@ -172,7 +172,7 @@ describe('highlightRange', () => {
     const inputHtml = `<b>Try highlighting this image: <img> — would that work?</b>`;
     const doc = domParser.parseFromString(inputHtml, 'text/html');
 
-    const range = document.createRange();
+    const range = doc.createRange();
     range.selectNode(evaluateXPath(doc, '//img'));
 
     const removeHighlights = highlightRange(range);

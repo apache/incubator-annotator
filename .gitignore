@@ -1,10 +1,15 @@
 *.d.ts
+!/packages/**/@types/**/*.d.ts
 *.d.ts.map
 .nyc_output
 coverage
+docs
 node_modules
 tsconfig.tsbuildinfo
+tsconfig.test.tsbuildinfo
+/packages/*/DISCLAIMER-WIP
 /packages/*/LICENSE
 /packages/*/NOTICE
+/packages/*/README.md
 /packages/*/lib
 /web/dist

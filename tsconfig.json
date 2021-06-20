@@ -1,14 +1,9 @@
 {
-  "extends": "./tsconfig.base.json",
-  "include": [
-    "test/**/*",
-    "packages/*/test/**/*",
-  ],
+  "files": [],
   "references": [
+    { "path": "packages/apache-annotator" },
     { "path": "packages/dom" },
-    { "path": "packages/selector" }
-  ],
-  "compilerOptions": {
-    "lib": ["dom", "dom.iterable", "es2018"]
-  }
+    { "path": "packages/selector" },
+    { "path": "tsconfig.test.json"}
+  ]
 }

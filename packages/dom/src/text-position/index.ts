@@ -18,22 +18,5 @@
  * under the License.
  */
 
-import type { DomScope } from './types';
-
-export function ownerDocument(scope: DomScope): Document {
-  const node = isRange(scope) ? scope.commonAncestorContainer : scope;
-  return node.ownerDocument || (node as Document);
-}
-
-export function rangeFromScope(scope: DomScope): Range {
-  if (isRange(scope)) {
-    return scope;
-  }
-  const range = ownerDocument(scope).createRange();
-  range.selectNodeContents(scope);
-  return range;
-}
-
-function isRange(scope: DomScope): scope is Range {
-  return 'collapsed' in scope;
-}
+export * from './describe';
+export * from './match';

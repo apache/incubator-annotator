@@ -18,23 +18,21 @@
  * under the License.
  */
 
-/* global info, module, source, target */
-// declare const module; // TODO type?
-// declare const info: HTMLElement;
-// declare const source: HTMLElement;
-// declare const target: HTMLElement;
+/* global info, module, source, target, form */
 
 import {
   createTextQuoteSelectorMatcher,
   describeTextQuote,
   supportRangeSelector,
+  createTextPositionSelectorMatcher,
+  describeTextPosition,
   highlightRange,
-} from '@annotator/dom';
+} from '@apache-annotator/dom';
 import {
   composeMatcherCreator,
   mapSelectorTypes,
   supportRefinement,
-} from '@annotator/selector';
+} from '@apache-annotator/selector';
 
 const EXAMPLE_SELECTORS = [
   {
@@ -89,14 +87,17 @@ const EXAMPLE_SELECTORS = [
   },
 ];
 
-const cleanupFunctions = [];
+let moduleState = {
+  cleanupFunctions: [],
+};
 
 function cleanup() {
   let removeHighlight;
-  while ((removeHighlight = cleanupFunctions.shift())) {
+  while ((removeHighlight = moduleState.cleanupFunctions.shift())) {
     removeHighlight();
   }
   target.normalize();
+  info.innerText = '';
 }
 
 const createMatcher = composeMatcherCreator(
@@ -104,6 +105,7 @@ const createMatcher = composeMatcherCreator(
   supportRangeSelector,
   mapSelectorTypes({
     TextQuoteSelector: createTextQuoteSelectorMatcher,
+    TextPositionSelector: createTextPositionSelectorMatcher,
   }),
 );
 
@@ -117,18 +119,24 @@ async function anchor(selector) {
 
   for (const range of ranges) {
     const removeHighlight = highlightRange(range);
-    cleanupFunctions.push(removeHighlight);
+    moduleState.cleanupFunctions.push(removeHighlight);
   }
 
-  info.innerText = JSON.stringify(selector, null, 2);
+  info.innerText += JSON.stringify(selector, null, 2) + '\n\n';
 }
 
 async function onSelectionChange() {
   cleanup();
+  const describeMode = form.describeMode.value;
   const selection = document.getSelection();
-  const range = selection.getRangeAt(0);
-  const selector = await describeTextQuote(range, source);
-  anchor(selector);
+  for (let i = 0; i < selection.rangeCount; i++) {
+    const range = selection.getRangeAt(i);
+    const selector =
+      describeMode === 'TextPosition'
+        ? await describeTextPosition(range, source)
+        : await describeTextQuote(range, source, { minimumQuoteLength: 10 });
+    await anchor(selector);
+  }
 }
 
 function onSelectorExampleClick(event) {
@@ -140,13 +148,26 @@ function onSelectorExampleClick(event) {
   event.preventDefault();
 }
 
-document.addEventListener('selectionchange', onSelectionChange);
-document.addEventListener('click', onSelectorExampleClick);
+function addEventListeners() {
+  document.addEventListener('selectionchange', onSelectionChange);
+  form.addEventListener('change', onSelectionChange);
+  document.addEventListener('click', onSelectorExampleClick);
+}
+addEventListeners();
+
+function removeEventListeners() {
+  document.removeEventListener('selectionchange', onSelectionChange);
+  form.removeEventListener('change', onSelectionChange);
+  document.removeEventListener('click', onSelectorExampleClick);
+}
 
 if (module.hot) {
   module.hot.accept();
-  module.hot.dispose(() => {
-    document.removeEventListener('selectionchange', onSelectionChange);
-    document.removeEventListener('click', onSelectorExampleClick);
+  module.hot.dispose((data) => {
+    removeEventListeners();
+    data.state = moduleState;
   });
+  if (module.hot.data?.state) {
+    moduleState = module.hot.data.state;
+  }
 }

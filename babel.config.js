@@ -18,11 +18,13 @@
  * under the License.
  */
 
+const path = require('path');
+const { DEFAULT_EXTENSIONS } = require('@babel/core');
+
 module.exports = (api) => {
   const ENV = api.env();
   const DEV = ENV === 'development';
   const TEST = ENV === 'test';
-  const CJS = ENV === 'cjs';
 
   // Options for the @babel/env preset.
   const envOptions = {
@@ -30,9 +32,7 @@ module.exports = (api) => {
     // Note: This setting may become the default in Babel 8.
     bugfixes: true,
     // Transform module syntax if necessary.
-    modules: CJS || TEST ? 'commonjs' : false,
-    // Set target environment to default browsers.
-    targets: TEST ? { node: 'current' } : 'defaults',
+    modules: TEST ? 'commonjs' : false,
   };
 
   // Options for the @babel/typescript preset.
@@ -44,7 +44,7 @@ module.exports = (api) => {
   };
 
   const addImportExtensionOptions = {
-    extension: DEV || TEST ? 'ts' : CJS ? 'js' : 'mjs',
+    extension: DEV || TEST ? 'ts' : 'js',
   };
 
   // Options for the module-resolver plugin.
@@ -53,42 +53,35 @@ module.exports = (api) => {
     alias: {
       ...(DEV || TEST
         ? {
-            '^@annotator/(.+)$': '@annotator/\\1/src/index.ts',
+            '^@apache-annotator/([^/]+)$': ([, name]) =>
+              path.join(__dirname, 'packages', name, '/src/index.ts'),
           }
         : null),
-      // TODO: Remove after babel/babel#8462 ships.
-      '^@babel/runtime-corejs3/core-js/(.+)$':
-        '@babel/runtime-corejs3/core-js/\\1.js',
-      '^@babel/runtime-corejs3/core-js-stable/(.+)$':
-        '@babel/runtime-corejs3/core-js-stable/\\1.js',
-      '^@babel/runtime-corejs3/helpers/(.+)$':
-        '@babel/runtime-corejs3/helpers/\\1.js',
-      '^@babel/runtime-corejs3/regenerator$':
-        '@babel/runtime-corejs3/regenerator/index.js',
-      extensions: ['.js', '.ts'],
     },
+    extensions: ['.ts', '.tsx', ...DEFAULT_EXTENSIONS],
   };
 
   // Options for the @babel/transform-runtime plugin.
   const runtimeOptions = {
     // Use corejs version 3.
-    corejs: { version: 3 },
+    corejs: { version: 3, proposals: true },
     // Use helpers formatted for the target environment.
-    // TODO: Re-enable after babel/babel#8462 ships.
-    // useESModules: !CJS && !TEST,
+    useESModules: !TEST,
   };
 
   return {
     plugins: [
+      '@babel/plugin-proposal-class-properties',
       ['@babel/transform-runtime', runtimeOptions],
-      ...(TEST ? ['istanbul'] : []),
       ['add-import-extension', addImportExtensionOptions],
       ['module-resolver', resolverOptions],
       'preserve-comment-header',
+      ...(TEST ? ['istanbul'] : []),
     ],
     presets: [
       ['@babel/env', envOptions],
       ['@babel/typescript', typescriptOptions],
     ],
+    targets: TEST ? { node: 'current' } : 'defaults',
   };
 };

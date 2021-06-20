@@ -1,13 +1,14 @@
-dist: bionic
+dist: focal
 language: node_js
-node_js:
-  - "10"
-  - "12"
-  - "13"
-  - "14"
+node_js: node
 
-# Travis is pretty behind the curve on their Yarn support...
-# https://docs.travis-ci.com/user/languages/javascript-with-nodejs/#Using-a-specific-yarn-version
-before_install:
-  - curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.5.1
-  - export PATH="$HOME/.yarn/bin:$PATH"
+before_deploy:
+  - git fetch --unshallow
+  - git checkout master
+
+deploy:
+  provider: npm
+  edge: true
+  run_script: publish:ci
+  on:
+    branch: master

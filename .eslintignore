@@ -3,5 +3,6 @@
 !/packages/*/src/types
 **/*.d.ts
 /coverage
+/docs
 /packages/*/lib
 /web/dist

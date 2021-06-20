@@ -22,7 +22,6 @@
 
 import fs from 'fs';
 import { URL } from 'url';
-
 import Ajv from 'ajv';
 import { assert } from 'chai';
 import fetch from 'node-fetch';
@@ -95,10 +94,10 @@ describe('Test JSON against Schemas', () => {
     }
   });
 
-  const assertions = MUSTS.assertions as [string];
+  const assertions = MUSTS['assertions'] as [string];
   assertions.forEach((schemaPath: string) => {
     const schema = requireJSON(`web-annotation-tests/${schemaPath}`);
-    it(schema.title as string, () => {
+    it(schema['title'] as string, () => {
       const valid = ajv.validate(schema, data);
       assert.isOk(valid, ajv.errorsText());
     });

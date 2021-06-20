@@ -1,2 +1,5 @@
-src
-test
+*.d.ts.map
+tsconfig.json
+tsconfig.tsbuildinfo
+/src
+/test

@@ -18,73 +18,66 @@
  * under the License.
  */
 
-import type { TextQuoteSelector } from '@annotator/selector';
-import seek from 'dom-seek';
+import type { Matcher, TextQuoteSelector } from '@apache-annotator/selector';
+import { textQuoteSelectorMatcher as abstractTextQuoteSelectorMatcher } from '@apache-annotator/selector';
+import { TextNodeChunker, EmptyScopeError } from '../text-node-chunker';
 
-import type { DomScope, DomMatcher } from '../types';
-import { ownerDocument, rangeFromScope } from '../scope';
-
+/**
+ * Find occurrences in a text matching the given {@link
+ * TextQuoteSelector}.
+ *
+ * This performs an exact search for the selector’s quote (including prefix and
+ * suffix) within the text contained in the given scope (a  {@link
+ * https://developer.mozilla.org/en-US/docs/Web/API/Range | Range}).
+ *
+ * Note the match is based on strict character-by-character equivalence, i.e.
+ * it is sensitive to whitespace, capitalisation, etc.
+ *
+ * The function is curried, taking first the selector and then the scope.
+ *
+ * As there may be multiple matches for a given selector (when its prefix and
+ * suffix attributes are not sufficient to disambiguate it), the matcher will
+ * return an (async) generator that produces each match in the order they are
+ * found in the text.
+ *
+ * @example
+ * ```
+ * // Find the word ‘banana’.
+ * const selector = { type: 'TextQuoteSelector', exact: 'banana' };
+ * const scope = document.body;
+ *
+ * // Read all matches.
+ * const matches = textQuoteSelectorMatcher(selector)(scope);
+ * for await (match of matches) console.log(match);
+ * // ⇒ Range { startContainer: #text, startOffset: 187, endContainer: #text,
+ * //   endOffset: 193, … }
+ * // ⇒ Range { startContainer: #text, startOffset: 631, endContainer: #text,
+ * //   endOffset: 637, … }
+ * ```
+ *
+ * @param selector - The {@link TextQuoteSelector} to be anchored.
+ * @returns A {@link Matcher} function that applies `selector` within a given
+ * `scope`.
+ *
+ * @public
+ */
 export function createTextQuoteSelectorMatcher(
   selector: TextQuoteSelector,
-): DomMatcher {
-  return async function* matchAll(scope: DomScope) {
-    const document = ownerDocument(scope);
-    const scopeAsRange = rangeFromScope(scope);
-    const scopeText = scopeAsRange.toString();
+): Matcher<Node | Range, Range> {
+  const abstractMatcher = abstractTextQuoteSelectorMatcher(selector);
 
-    const exact = selector.exact;
-    const prefix = selector.prefix || '';
-    const suffix = selector.suffix || '';
-    const searchPattern = prefix + exact + suffix;
+  return async function* matchAll(scope) {
+    let textChunks;
+    try {
+      textChunks = new TextNodeChunker(scope);
+    } catch (err) {
+      // An empty range contains no matches.
+      if (err instanceof EmptyScopeError) return;
+      else throw err;
+    }
 
-    const iter = document.createNodeIterator(
-      scopeAsRange.commonAncestorContainer,
-      NodeFilter.SHOW_TEXT,
-      {
-        acceptNode(node: Text) {
-          // Only reveal nodes within the range; and skip any empty text nodes.
-          return scopeAsRange.intersectsNode(node) && node.length > 0
-            ? NodeFilter.FILTER_ACCEPT
-            : NodeFilter.FILTER_REJECT;
-        },
-      },
-    );
-
-    // The index of the first character of iter.referenceNode inside the text.
-    let referenceNodeIndex = isTextNode(scopeAsRange.startContainer)
-      ? -scopeAsRange.startOffset
-      : 0;
-
-    let fromIndex = 0;
-    while (fromIndex <= scopeText.length) {
-      // Find the quote with its prefix and suffix in the string.
-      const patternStartIndex = scopeText.indexOf(searchPattern, fromIndex);
-      if (patternStartIndex === -1) return;
-
-      // Correct for the prefix and suffix lengths.
-      const matchStartIndex = patternStartIndex + prefix.length;
-      const matchEndIndex = matchStartIndex + exact.length;
-
-      // Create a range to represent this exact quote in the dom.
-      const match = document.createRange();
-
-      // Seek to the start of the match, make the range start there.
-      referenceNodeIndex += seek(iter, matchStartIndex - referenceNodeIndex);
-      match.setStart(iter.referenceNode, matchStartIndex - referenceNodeIndex);
-
-      // Seek to the end of the match, make the range end there.
-      referenceNodeIndex += seek(iter, matchEndIndex - referenceNodeIndex);
-      match.setEnd(iter.referenceNode, matchEndIndex - referenceNodeIndex);
-
-      // Yield the match.
-      yield match;
-
-      // Advance the search forward to detect multiple occurrences.
-      fromIndex = matchStartIndex + 1;
+    for await (const abstractMatch of abstractMatcher(textChunks)) {
+      yield textChunks.chunkRangeToRange(abstractMatch);
     }
   };
-}
-
-function isTextNode(node: Node): node is Text {
-  return node.nodeType === Node.TEXT_NODE;
 }

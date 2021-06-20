@@ -18,32 +18,103 @@
  * under the License.
  */
 
-import type { RangeSelector, Selector, MatcherCreator, Plugin } from '@annotator/selector';
+import type {
+  Matcher,
+  Plugin,
+  RangeSelector,
+  Selector,
+  MatcherCreator,
+} from '@apache-annotator/selector';
+import { ownerDocument } from '../owner-document';
+import { toRange } from '../to-range';
+import { cartesian } from './cartesian';
 
-import { ownerDocument } from '../scope';
-import type { DomMatcher, DomScope } from '../types';
-
-import { product } from './cartesian';
-
+/**
+ * Find the range(s) corresponding to the given {@link RangeSelector}.
+ *
+ * As a RangeSelector itself nests two further selectors, one needs to pass a
+ * `createMatcher` function that will be used to process those nested selectors.
+ *
+ * The function is curried, taking first the `createMatcher` function, then the
+ * selector, and then the scope.
+ *
+ * As there may be multiple matches for the start & end selectors, the resulting
+ * matcher will return an (async) iterable, that produces a match for each
+ * possible pair of matches of the nested selectors (except those where its end
+ * would precede its start). *(Note that this behaviour is a rather free
+ * interpretation of the Web Annotation Data Model spec, which is silent about
+ * the possibility of multiple matches for RangeSelectors)*
+ *
+ * @example
+ * By using a matcher for {@link TextQuoteSelector}s, one
+ * could create a matcher for text quotes with ellipsis to select a phrase
+ * “ipsum … amet,”:
+ * ```
+ * const selector = {
+ *   type: 'RangeSelector',
+ *   startSelector: {
+ *     type: 'TextQuoteSelector',
+ *     exact: 'ipsum ',
+ *   },
+ *   endSelector: {
+ *     type: 'TextQuoteSelector',
+ *     // Because the end of a RangeSelector is *exclusive*, we will present the
+ *     // latter part of the quote as the *prefix* so it will be part of the
+ *     // match.
+ *     exact: '',
+ *     prefix: ' amet,',
+ *   }
+ * };
+ * const createRangeSelectorMatcher =
+ *   makeCreateRangeSelectorMatcher(createTextQuoteMatcher);
+ * const match = createRangeSelectorMatcher(selector)(document.body);
+ * console.log(match)
+ * // ⇒ Range { startContainer: #text, startOffset: 6, endContainer: #text,
+ * //   endOffset: 27, … }
+ * ```
+ *
+ * @example
+ * To support RangeSelectors that might themselves contain RangeSelectors,
+ * recursion can be created by supplying the resulting matcher creator function
+ * as the `createMatcher` parameter:
+ * ```
+ * const createWhicheverMatcher = (selector) => {
+ *   const innerCreateMatcher = {
+ *     TextQuoteSelector: createTextQuoteSelectorMatcher,
+ *     TextPositionSelector: createTextPositionSelectorMatcher,
+ *     RangeSelector: makeCreateRangeSelectorMatcher(createWhicheverMatcher),
+ *   }[selector.type];
+ *   return innerCreateMatcher(selector);
+ * });
+ * ```
+ *
+ * @param createMatcher - The function used to process nested selectors.
+ * @returns A function that, given a RangeSelector `selector`, creates a {@link
+ * Matcher} function that can apply it to a given `scope`.
+ *
+ * @public
+ */
 export function makeCreateRangeSelectorMatcher(
-  createMatcher: <T extends Selector>(selector: T) => DomMatcher,
-): (selector: RangeSelector) => DomMatcher {
-  return function createRangeSelectorMatcher(selector: RangeSelector) {
+  createMatcher: MatcherCreator<Node | Range, Node | Range>,
+): (selector: RangeSelector) => Matcher<Node | Range, Range> {
+  return function createRangeSelectorMatcher(selector) {
     const startMatcher = createMatcher(selector.startSelector);
     const endMatcher = createMatcher(selector.endSelector);
 
-    return async function* matchAll(scope: DomScope) {
-      const document = ownerDocument(scope);
-
+    return async function* matchAll(scope) {
       const startMatches = startMatcher(scope);
       const endMatches = endMatcher(scope);
 
-      const pairs = product(startMatches, endMatches);
+      const pairs = cartesian(startMatches, endMatches);
 
-      for await (const [start, end] of pairs) {
-        const result = document.createRange();
+      for await (let [start, end] of pairs) {
+        start = toRange(start);
+        end = toRange(end);
 
-        result.setStart(start.endContainer, start.endOffset);
+        const result = ownerDocument(scope).createRange();
+        result.setStart(start.startContainer, start.startOffset);
+        // Note that a RangeSelector’s match *excludes* the endSelector’s match,
+        // hence we take the end’s startContainer & startOffset.
         result.setEnd(end.startContainer, end.startOffset);
 
         if (!result.collapsed) yield result;
@@ -52,7 +123,7 @@ export function makeCreateRangeSelectorMatcher(
   };
 }
 
-export const supportRangeSelector: Plugin<DomScope, Range> = function supportRangeSelectorPlugin(
+export const supportRangeSelector: Plugin<Node | Range, Node | Range> = function supportRangeSelectorPlugin(
   next,
   recurse,
 ) {

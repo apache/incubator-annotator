@@ -19,8 +19,7 @@
  */
 
 import { assert } from 'chai';
-
-import { product } from '../../src/range/cartesian';
+import { cartesian } from '../../src/range/cartesian';
 
 async function* gen1() {
   yield 1;
@@ -38,25 +37,52 @@ async function* gen3() {
 }
 
 describe('cartesian', () => {
-  describe('product', () => {
-    it('yields the cartesian product of the yielded items', async () => {
-      const cart = product(gen1(), gen2(), gen3());
+  it('yields the cartesian product of the yielded items', async () => {
+    const cart = cartesian(gen1(), gen2(), gen3());
 
-      const expected = [
-        [1, 4, 5],
-        [2, 4, 5],
-        [3, 4, 5],
-        [1, 4, 6],
-        [2, 4, 6],
-        [3, 4, 6],
-      ];
+    const expected = [
+      [1, 4, 5],
+      [2, 4, 5],
+      [3, 4, 5],
+      [1, 4, 6],
+      [2, 4, 6],
+      [3, 4, 6],
+    ];
 
-      const result: number[][] = [];
-      for await (const value of cart) {
-        result.push(value);
+    const actual: number[][] = [];
+    for await (const value of cart) {
+      actual.push(value);
+    }
+
+    assert.sameDeepMembers(actual, expected, 'yields the expected items');
+  });
+
+  it('re-raises exceptions and closes iterators', async () => {
+    let didClose = false;
+    const error = new Error();
+
+    async function* throws() {
+      yield 1;
+      throw error;
+    }
+
+    async function* works() {
+      try {
+        yield 2;
+        yield 3;
+      } finally {
+        didClose = true;
       }
+    }
 
-      assert.sameDeepMembers(result, expected, 'yields the expected items');
-    });
+    try {
+      // eslint-disable-next-line
+      const cart = cartesian(throws(), works());
+      await cart.next();
+      await cart.next();
+    } catch (e) {
+      assert.strictEqual(error, e, 're-raises an error from an iterable');
+      assert.isTrue(didClose, 'closes the iterators');
+    }
   });
 });

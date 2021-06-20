@@ -18,16 +18,29 @@
  * under the License.
  */
 
-// Wrap each text node in a given DOM Range with a <mark> or other element.
-// Breaks start and/or end node if needed.
-// Returns a function that cleans up the created highlight (not a perfect undo: split text nodes are
-// not merged again; if desired, you could run range.commonAncestorContainer.normalize() afterwards).
-//
-// Parameters:
-// - range: a DOM Range object. Note that as highlighting modifies the DOM, the range may be
-//   unusable afterwards
-// - tagName: the element used to wrap text nodes. Defaults to 'mark'.
-// - attributes: an Object defining any attributes to be set on the wrapper elements.
+import { ownerDocument } from './owner-document';
+
+/**
+ * Wrap each text node in a given DOM Range with a `<mark>` or other element.
+ *
+ * If the Range start and/or ends within a Text node, that node will be split
+ * in order to only wrap the contained part in the mark element.
+ *
+ * The highlight can be removed again by calling the function that cleans up the
+ * wrapper elements. Note that this might not perfectly restore the DOM to its
+ * previous state: text nodes that were split are not merged again. One could
+ * consider running `range.commonAncestorContainer.normalize()` afterwards to
+ * join all adjacent text nodes.
+ *
+ * @param range - A DOM Range object. Note that as highlighting modifies the
+ * DOM, the range may be unusable afterwards.
+ * @param tagName - The element used to wrap text nodes. Defaults to 'mark'.
+ * @param attributes - An object defining any attributes to be set on the
+ * wrapper elements
+ * @returns A function that removes the created highlight.
+ *
+ * @public
+ */
 export function highlightRange(
   range: Range,
   tagName = 'mark',
@@ -73,9 +86,7 @@ function textNodesInRange(range: Range): Text[] {
   }
 
   // Collect the text nodes.
-  const document =
-    range.startContainer.ownerDocument || (range.startContainer as Document);
-  const walker = document.createTreeWalker(
+  const walker = ownerDocument(range).createTreeWalker(
     range.commonAncestorContainer,
     NodeFilter.SHOW_TEXT,
     {

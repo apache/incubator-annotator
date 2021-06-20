@@ -18,36 +18,35 @@
  * under the License.
  */
 
-const path = require('path');
-
-const babel = require('@babel/core');
-
-// Use the root babel.config.js for module resolution.
-// Relevant issue: tleunen/eslint-import-resolver-babel-module#89
-const babelConfig = babel.loadPartialConfig({ cwd: __dirname });
-const babelModuleResolver = babelConfig.options.plugins.find(
-  (item) => item.file.request === 'module-resolver',
-);
-
 module.exports = {
   root: true,
   extends: ['eslint:recommended', 'plugin:import/recommended', 'prettier'],
   plugins: ['import', 'prettier'],
   rules: {
-    'import/extensions': [
-      'error',
-      'ignorePackages',
-      {
-        ts: 'never',
-      },
-    ],
+    'import/extensions': ['error', 'never'],
     'import/first': 'error',
     'import/newline-after-import': 'error',
+    'import/no-absolute-path': 'error',
     'import/no-default-export': 'error',
-    'import/no-internal-modules': 'error',
-    'import/no-relative-parent-imports': 'error',
-    'import/order': ['error', { 'newlines-between': 'always' }],
+    'import/order': [
+      'error',
+      {
+        alphabetize: {
+          order: 'asc',
+        },
+        groups: [
+          'builtin',
+          'external',
+          'internal',
+          'parent',
+          'sibling',
+          'index',
+        ],
+        'newlines-between': 'never',
+      },
+    ],
     'import/unambiguous': 'error',
+    'no-constant-condition': 'off',
     'prettier/prettier': [
       'error',
       {
@@ -57,8 +56,13 @@ module.exports = {
     ],
   },
   settings: {
+    'import/internal-regex': '^@apache-annotator/',
     'import/resolver': {
-      'babel-module': babelModuleResolver.options,
+      'babel-module': {
+        babelOptions: {
+          root: __dirname,
+        },
+      },
     },
   },
   overrides: [
@@ -76,8 +80,11 @@ module.exports = {
         es2017: true,
         node: true,
       },
+      globals: {
+        globalThis: 'readonly',
+      },
       parserOptions: {
-        ecmaVersion: 2018,
+        ecmaVersion: 2019,
       },
       plugins: ['node'],
       rules: {
@@ -89,10 +96,6 @@ module.exports = {
     },
     {
       files: ['**/*.ts'],
-      env: {
-        es2020: true,
-        'shared-node-browser': true,
-      },
       extends: [
         'plugin:@typescript-eslint/recommended',
         'plugin:@typescript-eslint/recommended-requiring-type-checking',
@@ -101,11 +104,15 @@ module.exports = {
       ],
       parserOptions: {
         ecmaVersion: 2020,
-        project: ['./tsconfig.json', './packages/*/tsconfig.json'],
+        project: ['./tsconfig.test.json', './packages/*/tsconfig.json'],
         tsconfigRootDir: __dirname,
+        EXPERIMENTAL_useSourceOfProjectReferenceRedirect: true,
       },
       plugins: ['@typescript-eslint'],
       rules: {
+        '@typescript-eslint/consistent-type-imports': 'error',
+        '@typescript-eslint/no-duplicate-imports': 'error',
+        '@typescript-eslint/no-explicit-any': 'off',
         '@typescript-eslint/no-unused-vars': [
           'error',
           { argsIgnorePattern: '^_' },
@@ -122,35 +129,18 @@ module.exports = {
     },
     {
       files: ['packages/*/test/**/*.ts', 'test/**/*.ts'],
-      env: {
-        mocha: true,
-      },
-      globals: {
-        assert: true,
-      },
       rules: {
-        'import/no-internal-modules': [
-          'error',
-          {
-            allow: [path.resolve(__dirname, './packages/*/src/**')],
-          },
-        ],
         'import/no-relative-parent-imports': 'off',
       },
     },
     {
-      files: ['packages/dom/**/*.js'],
-      env: {
-        browser: true,
-      },
-    },
-    {
-      files: ['web/demo/**/*.js'],
+      files: ['web/**/*.js'],
       env: {
         browser: true,
         es2020: true,
       },
       parserOptions: {
+        ecmaVersion: 2020,
         sourceType: 'module',
       },
     },

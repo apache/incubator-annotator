@@ -18,25 +18,11 @@
  * under the License.
  */
 
-/* eslint-env node */
-/* eslint-disable import/unambiguous */
-
 const path = require('path');
 
 module.exports = {
-  context: path.resolve(__dirname),
-  entry: {
-    index: ['./index.html', './style.css'],
-    demo: ['./demo/index.html', './demo/index.js'],
-    test: [
-      './test/index.html',
-      'mocha-loader!multi-entry-loader?include=./packages/*/test/**/*.test.[jt]s!',
-    ],
-  },
-  resolve: {
-    extensions: ['.ts', '.js'],
-  },
-  devtool: 'inline-source-map',
+  context: __dirname,
+  entry: ['./index.html', './index.js', './style.css'],
   module: {
     rules: [
       {
@@ -58,8 +44,8 @@ module.exports = {
     ],
   },
   output: {
+    // Note this directory is imported by the annotator website
     path: path.resolve(__dirname, 'dist'),
-    filename: '[name]/index.js',
   },
   devServer: {
     contentBase: false,

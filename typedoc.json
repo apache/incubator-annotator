@@ -1,0 +1,5 @@
+{
+  "disableSources": true,
+  "entryPoints": ["packages/apache-annotator/src/"],
+  "readme": "none"
+}

@@ -19,15 +19,13 @@
  */
 
 import { assert } from 'chai';
-import type { TextQuoteSelector } from '@annotator/selector';
-
+import type { TextQuoteSelector } from '@apache-annotator/selector';
 import { createTextQuoteSelectorMatcher } from '../../src/text-quote/match';
-import type { DomScope } from '../../src/types';
-import { evaluateXPath, RangeInfo } from '../utils';
-
+import { evaluateXPath } from '../utils';
+import type { RangeInfo } from '../utils';
 import { testCases } from './match-cases';
 
-const domParser = new window.DOMParser();
+const domParser = new DOMParser();
 
 describe('createTextQuoteSelectorMatcher', () => {
   for (const [name, { html, selector, expected }] of Object.entries(
@@ -53,8 +51,8 @@ describe('createTextQuoteSelectorMatcher', () => {
       {
         startContainerXPath: '//b/text()[13]',
         startOffset: 0,
-        endContainerXPath: '//b/text()[21]',
-        endOffset: 0,
+        endContainerXPath: '//b/text()[20]',
+        endOffset: 1,
       },
     ]);
   });
@@ -62,7 +60,6 @@ describe('createTextQuoteSelectorMatcher', () => {
   it('handles empty text nodes', async () => {
     const { html, selector } = testCases['simple'];
     const doc = domParser.parseFromString(html, 'text/html');
-
     const textNode = evaluateXPath(doc, '//b/text()') as Text;
     textNode.splitText(textNode.length);
     textNode.splitText(20);
@@ -79,34 +76,33 @@ describe('createTextQuoteSelectorMatcher', () => {
       {
         startContainerXPath: '//b/text()[4]', // "dolor"
         startOffset: 0,
-        endContainerXPath: '//b/text()[8]', // "et yada yada"
-        endOffset: 0,
+        endContainerXPath: '//b/text()[6]', // " am"
+        endOffset: 3,
       },
     ]);
   });
 
-  it('works with parent of text as scope', async () => {
-    const { html, selector, expected } = testCases['simple'];
-    const doc = domParser.parseFromString(html, 'text/html');
-
-    await testMatcher(doc, evaluateXPath(doc, '//b'), selector, expected);
-  });
-
-  it('works with parent of text as scope, when matching its first characters', async () => {
+  it('works when scope spans one text node’s contents, matching its first characters', async () => {
     const { html, selector, expected } = testCases['first characters'];
     const doc = domParser.parseFromString(html, 'text/html');
 
-    await testMatcher(doc, evaluateXPath(doc, '//b'), selector, expected);
+    const scope = doc.createRange();
+    scope.selectNodeContents(evaluateXPath(doc, '//b/text()'));
+
+    await testMatcher(doc, scope, selector, expected);
   });
 
-  it('works with parent of text as scope, when matching its first characters, with an empty text node', async () => {
+  it('works when scope starts with an empty text node, matching its first characters', async () => {
     const { html, selector } = testCases['first characters'];
     const doc = domParser.parseFromString(html, 'text/html');
 
     const textNode = evaluateXPath(doc, '//b/text()') as Text;
     textNode.splitText(0);
 
-    await testMatcher(doc, evaluateXPath(doc, '//b'), selector, [
+    const scope = doc.createRange();
+    scope.selectNodeContents(evaluateXPath(doc, '//b'));
+
+    await testMatcher(doc, scope, selector, [
       {
         startContainerXPath: '//b/text()[2]',
         startOffset: 0,
@@ -116,7 +112,7 @@ describe('createTextQuoteSelectorMatcher', () => {
     ]);
   });
 
-  it('works when scope is a Range within one text node', async () => {
+  it('works when scope has both ends within one text node', async () => {
     const { html, selector, expected } = testCases['simple'];
     const doc = domParser.parseFromString(html, 'text/html');
 
@@ -127,7 +123,7 @@ describe('createTextQuoteSelectorMatcher', () => {
     await testMatcher(doc, scope, selector, expected);
   });
 
-  it('works when scope is a Range with both ends inside text nodes', async () => {
+  it('works when scope has both ends inside text nodes', async () => {
     const { html, selector, expected } = testCases['across elements'];
     const doc = domParser.parseFromString(html, 'text/html');
 
@@ -138,7 +134,7 @@ describe('createTextQuoteSelectorMatcher', () => {
     await testMatcher(doc, scope, selector, expected);
   });
 
-  it('works when scope is a Range with both ends inside elements', async () => {
+  it('works when scope has both ends inside an element', async () => {
     const { html, selector, expected } = testCases['across elements'];
     const doc = domParser.parseFromString(html, 'text/html');
 
@@ -179,14 +175,14 @@ describe('createTextQuoteSelectorMatcher', () => {
 
 async function testMatcher(
   doc: Document,
-  scope: DomScope,
+  scope: Node | Range,
   selector: TextQuoteSelector,
   expected: RangeInfo[],
 ) {
   const matcher = createTextQuoteSelectorMatcher(selector);
   const matches = [];
   for await (const value of matcher(scope)) matches.push(value);
-  assert.equal(matches.length, expected.length);
+  assert.equal(matches.length, expected.length, 'Wrong number of matches.');
   matches.forEach((match, i) => {
     const expectedRange = expected[i];
     const expectedStartContainer = evaluateXPath(

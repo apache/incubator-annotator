@@ -18,9 +18,8 @@
  * under the License.
  */
 
-import type { TextQuoteSelector } from '@annotator/selector';
-
-import { RangeInfo } from '../utils';
+import type { TextQuoteSelector } from '@apache-annotator/selector';
+import type { RangeInfo } from '../utils';
 
 export const testCases: {
   [name: string]: {
@@ -99,8 +98,8 @@ export const testCases: {
       {
         startContainerXPath: '//i/text()',
         startOffset: 0,
-        endContainerXPath: '//b/text()[2]',
-        endOffset: 0,
+        endContainerXPath: '//i/text()',
+        endOffset: 11,
       },
     ],
   },
@@ -115,8 +114,8 @@ export const testCases: {
       {
         startContainerXPath: '//title/text()',
         startOffset: 4,
-        endContainerXPath: '//b/text()[1]',
-        endOffset: 0,
+        endContainerXPath: '//title/text()',
+        endOffset: 9,
       },
     ],
   },
@@ -301,6 +300,51 @@ export const testCases: {
         endContainerXPath: '//b/text()',
         endOffset: i,
       })),
+  },
+  'empty quote, multiple elements': {
+    html: '<b>l<i>or</i>em</b>',
+    selector: {
+      type: 'TextQuoteSelector',
+      exact: '',
+    },
+    expected: [
+      {
+        startContainerXPath: '//b/text()[1]',
+        startOffset: 0,
+        endContainerXPath: '//b/text()[1]',
+        endOffset: 0,
+      },
+      {
+        startContainerXPath: '//b/text()[1]',
+        startOffset: 1,
+        endContainerXPath: '//b/text()[1]',
+        endOffset: 1,
+      },
+      {
+        startContainerXPath: '//i/text()',
+        startOffset: 1,
+        endContainerXPath: '//i/text()',
+        endOffset: 1,
+      },
+      {
+        startContainerXPath: '//i/text()',
+        startOffset: 2,
+        endContainerXPath: '//i/text()',
+        endOffset: 2,
+      },
+      {
+        startContainerXPath: '//b/text()[2]',
+        startOffset: 1,
+        endContainerXPath: '//b/text()[2]',
+        endOffset: 1,
+      },
+      {
+        startContainerXPath: '//b/text()[2]',
+        startOffset: 2,
+        endContainerXPath: '//b/text()[2]',
+        endOffset: 2,
+      },
+    ],
   },
   'empty quote, with prefix': {
     html: '<b>lorem ipsum dolor amet yada yada</b>',

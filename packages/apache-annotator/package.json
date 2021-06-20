@@ -1,0 +1,28 @@
+{
+  "name": "apache-annotator",
+  "version": "0.1.0",
+  "description": "Apache Annotator provides annotation enabling code for browsers, servers, and humans.",
+  "homepage": "https://annotator.apache.org",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/apache/incubator-annotator.git",
+    "directory": "packages/apache-annotator"
+  },
+  "license": "Apache-2.0",
+  "author": "Apache Software Foundation",
+  "type": "module",
+  "exports": {
+    "./*": "./lib/*.js"
+  },
+  "dependencies": {
+    "@apache-annotator/dom": "^0.1.0",
+    "@apache-annotator/selector": "^0.1.0",
+    "@babel/runtime-corejs3": "^7.13.10"
+  },
+  "engines": {
+    "node": "^12.20 || ^14.15 || ^15.4 || ^16.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
