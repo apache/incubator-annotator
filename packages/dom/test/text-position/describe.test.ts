@@ -33,11 +33,9 @@ describe('createTextPositionSelectorMatcher', () => {
       const range = expected[0];
       it(`case: '${name}'`, async () => {
         const doc = domParser.parseFromString(html, 'text/html');
-        const scope = doc.createRange();
-        scope.selectNodeContents(doc);
         const result = await describeTextPosition(
           hydrateRange(range, doc),
-          scope,
+          doc,
         );
         assert.deepEqual(result, selector);
       });

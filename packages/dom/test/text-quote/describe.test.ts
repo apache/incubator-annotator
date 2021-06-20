@@ -38,11 +38,9 @@ function runTestCases(testCases: DescribeTextQuoteTestCases) {
   )) {
     it(`works for case: ${name}`, async () => {
       const doc = domParser.parseFromString(html, 'text/html');
-      const scope = doc.createRange();
-      scope.selectNodeContents(doc);
       const result = await describeTextQuote(
         hydrateRange(range, doc),
-        scope,
+        doc,
         options,
       );
       assert.deepEqual(result, expected);
@@ -142,11 +140,9 @@ describe('describeTextQuote', () => {
     for (const [name, { html, selector, expected }] of applicableTestCases) {
       it(`case: '${name}'`, async () => {
         const doc = domParser.parseFromString(html, 'text/html');
-        const scope = doc.createRange();
-        scope.selectNodeContents(doc);
         for (const rangeInfo of expected) {
           const range = hydrateRange(rangeInfo, doc);
-          const result = await describeTextQuote(range, scope);
+          const result = await describeTextQuote(range, doc);
           assert.equal(result.exact, selector.exact);
           // Our result may have a different combination of prefix/suffix; only check for obvious inconsistency.
           if (selector.prefix && result.prefix)

@@ -33,21 +33,13 @@ describe('createTextQuoteSelectorMatcher', () => {
   )) {
     it(`works for case: '${name}'`, async () => {
       const doc = domParser.parseFromString(html, 'text/html');
-
-      const scope = doc.createRange();
-      scope.selectNodeContents(doc);
-
-      await testMatcher(doc, scope, selector, expected);
+      await testMatcher(doc, doc, selector, expected);
     });
   }
 
   it('handles adjacent text nodes', async () => {
     const { html, selector } = testCases['simple'];
     const doc = domParser.parseFromString(html, 'text/html');
-
-    const scope = doc.createRange();
-    scope.selectNodeContents(doc);
-
     const textNode = evaluateXPath(doc, '//b/text()') as Text;
 
     for (let index = textNode.length - 1; index > 0; index--)
@@ -55,7 +47,7 @@ describe('createTextQuoteSelectorMatcher', () => {
     // console.log([...textNode.parentNode.childNodes].map(node => node.textContent))
     // → 'l',  'o', 'r', 'e', 'm', …
 
-    await testMatcher(doc, scope, selector, [
+    await testMatcher(doc, doc, selector, [
       {
         startContainerXPath: '//b/text()[13]',
         startOffset: 0,
@@ -68,10 +60,6 @@ describe('createTextQuoteSelectorMatcher', () => {
   it('handles empty text nodes', async () => {
     const { html, selector } = testCases['simple'];
     const doc = domParser.parseFromString(html, 'text/html');
-
-    const scope = doc.createRange();
-    scope.selectNodeContents(doc);
-
     const textNode = evaluateXPath(doc, '//b/text()') as Text;
     textNode.splitText(textNode.length);
     textNode.splitText(20);
@@ -84,7 +72,7 @@ describe('createTextQuoteSelectorMatcher', () => {
     // console.log([...textNode.parentNode.childNodes].map(node => node.textContent))
     // → '', 'lorem ipsum ', '', 'dolor', '', ' am', '', 'et yada yada', ''
 
-    await testMatcher(doc, scope, selector, [
+    await testMatcher(doc, doc, selector, [
       {
         startContainerXPath: '//b/text()[4]', // "dolor"
         startOffset: 0,
@@ -187,7 +175,7 @@ describe('createTextQuoteSelectorMatcher', () => {
 
 async function testMatcher(
   doc: Document,
-  scope: Range,
+  scope: Node | Range,
   selector: TextQuoteSelector,
   expected: RangeInfo[],
 ) {

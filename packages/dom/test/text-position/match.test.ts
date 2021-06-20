@@ -33,28 +33,20 @@ describe('createTextPositionSelectorMatcher', () => {
   )) {
     it(`works for case: '${name}'`, async () => {
       const doc = domParser.parseFromString(html, 'text/html');
-
-      const scope = doc.createRange();
-      scope.selectNodeContents(doc);
-
-      await testMatcher(doc, scope, selector, expected);
+      await testMatcher(doc, doc, selector, expected);
     });
   }
 
   it('handles adjacent text nodes', async () => {
     const { html, selector } = testCases['simple'];
     const doc = domParser.parseFromString(html, 'text/html');
-
-    const scope = doc.createRange();
-    scope.selectNodeContents(doc);
-
     const textNode = evaluateXPath(doc, '//b/text()') as Text;
 
     textNode.splitText(16);
     // console.log([...textNode.parentNode.childNodes].map(node => node.textContent))
     // → [ 'l😃rem ipsum dol', 'or amet yada yada' ]
 
-    await testMatcher(doc, scope, selector, [
+    await testMatcher(doc, doc, selector, [
       {
         startContainerXPath: '//b/text()[1]',
         startOffset: 13,
@@ -68,9 +60,6 @@ describe('createTextPositionSelectorMatcher', () => {
     const { html, selector } = testCases['simple'];
     const doc = domParser.parseFromString(html, 'text/html');
 
-    const scope = doc.createRange();
-    scope.selectNodeContents(doc);
-
     const textNode = evaluateXPath(doc, '//b/text()') as Text;
     textNode.splitText(textNode.length);
     textNode.splitText(21);
@@ -83,7 +72,7 @@ describe('createTextPositionSelectorMatcher', () => {
     // console.log([...textNode.parentNode.childNodes].map(node => node.textContent))
     // → [ '', 'l😃rem ipsum ', '', 'dolor', '', ' am', '', 'et yada yada', '' ]
 
-    await testMatcher(doc, scope, selector, [
+    await testMatcher(doc, doc, selector, [
       {
         startContainerXPath: '//b/text()[4]', // "dolor"
         startOffset: 0,
@@ -178,7 +167,7 @@ describe('createTextPositionSelectorMatcher', () => {
 
 async function testMatcher(
   doc: Document,
-  scope: Range,
+  scope: Node | Range,
   selector: TextPositionSelector,
   expected: RangeInfo[],
 ) {
