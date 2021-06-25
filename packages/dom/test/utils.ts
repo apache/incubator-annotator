@@ -19,6 +19,7 @@
  */
 
 import { assert } from 'chai';
+import { ownerDocument } from '../src/owner-document';
 
 // RangeInfo serialises a Range’s start and end containers as XPaths.
 export type RangeInfo = {
@@ -57,4 +58,71 @@ export function hydrateRange(rangeInfo: RangeInfo, doc: Document): Range {
     rangeInfo.endOffset,
   );
   return range;
+}
+
+export function assertRangeEquals(
+  match: Range,
+  expected: RangeInfo,
+) {
+  const doc = ownerDocument(match);
+  if (expected === undefined) {
+    assert.fail(`Unexpected match: ${prettyRange(match)}`);
+  }
+  const expectedStartContainer = evaluateXPath(
+    doc,
+    expected.startContainerXPath,
+  );
+  const expectedEndContainer = evaluateXPath(
+    doc,
+    expected.endContainerXPath,
+  );
+  assert(
+    match.startContainer === expectedStartContainer,
+    `unexpected start container: ${prettyNodeName(match.startContainer)}; ` +
+      `expected ${prettyNodeName(expectedStartContainer)}`,
+  );
+  assert.equal(match.startOffset, expected.startOffset);
+  assert(
+    match.endContainer ===
+      evaluateXPath(doc, expected.endContainerXPath),
+    `unexpected end container: ${prettyNodeName(match.endContainer)}; ` +
+      `expected ${prettyNodeName(expectedEndContainer)}`,
+  );
+  assert.equal(match.endOffset, expected.endOffset);
+}
+
+function prettyNodeName(node: Node) {
+  switch (node.nodeType) {
+    case Node.TEXT_NODE: {
+      const text = (node as Text).nodeValue || '';
+      return `#text "${text.length > 50 ? text.substring(0, 50) + '…' : text}"`;
+    }
+    case Node.ELEMENT_NODE:
+      return `<${(node as Element).tagName.toLowerCase()}>`;
+    default:
+      return node.nodeName.toLowerCase();
+  }
+}
+
+function prettyRange(range: Range): string {
+  let s = 'Range('
+  if (
+    range.startContainer.nodeType === Node.TEXT_NODE
+    && range.startContainer.parentNode
+  ) s += prettyNodeName(range.startContainer.parentNode) + ' → ';
+  s += prettyNodeName(range.startContainer) + ' : ' + range.startOffset;
+  if (range.endContainer !== range.startContainer) {
+    s += ' … '
+    if (
+      range.endContainer.nodeType === Node.TEXT_NODE
+      && range.endContainer.parentNode
+      && range.endContainer.parentNode !== range.startContainer.parentNode
+    ) s += prettyNodeName(range.endContainer.parentNode) + ' → ';
+    s += prettyNodeName(range.endContainer) + ' : ';
+  } else {
+    s += '…';
+  }
+  s += range.endOffset;
+  s += ')';
+  return s;
 }

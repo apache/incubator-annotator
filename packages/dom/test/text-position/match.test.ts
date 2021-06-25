@@ -21,7 +21,7 @@
 import { assert } from 'chai';
 import type { TextPositionSelector } from '@apache-annotator/selector';
 import { createTextPositionSelectorMatcher } from '../../src/text-position/match';
-import { evaluateXPath } from '../utils';
+import { evaluateXPath, assertRangeEquals } from '../utils';
 import type { RangeInfo } from '../utils';
 import { testCases } from './match-cases';
 
@@ -33,7 +33,7 @@ describe('createTextPositionSelectorMatcher', () => {
   )) {
     it(`works for case: '${name}'`, async () => {
       const doc = domParser.parseFromString(html, 'text/html');
-      await testMatcher(doc, doc, selector, expected);
+      await testMatcher(doc, selector, expected);
     });
   }
 
@@ -46,7 +46,7 @@ describe('createTextPositionSelectorMatcher', () => {
     // console.log([...textNode.parentNode.childNodes].map(node => node.textContent))
     // → [ 'l😃rem ipsum dol', 'or amet yada yada' ]
 
-    await testMatcher(doc, doc, selector, [
+    await testMatcher(doc, selector, [
       {
         startContainerXPath: '//b/text()[1]',
         startOffset: 13,
@@ -72,7 +72,7 @@ describe('createTextPositionSelectorMatcher', () => {
     // console.log([...textNode.parentNode.childNodes].map(node => node.textContent))
     // → [ '', 'l😃rem ipsum ', '', 'dolor', '', ' am', '', 'et yada yada', '' ]
 
-    await testMatcher(doc, doc, selector, [
+    await testMatcher(doc, selector, [
       {
         startContainerXPath: '//b/text()[4]', // "dolor"
         startOffset: 0,
@@ -89,7 +89,7 @@ describe('createTextPositionSelectorMatcher', () => {
     const scope = doc.createRange();
     scope.selectNodeContents(evaluateXPath(doc, '//b/text()'));
 
-    await testMatcher(doc, scope, selector, expected);
+    await testMatcher(scope, selector, expected);
   });
 
   it('works when scope starts with an empty text node, matching its first characters', async () => {
@@ -102,7 +102,7 @@ describe('createTextPositionSelectorMatcher', () => {
     const scope = doc.createRange();
     scope.selectNodeContents(evaluateXPath(doc, '//b'));
 
-    await testMatcher(doc, scope, selector, [
+    await testMatcher(scope, selector, [
       {
         startContainerXPath: '//b/text()[2]',
         startOffset: 0,
@@ -128,7 +128,7 @@ describe('createTextPositionSelectorMatcher', () => {
       end: 14,
     };
 
-    await testMatcher(doc, scope, selector, expected);
+    await testMatcher(scope, selector, expected);
   });
 
   it('works when scope has both ends inside text nodes', async () => {
@@ -146,7 +146,7 @@ describe('createTextPositionSelectorMatcher', () => {
       end: 12,
     };
 
-    await testMatcher(doc, scope, selector, expected);
+    await testMatcher(scope, selector, expected);
   });
 
   it('works when scope has both ends inside an element', async () => {
@@ -161,55 +161,19 @@ describe('createTextPositionSelectorMatcher', () => {
       start: 6,
       end: 14,
     };
-    await testMatcher(doc, scope, selector, expected);
+    await testMatcher(scope, selector, expected);
   });
 });
 
 async function testMatcher(
-  doc: Document,
   scope: Node | Range,
   selector: TextPositionSelector,
   expected: RangeInfo[],
 ) {
   const matcher = createTextPositionSelectorMatcher(selector);
-  const matches = [];
-  for await (const value of matcher(scope)) matches.push(value);
-  assert.equal(matches.length, expected.length);
-  matches.forEach((match, i) => {
-    const expectedRange = expected[i];
-    const expectedStartContainer = evaluateXPath(
-      doc,
-      expectedRange.startContainerXPath,
-    );
-    const expectedEndContainer = evaluateXPath(
-      doc,
-      expectedRange.endContainerXPath,
-    );
-    assert(
-      match.startContainer === expectedStartContainer,
-      `unexpected start container: ${prettyNodeName(match.startContainer)}; ` +
-        `expected ${prettyNodeName(expectedStartContainer)}`,
-    );
-    assert.equal(match.startOffset, expectedRange.startOffset);
-    assert(
-      match.endContainer ===
-        evaluateXPath(doc, expectedRange.endContainerXPath),
-      `unexpected end container: ${prettyNodeName(match.endContainer)}; ` +
-        `expected ${prettyNodeName(expectedEndContainer)}`,
-    );
-    assert.equal(match.endOffset, expectedRange.endOffset);
-  });
-}
-
-function prettyNodeName(node: Node) {
-  switch (node.nodeType) {
-    case Node.TEXT_NODE: {
-      const text = (node as Text).nodeValue || '';
-      return `#text "${text.length > 50 ? text.substring(0, 50) + '…' : text}"`;
-    }
-    case Node.ELEMENT_NODE:
-      return `<${(node as Element).tagName.toLowerCase()}>`;
-    default:
-      return node.nodeName.toLowerCase();
+  let count = 0;
+  for await (const match of matcher(scope)) {
+    assertRangeEquals(match, expected[count++]);
   }
+  assert.equal(count, expected.length, 'Wrong number of matches.');
 }
