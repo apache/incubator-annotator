@@ -19,12 +19,14 @@
  */
 
 import { ownerDocument } from './owner-document';
+import { toRange } from './to-range';
 
 /**
- * Wrap each text node in a given DOM Range with a `<mark>` or other element.
+ * Wrap each text node in a given Node or Range with a `<mark>` or other
+ * element.
  *
- * If the Range start and/or ends within a Text node, that node will be split
- * in order to only wrap the contained part in the mark element.
+ * If a Range is given that starts and/or ends within a Text node, that node
+ * will be split in order to only wrap the contained part in the mark element.
  *
  * The highlight can be removed again by calling the function that cleans up the
  * wrapper elements. Note that this might not perfectly restore the DOM to its
@@ -32,22 +34,22 @@ import { ownerDocument } from './owner-document';
  * consider running `range.commonAncestorContainer.normalize()` afterwards to
  * join all adjacent text nodes.
  *
- * @param range - A DOM Range object. Note that as highlighting modifies the
- * DOM, the range may be unusable afterwards.
- * @param tagName - The element used to wrap text nodes. Defaults to 'mark'.
+ * @param target - The Node/Range containing the text. If it is a Range, note
+ * that as highlighting modifies the DOM, the Range may be unusable afterwards.
+ * @param tagName - The element used to wrap text nodes. Defaults to `'mark'`.
  * @param attributes - An object defining any attributes to be set on the
- * wrapper elements
+ * wrapper elements, e.g. its `class`.
  * @returns A function that removes the created highlight.
  *
  * @public
  */
-export function highlightRange(
-  range: Range,
+export function highlightText(
+  target: Node | Range,
   tagName = 'mark',
   attributes: Record<string, string> = {},
 ): () => void {
   // First put all nodes in an array (splits start and end nodes if needed)
-  const nodes = textNodesInRange(range);
+  const nodes = textNodesInRange(toRange(target));
 
   // Highlight each node
   const highlightElements: HTMLElement[] = [];

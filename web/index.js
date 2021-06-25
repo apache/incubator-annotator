@@ -26,7 +26,7 @@ import {
   describeTextQuote,
   createTextPositionSelectorMatcher,
   describeTextPosition,
-  highlightRange,
+  highlightText,
 } from '@apache-annotator/dom';
 import { makeRefinable } from '@apache-annotator/selector';
 
@@ -119,7 +119,7 @@ async function anchor(selector) {
   }
 
   for (const range of ranges) {
-    const removeHighlight = highlightRange(range);
+    const removeHighlight = highlightText(range);
     moduleState.cleanupFunctions.push(removeHighlight);
   }
 

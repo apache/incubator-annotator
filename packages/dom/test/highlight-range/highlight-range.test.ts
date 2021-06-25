@@ -19,7 +19,7 @@
  */
 
 import { assert } from 'chai';
-import { highlightRange } from '../../src/highlight-range';
+import { highlightText } from '../../src/highlight-text';
 import type { RangeInfo } from '../utils';
 import { hydrateRange, evaluateXPath } from '../utils';
 
@@ -105,7 +105,7 @@ const testCases: {
   },
 };
 
-describe('highlightRange', () => {
+describe('highlightText', () => {
   for (const [
     name,
     { inputHtml, range, tagName, attributes, expectedHtml },
@@ -113,8 +113,8 @@ describe('highlightRange', () => {
     it(`works for case: ${name}`, () => {
       const doc = domParser.parseFromString(inputHtml, 'text/html');
 
-      // Invoke highlightRange for the specified Range, and check the result.
-      const removeHighlights = highlightRange(
+      // Invoke highlightText for the specified Range, and check the result.
+      const removeHighlights = highlightText(
         hydrateRange(range, doc),
         tagName,
         attributes,
@@ -138,7 +138,7 @@ describe('highlightRange', () => {
     range.setStart(evaluateXPath(doc, '//b/text()[1]'), 12); // before 'dolor am'
     range.setEnd(evaluateXPath(doc, '//b/text()[2]'), 20 - 15); // after 'dolor am'
 
-    const removeHighlights = highlightRange(range);
+    const removeHighlights = highlightText(range);
     const expectedHtml =
       '<b>lorem ipsum <mark>dol</mark><mark>or am</mark>et yada yada</b>';
     assert.equal(doc.body.innerHTML, expectedHtml);
@@ -159,7 +159,7 @@ describe('highlightRange', () => {
     range.setStart(evaluateXPath(doc, '//b/text()[1]'), 12); // before 'dolor am'
     range.setEnd(evaluateXPath(doc, '//b/text()[3]'), 20 - 15); // after 'dolor am'
 
-    const removeHighlights = highlightRange(range);
+    const removeHighlights = highlightText(range);
     const expectedHtml =
       '<b>lorem ipsum <mark>dol</mark><mark></mark><mark>or am</mark>et yada yada</b>';
     assert.equal(doc.body.innerHTML, expectedHtml);
@@ -175,7 +175,7 @@ describe('highlightRange', () => {
     const range = doc.createRange();
     range.selectNode(evaluateXPath(doc, '//img'));
 
-    const removeHighlights = highlightRange(range);
+    const removeHighlights = highlightText(range);
     assert.equal(doc.body.innerHTML, inputHtml);
 
     removeHighlights();
@@ -187,8 +187,8 @@ describe('highlightRange', () => {
     const { range: range2, expectedHtml } = testCases['overlapping highlight'];
     const doc = domParser.parseFromString(inputHtml, 'text/html');
 
-    const removeHighlights1 = highlightRange(hydrateRange(range, doc));
-    const removeHighlights2 = highlightRange(
+    const removeHighlights1 = highlightText(hydrateRange(range, doc));
+    const removeHighlights2 = highlightText(
       hydrateRange(range2, doc),
       'mark2',
     );
@@ -204,8 +204,8 @@ describe('highlightRange', () => {
     const { range: range2, expectedHtml } = testCases['overlapping highlight'];
     const doc = domParser.parseFromString(inputHtml, 'text/html');
 
-    const removeHighlights1 = highlightRange(hydrateRange(range, doc));
-    const removeHighlights2 = highlightRange(
+    const removeHighlights1 = highlightText(hydrateRange(range, doc));
+    const removeHighlights2 = highlightText(
       hydrateRange(range2, doc),
       'mark2',
     );
