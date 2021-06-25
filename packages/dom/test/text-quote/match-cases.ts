@@ -119,7 +119,7 @@ export const testCases: {
       },
     ],
   },
-  'two matches': {
+  'two matches in one node': {
     html: '<b>lorem ipsum dolor amet yada yada</b>',
     selector: {
       type: 'TextQuoteSelector',
@@ -140,7 +140,34 @@ export const testCases: {
       },
     ],
   },
-  'overlapping matches': {
+  'matches in multiple nodes': {
+    html: `<p>Match again and <b>again </b>and <i>again</i>!`,
+    selector: {
+      type: 'TextQuoteSelector',
+      exact: 'again',
+    },
+    expected: [
+      {
+        startContainerXPath: '//p/text()[1]',
+        startOffset: 6,
+        endContainerXPath: '//p/text()[1]',
+        endOffset: 11,
+      },
+      {
+        startContainerXPath: '//b/text()',
+        startOffset: 0,
+        endContainerXPath: '//b/text()',
+        endOffset: 5,
+      },
+      {
+        startContainerXPath: '//i/text()',
+        startOffset: 0,
+        endContainerXPath: '//i/text()',
+        endOffset: 5,
+      },
+    ],
+  },
+  'overlapping matches in one node': {
     html: '<b>bananas</b>',
     selector: {
       type: 'TextQuoteSelector',
@@ -158,6 +185,27 @@ export const testCases: {
         startOffset: 3,
         endContainerXPath: '//b/text()',
         endOffset: 6,
+      },
+    ],
+  },
+  'overlapping matches stretching multiple nodes': {
+    html: '<b>bana<i>na</i>nas</b>',
+    selector: {
+      type: 'TextQuoteSelector',
+      exact: 'anana',
+    },
+    expected: [
+      {
+        startContainerXPath: '//b/text()[1]',
+        startOffset: 1,
+        endContainerXPath: '//i/text()',
+        endOffset: 2,
+      },
+      {
+        startContainerXPath: '//b/text()[1]',
+        startOffset: 3,
+        endContainerXPath: '//b/text()[2]',
+        endOffset: 2,
       },
     ],
   },

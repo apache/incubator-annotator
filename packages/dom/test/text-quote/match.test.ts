@@ -173,7 +173,7 @@ describe('createTextQuoteSelectorMatcher', () => {
   });
 
   it.skip('is resistant to splitting text nodes', async () => {
-    const { html, selector, expected } = testCases['two matches'];
+    const { html, selector, expected } = testCases['matches in multiple nodes'];
     const doc = domParser.parseFromString(html, 'text/html');
 
     const matcher = createTextQuoteSelectorMatcher(selector);
