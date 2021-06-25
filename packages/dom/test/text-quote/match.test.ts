@@ -37,6 +37,17 @@ describe('createTextQuoteSelectorMatcher', () => {
     });
   }
 
+  describe.skip('Is resistant to splitting text nodes', () => {
+    for (const [name, { html, selector, expected }] of Object.entries(
+      testCases,
+    )) {
+      it(`for case: '${name}'`, async () => {
+        const doc = domParser.parseFromString(html, 'text/html');
+        await testMatcher(doc, doc, selector, expected, true);
+      });
+    }
+  });
+
   it('handles adjacent text nodes', async () => {
     const { html, selector } = testCases['simple'];
     const doc = domParser.parseFromString(html, 'text/html');
@@ -171,20 +182,6 @@ describe('createTextQuoteSelectorMatcher', () => {
     scope.setEnd(evaluateXPath(doc, '//b/text()'), 32);
     await testMatcher(doc, scope, selector, []);
   });
-
-  it.skip('is resistant to splitting text nodes', async () => {
-    const { html, selector, expected } = testCases['matches in multiple nodes'];
-    const doc = domParser.parseFromString(html, 'text/html');
-
-    const matcher = createTextQuoteSelectorMatcher(selector);
-    let count = 0;
-    for await (const match of matcher(doc.body)) {
-      assertMatchIsCorrect(doc, match, expected[count++]);
-      const wrapperNode = doc.createElement('mark');
-      match.surroundContents(wrapperNode);
-    }
-    assert.equal(count, expected.length, 'Wrong number of matches.');
-  });
 });
 
 async function testMatcher(
@@ -192,14 +189,18 @@ async function testMatcher(
   scope: Node | Range,
   selector: TextQuoteSelector,
   expected: RangeInfo[],
+  mutateDom: boolean = false,
 ) {
   const matcher = createTextQuoteSelectorMatcher(selector);
-  const matches = [];
-  for await (const value of matcher(scope)) matches.push(value);
-  assert.equal(matches.length, expected.length, 'Wrong number of matches.');
-  matches.forEach((match, i) => {
-    assertMatchIsCorrect(doc, match, expected[i]);
-  });
+  let count = 0;
+  for await (const match of matcher(scope)) {
+    assertMatchIsCorrect(doc, match, expected[count++]);
+    if (mutateDom) {
+      const wrapperNode = doc.createElement('mark');
+      match.surroundContents(wrapperNode);
+    }
+  }
+  assert.equal(count, expected.length, 'Wrong number of matches.');
 }
 
 function assertMatchIsCorrect(
@@ -207,6 +208,9 @@ function assertMatchIsCorrect(
   match: Range,
   expected: RangeInfo,
 ) {
+  if (expected === undefined) {
+    assert.fail(`Unexpected match: ${prettyRange(match)}`);
+  }
   const expectedStartContainer = evaluateXPath(
     doc,
     expected.startContainerXPath,
@@ -241,4 +245,27 @@ function prettyNodeName(node: Node) {
     default:
       return node.nodeName.toLowerCase();
   }
+}
+
+function prettyRange(range: Range): string {
+  let s = 'Range('
+  if (
+    range.startContainer.nodeType === Node.TEXT_NODE
+    && range.startContainer.parentNode
+  ) s += prettyNodeName(range.startContainer.parentNode) + ' → ';
+  s += prettyNodeName(range.startContainer) + ' : ' + range.startOffset;
+  if (range.endContainer !== range.startContainer) {
+    s += ' … '
+    if (
+      range.endContainer.nodeType === Node.TEXT_NODE
+      && range.endContainer.parentNode
+      && range.endContainer.parentNode !== range.startContainer.parentNode
+    ) s += prettyNodeName(range.endContainer.parentNode) + ' → ';
+    s += prettyNodeName(range.endContainer) + ' : ';
+  } else {
+    s += '…';
+  }
+  s += range.endOffset;
+  s += ')';
+  return s;
 }
