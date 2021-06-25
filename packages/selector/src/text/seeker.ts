@@ -332,7 +332,7 @@ export class TextSeeker<TChunk extends Chunk<string>>
           this.currentChunkPosition + this.currentChunk.data.length;
         if (endOfChunk <= target) {
           // The target is beyond the current chunk.
-          // (we use < not ≤: if the target is *at* the end of the chunk, possibly
+          // (we use ≤ not <: if the target is *at* the end of the chunk, possibly
           // because the current chunk is empty, we prefer to take the next chunk)
 
           const [data, nextChunk] = this._readToNextChunk();
