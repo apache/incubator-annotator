@@ -171,6 +171,20 @@ describe('createTextQuoteSelectorMatcher', () => {
     scope.setEnd(evaluateXPath(doc, '//b/text()'), 32);
     await testMatcher(doc, scope, selector, []);
   });
+
+  it.skip('is resistant to splitting text nodes', async () => {
+    const { html, selector, expected } = testCases['two matches'];
+    const doc = domParser.parseFromString(html, 'text/html');
+
+    const matcher = createTextQuoteSelectorMatcher(selector);
+    let count = 0;
+    for await (const match of matcher(doc.body)) {
+      assertMatchIsCorrect(doc, match, expected[count++]);
+      const wrapperNode = doc.createElement('mark');
+      match.surroundContents(wrapperNode);
+    }
+    assert.equal(count, expected.length, 'Wrong number of matches.');
+  });
 });
 
 async function testMatcher(
@@ -184,29 +198,36 @@ async function testMatcher(
   for await (const value of matcher(scope)) matches.push(value);
   assert.equal(matches.length, expected.length, 'Wrong number of matches.');
   matches.forEach((match, i) => {
-    const expectedRange = expected[i];
-    const expectedStartContainer = evaluateXPath(
-      doc,
-      expectedRange.startContainerXPath,
-    );
-    const expectedEndContainer = evaluateXPath(
-      doc,
-      expectedRange.endContainerXPath,
-    );
-    assert(
-      match.startContainer === expectedStartContainer,
-      `unexpected start container: ${prettyNodeName(match.startContainer)}; ` +
-        `expected ${prettyNodeName(expectedStartContainer)}`,
-    );
-    assert.equal(match.startOffset, expectedRange.startOffset);
-    assert(
-      match.endContainer ===
-        evaluateXPath(doc, expectedRange.endContainerXPath),
-      `unexpected end container: ${prettyNodeName(match.endContainer)}; ` +
-        `expected ${prettyNodeName(expectedEndContainer)}`,
-    );
-    assert.equal(match.endOffset, expectedRange.endOffset);
+    assertMatchIsCorrect(doc, match, expected[i]);
   });
+}
+
+function assertMatchIsCorrect(
+  doc: Document,
+  match: Range,
+  expected: RangeInfo,
+) {
+  const expectedStartContainer = evaluateXPath(
+    doc,
+    expected.startContainerXPath,
+  );
+  const expectedEndContainer = evaluateXPath(
+    doc,
+    expected.endContainerXPath,
+  );
+  assert(
+    match.startContainer === expectedStartContainer,
+    `unexpected start container: ${prettyNodeName(match.startContainer)}; ` +
+      `expected ${prettyNodeName(expectedStartContainer)}`,
+  );
+  assert.equal(match.startOffset, expected.startOffset);
+  assert(
+    match.endContainer ===
+      evaluateXPath(doc, expected.endContainerXPath),
+    `unexpected end container: ${prettyNodeName(match.endContainer)}; ` +
+      `expected ${prettyNodeName(expectedEndContainer)}`,
+  );
+  assert.equal(match.endOffset, expected.endOffset);
 }
 
 function prettyNodeName(node: Node) {

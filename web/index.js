@@ -114,6 +114,8 @@ async function anchor(selector) {
   const matchAll = createMatcher(selector);
   const ranges = [];
 
+  // First collect all matches, and only then highlight them; to avoid
+  // modifying the DOM while the matcher is running.
   for await (const range of matchAll(target)) {
     ranges.push(range);
   }
