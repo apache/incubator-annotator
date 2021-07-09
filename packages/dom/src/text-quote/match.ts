@@ -40,6 +40,10 @@ import { TextNodeChunker, EmptyScopeError } from '../text-node-chunker';
  * return an (async) generator that produces each match in the order they are
  * found in the text.
  *
+ * *XXX Modifying the DOM (e.g. to highlight the text) while the search is still
+ * running can mess up and result in an error or an infinite loop. See [issue
+ * #112](https://github.com/apache/incubator-annotator/issues/112).*
+ *
  * @example
  * ```
  * // Find the word ‘banana’.

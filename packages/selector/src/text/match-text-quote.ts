@@ -45,6 +45,9 @@ import type { Chunk, Chunker, ChunkRange } from './chunker';
  * return an (async) generator that produces each match in the order they are
  * found in the text.
  *
+ * *XXX Modifying the Chunks while the search is still running can mess up and
+ * result in an error or an infinite loop. See [issue #112](https://github.com/apache/incubator-annotator/issues/112).*
+ *
  * @example
  * ```
  * const selector = { type: 'TextQuoteSelector', exact: 'banana' };
