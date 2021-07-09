@@ -28,8 +28,6 @@ import { toRange } from './to-range';
  * CssSelector}.
  *
  * The given CssSelector returns all elements within `scope` that it matches.
- * However, the selector is evaluated relative to the Document as a whole.
- * *(XXX is this intentional, a mistake, or compromise?)*
  *
  * The function is curried, taking first the selector and then the scope.
  *
@@ -45,6 +43,24 @@ import { toRange } from './to-range';
  *
  * > “If […] the user agent discovers multiple matching text sequences, then the
  * > selection SHOULD be treated as matching all of the matches.”
+ *
+ * Note that if `scope` is *not* a Document, the [Web Annotation Data Model](https://www.w3.org/TR/2017/REC-annotation-model-20170223/#css-selector)
+ * leaves the behaviour undefined. This implementation will, in such a case,
+ * evaluate the selector relative to the document containing the scope, but only
+ * return those matches that are fully enclosed within the scope. There might be
+ * edge cases where this is not a perfect inverse of {@link describeCss}.
+ *
+ * @example
+ * ```
+ * const matches = createCssSelectorMatcher({
+ *   type: 'CssSelector',
+ *   value: '#target',
+ * });
+ * for await (const match of matches) {
+ *   console.log(match);
+ * }
+ * // <div id="target" …>
+ * ```
  *
  * @param selector - The {@link CssSelector} to be anchored.
  * @returns A {@link Matcher} function that applies `selector` to a given
@@ -89,7 +105,7 @@ export function createCssSelectorMatcher(
  *
  * @param element - The element that the selector should describe.
  * @param scope - The node that serves as the ‘document’ for purposes of finding
- * a unique selector. Defaults to the full Document that contains `element`.
+ * an unambiguous selector. Defaults to the Document that contains `element`.
  * @returns The selector unambiguously describing `element` within `scope`.
  */
 export async function describeCss(
