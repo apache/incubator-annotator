@@ -19,7 +19,7 @@
     "build:js": "lerna exec --parallel -- babel -d lib -s -x .ts --env-name production --root-mode upward src",
     "build:misc": "lerna exec --parallel -- cp ../../DISCLAIMER-WIP ../../LICENSE ../../NOTICE ../../README.md .",
     "build:types": "tsc --build",
-    "clean": "tsc --build --clean && lerna exec -- rimraf DISCLAIMER-WIP LICENSE NOTICE README.md lib && rimraf docs",
+    "clean": "tsc --build --clean && lerna exec -- rimraf DISCLAIMER-WIP LICENSE NOTICE README.md lib && rimraf .nyc_output coverage docs web/dist *.tsbuildinfo",
     "docs": "tsc --build && typedoc",
     "lint": "eslint .",
     "prepublishOnly": "yarn run build",
