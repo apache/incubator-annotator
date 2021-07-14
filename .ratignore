@@ -15,5 +15,6 @@ typedoc\.json
 yarn\.lock
 CODE_OF_CONDUCT\.md
 DISCLAIMER-WIP
+LICENSES
 README\.md
 SECURITY\.md

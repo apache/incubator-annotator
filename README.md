@@ -17,7 +17,8 @@ See documentation on the website: <https://annotator.apache.org/docs/>
 
 # License
 
-Apache License 2.0
+This project is available as open source under the terms of the Apache 2.0 License. 
+For accurate information, please check individual files.
 
 # Disclaimer
 
