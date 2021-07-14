@@ -189,7 +189,7 @@ async function testMatcher(
   scope: Node | Range,
   selector: TextQuoteSelector,
   expected: RangeInfo[],
-  mutateDom: boolean = false,
+  mutateDom = false,
 ) {
   const matcher = createTextQuoteSelectorMatcher(selector);
   let count = 0;

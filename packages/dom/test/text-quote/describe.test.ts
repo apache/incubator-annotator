@@ -119,7 +119,7 @@ describe('describeTextQuote', () => {
   });
 
   it('works if range does not contain Text nodes', async () => {
-    const html = `<b>Try quoting this image: <img/> — would that work?</b>`
+    const html = `<b>Try quoting this image: <img/> — would that work?</b>`;
     const doc = domParser.parseFromString(html, 'text/html');
     const range = document.createRange();
     range.selectNode(evaluateXPath(doc, '//img'));

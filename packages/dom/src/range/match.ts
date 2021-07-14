@@ -36,7 +36,7 @@ import { cartesian } from './cartesian';
  * The function is curried, taking first the `createMatcher` function, then the
  * selector, and then the scope.
  *
- * As there may be multiple matches for the start & end selectors, the resulting
+ * As there may be multiple matches for the start & end selectors, the resulting
  * matcher will return an (async) iterable, that produces a match for each
  * possible pair of matches of the nested selectors (except those where its end
  * would precede its start). *(Note that this behaviour is a rather free
@@ -114,7 +114,7 @@ export function makeCreateRangeSelectorMatcher(
         const result = ownerDocument(scope).createRange();
         result.setStart(start.startContainer, start.startOffset);
         // Note that a RangeSelector’s match *excludes* the endSelector’s match,
-        // hence we take the end’s startContainer & startOffset.
+        // hence we take the end’s startContainer & startOffset.
         result.setEnd(end.startContainer, end.startOffset);
 
         if (!result.collapsed) yield result;

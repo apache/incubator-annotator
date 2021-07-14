@@ -188,10 +188,7 @@ describe('highlightText', () => {
     const doc = domParser.parseFromString(inputHtml, 'text/html');
 
     const removeHighlights1 = highlightText(hydrateRange(range, doc));
-    const removeHighlights2 = highlightText(
-      hydrateRange(range2, doc),
-      'mark2',
-    );
+    const removeHighlights2 = highlightText(hydrateRange(range2, doc), 'mark2');
     assert.equal(doc.body.innerHTML, expectedHtml);
 
     removeHighlights1();
@@ -205,10 +202,7 @@ describe('highlightText', () => {
     const doc = domParser.parseFromString(inputHtml, 'text/html');
 
     const removeHighlights1 = highlightText(hydrateRange(range, doc));
-    const removeHighlights2 = highlightText(
-      hydrateRange(range2, doc),
-      'mark2',
-    );
+    const removeHighlights2 = highlightText(hydrateRange(range2, doc), 'mark2');
     assert.equal(doc.body.innerHTML, expectedHtml);
 
     removeHighlights2();

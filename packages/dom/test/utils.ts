@@ -60,10 +60,7 @@ export function hydrateRange(rangeInfo: RangeInfo, doc: Document): Range {
   return range;
 }
 
-export function assertRangeEquals(
-  match: Range,
-  expected: RangeInfo,
-) {
+export function assertRangeEquals(match: Range, expected: RangeInfo): void {
   const doc = ownerDocument(match);
   if (expected === undefined) {
     assert.fail(`Unexpected match: ${prettyRange(match)}`);
@@ -72,10 +69,7 @@ export function assertRangeEquals(
     doc,
     expected.startContainerXPath,
   );
-  const expectedEndContainer = evaluateXPath(
-    doc,
-    expected.endContainerXPath,
-  );
+  const expectedEndContainer = evaluateXPath(doc, expected.endContainerXPath);
   assert(
     match.startContainer === expectedStartContainer,
     `unexpected start container: ${prettyNodeName(match.startContainer)}; ` +
@@ -83,8 +77,7 @@ export function assertRangeEquals(
   );
   assert.equal(match.startOffset, expected.startOffset);
   assert(
-    match.endContainer ===
-      evaluateXPath(doc, expected.endContainerXPath),
+    match.endContainer === evaluateXPath(doc, expected.endContainerXPath),
     `unexpected end container: ${prettyNodeName(match.endContainer)}; ` +
       `expected ${prettyNodeName(expectedEndContainer)}`,
   );
@@ -105,19 +98,21 @@ function prettyNodeName(node: Node) {
 }
 
 function prettyRange(range: Range): string {
-  let s = 'Range('
+  let s = 'Range(';
   if (
-    range.startContainer.nodeType === Node.TEXT_NODE
-    && range.startContainer.parentNode
-  ) s += prettyNodeName(range.startContainer.parentNode) + ' → ';
-  s += prettyNodeName(range.startContainer) + ' : ' + range.startOffset;
+    range.startContainer.nodeType === Node.TEXT_NODE &&
+    range.startContainer.parentNode
+  )
+    s += prettyNodeName(range.startContainer.parentNode) + ' → ';
+  s += prettyNodeName(range.startContainer) + `: ${range.startOffset}`;
   if (range.endContainer !== range.startContainer) {
-    s += ' … '
+    s += ' … ';
     if (
-      range.endContainer.nodeType === Node.TEXT_NODE
-      && range.endContainer.parentNode
-      && range.endContainer.parentNode !== range.startContainer.parentNode
-    ) s += prettyNodeName(range.endContainer.parentNode) + ' → ';
+      range.endContainer.nodeType === Node.TEXT_NODE &&
+      range.endContainer.parentNode &&
+      range.endContainer.parentNode !== range.startContainer.parentNode
+    )
+      s += prettyNodeName(range.endContainer.parentNode) + ' → ';
     s += prettyNodeName(range.endContainer) + ' : ';
   } else {
     s += '…';
