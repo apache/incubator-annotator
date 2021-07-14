@@ -11,6 +11,7 @@ node_modules
 package\.json
 repolinter\.json
 tsconfig(\.\w+)?\.json
+typedoc\.json
 yarn\.lock
 CODE_OF_CONDUCT\.md
 DISCLAIMER-WIP
