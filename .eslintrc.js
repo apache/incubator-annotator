@@ -108,9 +108,11 @@ module.exports = {
         ecmaVersion: 2020,
         project: ['./tsconfig.test.json', './packages/*/tsconfig.json'],
         tsconfigRootDir: __dirname,
+        EXPERIMENTAL_useSourceOfProjectReferenceRedirect: true,
       },
       plugins: ['@typescript-eslint'],
       rules: {
+        'import/no-unresolved': 'off',
         '@typescript-eslint/consistent-type-imports': 'error',
         '@typescript-eslint/no-duplicate-imports': 'error',
         '@typescript-eslint/no-explicit-any': 'off',
