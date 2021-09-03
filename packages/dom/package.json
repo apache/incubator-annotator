@@ -14,11 +14,9 @@
   "exports": "./lib/index.js",
   "main": "./lib/index.js",
   "dependencies": {
+    "@apache-annotator/selector": "^0.2.0",
     "@babel/runtime-corejs3": "^7.13.10",
     "optimal-select": "^4.0.1"
-  },
-  "devDependencies": {
-    "@apache-annotator/selector": "^0.2.0"
   },
   "engines": {
     "node": "^12.20 || ^14.15 || ^15.4 || ^16.0"
