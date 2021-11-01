@@ -23,7 +23,8 @@
 module.exports = {
   extension: ['.ts'],
   ignore: ['node_modules'],
-  require: ['./babel-register.js', 'global-jsdom/register'],
+  loader: 'babel-register-esm',
+  require: ['global-jsdom/register'],
   timeout: 5000,
   watchFiles: [
     './test/**/*.ts',

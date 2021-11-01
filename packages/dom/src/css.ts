@@ -20,7 +20,7 @@
  * under the License.
  */
 
-import optimalSelect from 'optimal-select';
+import { finder } from '@medv/finder';
 import type { CssSelector, Matcher } from '@apache-annotator/selector';
 import { ownerDocument } from './owner-document.js';
 import { toRange } from './to-range.js';
@@ -112,9 +112,9 @@ export function createCssSelectorMatcher(
  */
 export async function describeCss(
   element: HTMLElement,
-  scope: Node = element.ownerDocument,
+  scope: Element = element.ownerDocument.documentElement,
 ): Promise<CssSelector> {
-  const selector = optimalSelect(element, { root: scope });
+  const selector = finder(element, { root: scope });
   return {
     type: 'CssSelector',
     value: selector,

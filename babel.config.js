@@ -32,8 +32,8 @@ module.exports = (api) => {
     // Use minimal syntax fixes where possible
     // Note: This setting may become the default in Babel 8.
     bugfixes: true,
-    // Transform module syntax if necessary.
-    modules: TEST ? 'commonjs' : false,
+    // Do not transform module syntax.
+    modules: false,
   };
 
   // Options for the @babel/typescript preset.

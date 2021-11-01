@@ -1,7 +1,6 @@
 *.d.ts
 !/packages/**/src/**/*.d.ts
 *.d.ts.map
-.nyc_output
 coverage
 docs
 node_modules
