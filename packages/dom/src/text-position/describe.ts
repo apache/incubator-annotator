@@ -22,9 +22,9 @@
 
 import type { TextPositionSelector } from '@apache-annotator/selector';
 import { describeTextPosition as abstractDescribeTextPosition } from '@apache-annotator/selector';
-import { ownerDocument } from '../owner-document';
-import { TextNodeChunker } from '../text-node-chunker';
-import { toRange } from '../to-range';
+import { ownerDocument } from '../owner-document.js';
+import { TextNodeChunker } from '../text-node-chunker.js';
+import { toRange } from '../to-range.js';
 
 /**
  * Returns a {@link TextPositionSelector} that points at the target text within

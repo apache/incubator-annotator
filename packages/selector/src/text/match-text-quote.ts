@@ -20,8 +20,8 @@
  * under the License.
  */
 
-import type { TextQuoteSelector } from '../types';
-import type { Chunk, Chunker, ChunkRange } from './chunker';
+import type { TextQuoteSelector } from '../types.js';
+import type { Chunk, Chunker, ChunkRange } from './chunker.js';
 
 /**
  * Find occurrences in a text matching the given {@link TextQuoteSelector}.

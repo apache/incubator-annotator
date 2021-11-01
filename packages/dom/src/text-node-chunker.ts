@@ -21,9 +21,9 @@
  */
 
 import type { Chunk, Chunker, ChunkRange } from '@apache-annotator/selector';
-import { normalizeRange } from './normalize-range';
-import { ownerDocument } from './owner-document';
-import { toRange } from './to-range';
+import { normalizeRange } from './normalize-range.js';
+import { ownerDocument } from './owner-document.js';
+import { toRange } from './to-range.js';
 
 export interface PartialTextNode extends Chunk<string> {
   readonly node: Text;

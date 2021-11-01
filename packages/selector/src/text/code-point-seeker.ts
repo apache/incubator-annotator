@@ -20,8 +20,8 @@
  * under the License.
  */
 
-import type { Chunk } from './chunker';
-import type { Seeker } from './seeker';
+import type { Chunk } from './chunker.js';
+import type { Seeker } from './seeker.js';
 
 /**
  * Seeks through text counting Unicode *code points* instead of *code units*.

@@ -22,9 +22,9 @@
 
 import { strict as assert } from 'assert';
 import type { CssSelector } from '@apache-annotator/selector';
-import { createCssSelectorMatcher } from '../../src/css';
-import { evaluateXPath } from '../utils';
-import { testCases } from './match-cases';
+import { createCssSelectorMatcher } from '../../src/css.js';
+import { evaluateXPath } from '../utils.js';
+import { testCases } from './match-cases.js';
 
 const domParser = new DOMParser();
 

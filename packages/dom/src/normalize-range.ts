@@ -20,7 +20,7 @@
  * under the License.
  */
 
-import { ownerDocument } from './owner-document';
+import { ownerDocument } from './owner-document.js';
 
 /**
  * TextRange is a Range that guarantees to always have Text nodes as its start

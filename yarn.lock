@@ -2536,13 +2536,6 @@ babel-loader@^8.0.5:
     mkdirp "^0.5.1"
     pify "^4.0.1"
 
-babel-plugin-add-import-extension@^1.4.1:
-  version "1.4.1"
-  resolved "https://registry.yarnpkg.com/babel-plugin-add-import-extension/-/babel-plugin-add-import-extension-1.4.1.tgz#d31b919ecbbd052aa3df210eca0b9f0153df770b"
-  integrity sha512-owxjRte+y2QB0YPCv3hWFNLF3Y1S7eEEZCCGo48TzRPM6zEzYsvxtOyx1h95Ghw1gEcl1UnOFIs5CY3Kd4OLYg==
-  dependencies:
-    "@babel/helper-plugin-utils" "^7.10.4"
-
 babel-plugin-dynamic-import-node@^2.3.3:
   version "2.3.3"
   resolved "https://registry.yarnpkg.com/babel-plugin-dynamic-import-node/-/babel-plugin-dynamic-import-node-2.3.3.tgz#84fda19c976ec5c6defef57f9427b3def66e17a3"

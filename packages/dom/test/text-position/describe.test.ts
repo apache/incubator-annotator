@@ -21,9 +21,9 @@
  */
 
 import { strict as assert } from 'assert';
-import { describeTextPosition } from '../../src/text-position/describe';
-import { hydrateRange } from '../utils';
-import { testCases } from './match-cases';
+import { describeTextPosition } from '../../src/text-position/describe.js';
+import { hydrateRange } from '../utils.js';
+import { testCases } from './match-cases.js';
 
 const domParser = new DOMParser();
 

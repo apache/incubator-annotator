@@ -22,7 +22,7 @@
 
 import type { Matcher, TextQuoteSelector } from '@apache-annotator/selector';
 import { textQuoteSelectorMatcher as abstractTextQuoteSelectorMatcher } from '@apache-annotator/selector';
-import { TextNodeChunker, EmptyScopeError } from '../text-node-chunker';
+import { TextNodeChunker, EmptyScopeError } from '../text-node-chunker.js';
 
 /**
  * Find occurrences in a text matching the given {@link

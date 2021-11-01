@@ -20,8 +20,8 @@
  * under the License.
  */
 
-import type { Chunk, Chunker } from './chunker';
-import { chunkEquals } from './chunker';
+import type { Chunk, Chunker } from './chunker.js';
+import { chunkEquals } from './chunker.js';
 
 const E_END = 'Iterator exhausted before seek ended.';
 

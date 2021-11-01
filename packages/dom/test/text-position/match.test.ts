@@ -22,10 +22,10 @@
 
 import { strict as assert } from 'assert';
 import type { TextPositionSelector } from '@apache-annotator/selector';
-import { createTextPositionSelectorMatcher } from '../../src/text-position/match';
-import { evaluateXPath, assertRangeEquals } from '../utils';
-import type { RangeInfo } from '../utils';
-import { testCases } from './match-cases';
+import { createTextPositionSelectorMatcher } from '../../src/text-position/match.js';
+import { evaluateXPath, assertRangeEquals } from '../utils.js';
+import type { RangeInfo } from '../utils.js';
+import { testCases } from './match-cases.js';
 
 const domParser = new DOMParser();
 

@@ -22,8 +22,8 @@
 
 import optimalSelect from 'optimal-select';
 import type { CssSelector, Matcher } from '@apache-annotator/selector';
-import { ownerDocument } from './owner-document';
-import { toRange } from './to-range';
+import { ownerDocument } from './owner-document.js';
+import { toRange } from './to-range.js';
 
 /**
  * Find the elements corresponding to the given {@link

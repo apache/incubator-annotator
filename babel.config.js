@@ -21,7 +21,6 @@
  */
 
 const path = require('path');
-const { DEFAULT_EXTENSIONS } = require('@babel/core');
 
 module.exports = (api) => {
   const ENV = api.env();
@@ -45,10 +44,6 @@ module.exports = (api) => {
     onlyRemoveTypeImports: true,
   };
 
-  const addImportExtensionOptions = {
-    extension: DEV || TEST ? 'ts' : 'js',
-  };
-
   // Options for the module-resolver plugin.
   // Used for resolving source files during development.
   const resolverOptions = {
@@ -60,7 +55,6 @@ module.exports = (api) => {
           }
         : null),
     },
-    extensions: ['.ts', '.tsx', ...DEFAULT_EXTENSIONS],
   };
 
   // Options for the @babel/transform-runtime plugin.
@@ -75,7 +69,6 @@ module.exports = (api) => {
     plugins: [
       '@babel/plugin-proposal-class-properties',
       ['@babel/transform-runtime', runtimeOptions],
-      ['add-import-extension', addImportExtensionOptions],
       ['module-resolver', resolverOptions],
       'preserve-comment-header',
       ...(TEST ? ['istanbul'] : []),

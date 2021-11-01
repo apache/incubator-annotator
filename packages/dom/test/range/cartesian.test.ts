@@ -21,7 +21,7 @@
  */
 
 import { strict as assert } from 'assert';
-import { cartesian } from '../../src/range/cartesian';
+import { cartesian } from '../../src/range/cartesian.js';
 
 async function* gen1() {
   yield 1;
