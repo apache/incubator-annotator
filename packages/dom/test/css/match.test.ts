@@ -20,7 +20,7 @@
  * under the License.
  */
 
-import { assert } from 'chai';
+import { strict as assert } from 'assert';
 import type { CssSelector } from '@apache-annotator/selector';
 import { createCssSelectorMatcher } from '../../src/css';
 import { evaluateXPath } from '../utils';

@@ -20,7 +20,7 @@
  * under the License.
  */
 
-import { assert } from 'chai';
+import { strict as assert } from 'assert';
 import { ownerDocument } from '../src/owner-document';
 
 // RangeInfo serialises a Range’s start and end containers as XPaths.

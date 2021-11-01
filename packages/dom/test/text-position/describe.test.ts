@@ -20,7 +20,7 @@
  * under the License.
  */
 
-import { assert } from 'chai';
+import { strict as assert } from 'assert';
 import { describeTextPosition } from '../../src/text-position/describe';
 import { hydrateRange } from '../utils';
 import { testCases } from './match-cases';

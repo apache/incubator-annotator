@@ -20,7 +20,7 @@
  * under the License.
  */
 
-import { assert } from 'chai';
+import { strict as assert } from 'assert';
 import type { TextQuoteSelector } from '@apache-annotator/selector';
 import { createTextQuoteSelectorMatcher } from '../../src/text-quote/match';
 import { evaluateXPath, assertRangeEquals } from '../utils';

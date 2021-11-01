@@ -20,7 +20,7 @@
  * under the License.
  */
 
-import { assert } from 'chai';
+import { strict as assert } from 'assert';
 import { highlightText } from '../../src/highlight-text';
 import type { RangeInfo } from '../utils';
 import { hydrateRange, evaluateXPath } from '../utils';

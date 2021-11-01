@@ -20,7 +20,7 @@
  * under the License.
  */
 
-import { assert } from 'chai';
+import { strict as assert } from 'assert';
 import type { TextPositionSelector } from '@apache-annotator/selector';
 import { createTextPositionSelectorMatcher } from '../../src/text-position/match';
 import { evaluateXPath, assertRangeEquals } from '../utils';

@@ -20,7 +20,7 @@
  * under the License.
  */
 
-import { assert } from 'chai';
+import { strict as assert } from 'assert';
 import { describeTextQuote } from '../../src/text-quote/describe';
 import { hydrateRange, evaluateXPath } from '../utils';
 import type { DescribeTextQuoteTestCases } from './describe-cases';

@@ -22,10 +22,10 @@
 
 /* global process */
 
+import { strict as assert } from 'assert';
 import fs from 'fs';
 import { URL } from 'url';
 import Ajv from 'ajv';
-import { assert } from 'chai';
 import fetch from 'node-fetch';
 import resolve from 'resolve';
 
@@ -101,7 +101,7 @@ describe('Test JSON against Schemas', () => {
     const schema = requireJSON(`web-annotation-tests/${schemaPath}`);
     it(schema['title'] as string, () => {
       const valid = ajv.validate(schema, data);
-      assert.isOk(valid, ajv.errorsText());
+      assert.ok(valid, ajv.errorsText());
     });
   });
 });
