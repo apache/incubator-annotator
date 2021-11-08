@@ -75,8 +75,6 @@ module.exports = (api) => {
   const runtimeOptions = {
     // Use corejs version 3.
     corejs: { version: 3, proposals: true },
-    // Use helpers formatted for the target environment.
-    useESModules: !TEST,
   };
 
   return {
