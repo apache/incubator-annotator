@@ -26,7 +26,7 @@
     "publish": "lerna publish",
     "publish:ci": "yarn run publish --canary --exact --force-publish '*' --no-verify-access --yes minor",
     "start": "yarn run web:server",
-    "test": "cross-env BABEL_ENV=test c8 -r html -r text mocha packages/**/*.test.ts",
+    "test": "cross-env BABEL_ENV=test c8 -a -r html -r text mocha packages/**/*.test.ts",
     "test:watch": "cross-env BABEL_ENV=test mocha -p -w packages/**/*.test.ts",
     "validate": "cross-env BABEL_ENV=test mocha test/**/*.test.ts",
     "web:build": "webpack --config=web/webpack.config.js --mode development",
