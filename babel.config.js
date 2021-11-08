@@ -21,6 +21,9 @@
  */
 
 const path = require('path');
+const { resolvePath } = require('babel-plugin-module-resolver');
+
+const packagePath = path.join(__dirname, 'packages');
 
 module.exports = (api) => {
   const ENV = api.env();
@@ -47,14 +50,25 @@ module.exports = (api) => {
   // Options for the module-resolver plugin.
   // Used for resolving source files during development.
   const resolverOptions = {
-    alias: {
-      ...(DEV || TEST
-        ? {
+    ...(DEV || TEST
+      ? {
+          alias: {
             '^@apache-annotator/([^/]+)$': ([, name]) =>
-              path.join(__dirname, 'packages', name, '/src/index.ts'),
-          }
-        : null),
-    },
+              path.join(packagePath, name, '/src/index.ts'),
+          },
+          resolvePath(sourcePath, currentFile, opts) {
+            if (
+              currentFile.startsWith(packagePath) &&
+              currentFile.endsWith('.ts') &&
+              sourcePath.startsWith('.') &&
+              sourcePath.endsWith('.js')
+            ) {
+              return sourcePath.replace(/\.js$/, '.ts');
+            }
+            return resolvePath(sourcePath, currentFile, opts);
+          },
+        }
+      : null),
   };
 
   // Options for the @babel/transform-runtime plugin.
