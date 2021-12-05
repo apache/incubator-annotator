@@ -20,8 +20,8 @@
  * under the License.
  */
 
-import { assert } from 'chai';
-import { cartesian } from '../../src/range/cartesian';
+import { strict as assert } from 'assert';
+import { cartesian } from '../../src/range/cartesian.js';
 
 async function* gen1() {
   yield 1;
@@ -56,7 +56,7 @@ describe('cartesian', () => {
       actual.push(value);
     }
 
-    assert.sameDeepMembers(actual, expected, 'yields the expected items');
+    assert.deepEqual(actual, expected, 'yields the expected items');
   });
 
   it('re-raises exceptions and closes iterators', async () => {
@@ -84,7 +84,7 @@ describe('cartesian', () => {
       await cart.next();
     } catch (e) {
       assert.strictEqual(error, e, 're-raises an error from an iterable');
-      assert.isTrue(didClose, 'closes the iterators');
+      assert.strictEqual(didClose, true, 'closes the iterators');
     }
   });
 });

@@ -20,10 +20,10 @@
  * under the License.
  */
 
-import { assert } from 'chai';
-import { describeCss } from '../../src/css';
-import { evaluateXPath } from '../utils';
-import { testCases } from './match-cases';
+import { strict as assert } from 'assert';
+import { describeCss } from '../../src/css.js';
+import { evaluateXPath } from '../utils.js';
+import { testCases } from './match-cases.js';
 
 const domParser = new DOMParser();
 

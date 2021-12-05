@@ -25,9 +25,9 @@ import type {
   RangeSelector,
   Selector,
 } from '@apache-annotator/selector';
-import { ownerDocument } from '../owner-document';
-import { toRange } from '../to-range';
-import { cartesian } from './cartesian';
+import { ownerDocument } from '../owner-document.js';
+import { toRange } from '../to-range.js';
+import { cartesian } from './cartesian.js';
 
 /**
  * Find the range(s) corresponding to the given {@link RangeSelector}.

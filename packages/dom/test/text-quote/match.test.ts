@@ -20,12 +20,12 @@
  * under the License.
  */
 
-import { assert } from 'chai';
+import { strict as assert } from 'assert';
 import type { TextQuoteSelector } from '@apache-annotator/selector';
-import { createTextQuoteSelectorMatcher } from '../../src/text-quote/match';
-import { evaluateXPath, assertRangeEquals } from '../utils';
-import type { RangeInfo } from '../utils';
-import { testCases } from './match-cases';
+import { createTextQuoteSelectorMatcher } from '../../src/text-quote/match.js';
+import { evaluateXPath, assertRangeEquals } from '../utils.js';
+import type { RangeInfo } from '../utils.js';
+import { testCases } from './match-cases.js';
 
 const domParser = new DOMParser();
 

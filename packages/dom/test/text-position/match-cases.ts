@@ -21,7 +21,7 @@
  */
 
 import type { TextPositionSelector } from '@apache-annotator/selector';
-import type { RangeInfo } from '../utils';
+import type { RangeInfo } from '../utils.js';
 
 export const testCases: {
   [name: string]: {

@@ -22,7 +22,7 @@
 
 import type { Matcher, TextPositionSelector } from '@apache-annotator/selector';
 import { textPositionSelectorMatcher as abstractTextPositionSelectorMatcher } from '@apache-annotator/selector';
-import { TextNodeChunker } from '../text-node-chunker';
+import { TextNodeChunker } from '../text-node-chunker.js';
 
 /**
  * Find the range of text corresponding to the given {@link

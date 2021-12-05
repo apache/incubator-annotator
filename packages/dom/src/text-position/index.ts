@@ -20,5 +20,5 @@
  * under the License.
  */
 
-export * from './describe';
-export * from './match';
+export * from './describe.js';
+export * from './match.js';

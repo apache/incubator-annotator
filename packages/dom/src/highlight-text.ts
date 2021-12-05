@@ -20,8 +20,8 @@
  * under the License.
  */
 
-import { ownerDocument } from './owner-document';
-import { toRange } from './to-range';
+import { ownerDocument } from './owner-document.js';
+import { toRange } from './to-range.js';
 
 /**
  * Wrap each text node in a given Node or Range with a `<mark>` or other

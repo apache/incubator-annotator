@@ -20,17 +20,17 @@
  * under the License.
  */
 
-import { assert } from 'chai';
-import { describeTextQuote } from '../../src/text-quote/describe';
-import { hydrateRange, evaluateXPath } from '../utils';
-import type { DescribeTextQuoteTestCases } from './describe-cases';
+import { strict as assert } from 'assert';
+import { describeTextQuote } from '../../src/text-quote/describe.js';
+import { hydrateRange, evaluateXPath } from '../utils.js';
+import type { DescribeTextQuoteTestCases } from './describe-cases.js';
 import {
   testCasesWithMinimumQuoteLength,
   testCasesWithMaxWordLength,
   testCasesWithMinimalContext,
   testCasesWithoutOptions,
-} from './describe-cases';
-import { testCases as testMatchCases } from './match-cases';
+} from './describe-cases.js';
+import { testCases as testMatchCases } from './match-cases.js';
 
 const domParser = new DOMParser();
 

@@ -20,12 +20,12 @@
  * under the License.
  */
 
-import type { TextQuoteSelector } from '../types';
-import type { Chunk, Chunker, ChunkRange } from './chunker';
-import { chunkRangeEquals } from './chunker';
-import type { RelativeSeeker } from './seeker';
-import { TextSeeker } from './seeker';
-import { textQuoteSelectorMatcher } from '.';
+import type { TextQuoteSelector } from '../types.js';
+import type { Chunk, Chunker, ChunkRange } from './chunker.js';
+import { chunkRangeEquals } from './chunker.js';
+import { textQuoteSelectorMatcher } from './match-text-quote.js';
+import type { RelativeSeeker } from './seeker.js';
+import { TextSeeker } from './seeker.js';
 
 /**
  * @public

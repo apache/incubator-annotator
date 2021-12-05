@@ -20,7 +20,7 @@
  * under the License.
  */
 
-import { ownerDocument } from './owner-document';
+import { ownerDocument } from './owner-document.js';
 
 /**
  * Returns a range that exactly selects the contents of the given node.

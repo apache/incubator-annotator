@@ -20,4 +20,4 @@
  * under the License.
  */
 
-export * from './match';
+export * from './match.js';

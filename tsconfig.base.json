@@ -1,11 +1,11 @@
 {
   "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
     "composite": true,
     "declaration": true,
     "declarationMap": true,
     "downlevelIteration": true,
     "emitDeclarationOnly": true,
-    "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
     "lib": [
@@ -13,6 +13,7 @@
       "dom.iterable",
       "es2020"
     ],
+    "module": "es2020",
     "moduleResolution": "node",
     "noPropertyAccessFromIndexSignature": true,
     "skipLibCheck": true,

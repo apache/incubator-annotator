@@ -20,16 +20,16 @@
  * under the License.
  */
 
-import type { Matcher, Selector } from './types';
+import type { Matcher, Selector } from './types.js';
 
-export type { Matcher, Selector } from './types';
+export type { Matcher, Selector } from './types.js';
 export type {
   CssSelector,
   RangeSelector,
   TextPositionSelector,
   TextQuoteSelector,
-} from './types';
-export * from './text';
+} from './types.js';
+export * from './text/index.js';
 
 /**
  * Wrap a matcher creation function so that it supports refinement of selection.

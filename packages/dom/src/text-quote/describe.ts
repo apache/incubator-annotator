@@ -25,9 +25,9 @@ import type {
   DescribeTextQuoteOptions,
 } from '@apache-annotator/selector';
 import { describeTextQuote as abstractDescribeTextQuote } from '@apache-annotator/selector';
-import { ownerDocument } from '../owner-document';
-import { TextNodeChunker } from '../text-node-chunker';
-import { toRange } from '../to-range';
+import { ownerDocument } from '../owner-document.js';
+import { TextNodeChunker } from '../text-node-chunker.js';
+import { toRange } from '../to-range.js';
 
 /**
  * Returns a {@link TextQuoteSelector} that unambiguously describes the given

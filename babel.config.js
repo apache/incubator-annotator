@@ -21,7 +21,9 @@
  */
 
 const path = require('path');
-const { DEFAULT_EXTENSIONS } = require('@babel/core');
+const { resolvePath } = require('babel-plugin-module-resolver');
+
+const packagePath = path.join(__dirname, 'packages');
 
 module.exports = (api) => {
   const ENV = api.env();
@@ -33,8 +35,8 @@ module.exports = (api) => {
     // Use minimal syntax fixes where possible
     // Note: This setting may become the default in Babel 8.
     bugfixes: true,
-    // Transform module syntax if necessary.
-    modules: TEST ? 'commonjs' : false,
+    // Do not transform module syntax.
+    modules: false,
   };
 
   // Options for the @babel/typescript preset.
@@ -45,37 +47,40 @@ module.exports = (api) => {
     onlyRemoveTypeImports: true,
   };
 
-  const addImportExtensionOptions = {
-    extension: DEV || TEST ? 'ts' : 'js',
-  };
-
   // Options for the module-resolver plugin.
   // Used for resolving source files during development.
   const resolverOptions = {
-    alias: {
-      ...(DEV || TEST
-        ? {
+    ...(DEV || TEST
+      ? {
+          alias: {
             '^@apache-annotator/([^/]+)$': ([, name]) =>
-              path.join(__dirname, 'packages', name, '/src/index.ts'),
-          }
-        : null),
-    },
-    extensions: ['.ts', '.tsx', ...DEFAULT_EXTENSIONS],
+              path.join(packagePath, name, 'src', 'index.ts'),
+          },
+          resolvePath(sourcePath, currentFile, opts) {
+            if (
+              currentFile.startsWith(packagePath) &&
+              currentFile.endsWith('.ts') &&
+              sourcePath.startsWith('.') &&
+              sourcePath.endsWith('.js')
+            ) {
+              return sourcePath.replace(/\.js$/, '.ts');
+            }
+            return resolvePath(sourcePath, currentFile, opts);
+          },
+        }
+      : null),
   };
 
   // Options for the @babel/transform-runtime plugin.
   const runtimeOptions = {
     // Use corejs version 3.
     corejs: { version: 3, proposals: true },
-    // Use helpers formatted for the target environment.
-    useESModules: !TEST,
   };
 
   return {
     plugins: [
       '@babel/plugin-proposal-class-properties',
       ['@babel/transform-runtime', runtimeOptions],
-      ['add-import-extension', addImportExtensionOptions],
       ['module-resolver', resolverOptions],
       'preserve-comment-header',
       ...(TEST ? ['istanbul'] : []),

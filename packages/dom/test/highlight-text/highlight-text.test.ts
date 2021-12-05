@@ -20,10 +20,10 @@
  * under the License.
  */
 
-import { assert } from 'chai';
-import { highlightText } from '../../src/highlight-text';
-import type { RangeInfo } from '../utils';
-import { hydrateRange, evaluateXPath } from '../utils';
+import { strict as assert } from 'assert';
+import { highlightText } from '../../src/highlight-text.js';
+import type { RangeInfo } from '../utils.js';
+import { hydrateRange, evaluateXPath } from '../utils.js';
 
 const domParser = new DOMParser();
 
