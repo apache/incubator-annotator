@@ -23,10 +23,9 @@ vsn_rel = $(shell git describe --tags --always --first-parent \
         | tail -c +2 \
         2>/dev/null)
 
-# Is this a tagged release?
+# What is the release tag?
 vsn_tag = $(shell git describe --tags --always --first-parent \
         | grep -Eo -- '^v[0-9]+\.[0-9]\.[0-9]+(-rc.[0-9]+)?$$' \
-        | tail -c +2 \
         2>/dev/null)
 
 annotator_vsn = $(vsn_rel)
@@ -64,19 +63,10 @@ else
 .PHONY: dist
 dist:
 	@rm -rf apache-annotator-$(annotator_vsn)-incubating
-	@git clone \
-        --config advice.detachedHead=false \
-        --config versionsort.suffix=-rc \
-        --depth 1 \
-        --no-tags \
-        --quiet \
-        file://"$(shell git rev-parse --show-toplevel)" \
-        apache-annotator-$(annotator_vsn)-incubating
-	@git --git-dir apache-annotator-$(annotator_vsn)-incubating/.git config \
-        remote.origin.url https://github.com/apache/incubator-annotator.git
-	@tar czf \
-        apache-annotator-$(annotator_vsn)$(vsn_pre)-incubating.tar.gz \
-        apache-annotator-$(annotator_vsn)-incubating
+	@git archive \
+        --output apache-annotator-$(annotator_vsn)$(vsn_pre)-incubating.tar.gz \
+        --prefix apache-annotator-$(annotator_vsn)-incubating/ \
+        $(vsn_tag)
 	@echo "Done: apache-annotator-$(annotator_vsn)$(vsn_pre)-incubating.tar.gz"
 
 endif
