@@ -89,6 +89,10 @@ module.exports = (api) => {
       ['@babel/env', envOptions],
       ['@babel/typescript', typescriptOptions],
     ],
-    targets: TEST ? { node: 'current' } : 'defaults',
+    targets: {
+      browsers: 'defaults',
+      esmodules: true,
+      node: TEST ? 'current' : '14.15',
+    },
   };
 };
