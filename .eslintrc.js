@@ -74,7 +74,6 @@ module.exports = {
         '.mocharc.js',
         'babel-register.js',
         'babel.config.js',
-        'husky.config.js',
         'nyc.config.js',
         'web/webpack.config.js',
       ],

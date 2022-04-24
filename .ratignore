@@ -6,6 +6,7 @@
 \.npmignore
 \.ratignore
 \.travis.yml
+husky.sh
 lerna\.json
 node_modules
 package\.json
