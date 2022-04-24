@@ -28,7 +28,8 @@ vsn_tag = $(shell git describe --tags --always --first-parent \
 	| grep -Eo -- '^v[0-9]+\.[0-9]\.[0-9]+(-rc.[0-9]+)?$$' \
 	2>/dev/null)
 
-annotator_vsn = $(vsn_rel)
+distdir = apache-annotator-$(vsn_rel)-incubating
+disttar = apache-annotator-$(vsn_rel)$(vsn_pre)-incubating.tar.gz
 
 .PHONY: all
 all: build
@@ -62,24 +63,19 @@ else
 
 .PHONY: dist
 dist:
-	@rm -rf apache-annotator-$(annotator_vsn)-incubating
-	@git archive \
-		--output apache-annotator-$(annotator_vsn)$(vsn_pre)-incubating.tar.gz \
-		--prefix apache-annotator-$(annotator_vsn)-incubating/ \
-		$(vsn_tag)
-	@echo "Done: apache-annotator-$(annotator_vsn)$(vsn_pre)-incubating.tar.gz"
+	@rm -rf $(distdir)
+	@git archive --output $(disttar) --prefix $(distdir)/ $(vsn_tag)
+	@echo "Done: $(disttar)"
 
 endif
 
 .PHONY: distcheck
 distcheck: dist
-	@tar xzf apache-annotator-$(annotator_vsn)$(vsn_pre)-incubating.tar.gz
-	@make -C apache-annotator-$(annotator_vsn)-incubating check
+	@tar xzf $(disttar)
+	@make -C $(distdir) check
 
 .PHONY: distsign
 distsign: dist
-	@gpg -ab apache-annotator-$(annotator_vsn)$(vsn_pre)-incubating.tar.gz
-	@sha256sum apache-annotator-$(annotator_vsn)$(vsn_pre)-incubating.tar.gz \
-		> apache-annotator-$(annotator_vsn)$(vsn_pre)-incubating.tar.gz.sha256
-	@sha512sum apache-annotator-$(annotator_vsn)$(vsn_pre)-incubating.tar.gz \
-		> apache-annotator-$(annotator_vsn)$(vsn_pre)-incubating.tar.gz.sha512
+	@gpg -ab $(disttar)
+	@sha256sum $(disttar) > $(disttar).sha256
+	@sha512sum $(disttar) > $(disttar).sha512
