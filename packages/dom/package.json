@@ -1,6 +1,6 @@
 {
   "name": "@apache-annotator/dom",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Utilities for annotation of the Document Object Model.",
   "homepage": "https://annotator.apache.org",
   "repository": {
@@ -14,7 +14,7 @@
   "exports": "./lib/index.js",
   "main": "./lib/index.js",
   "dependencies": {
-    "@apache-annotator/selector": "^0.2.0",
+    "@apache-annotator/selector": "^0.3.0",
     "@babel/runtime-corejs3": "^7.13.10",
     "@medv/finder": "^2.1.0"
   },
