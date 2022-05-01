@@ -1,6 +1,7 @@
 \.asf.yaml
 \.editorconfig
 \.eslintignore
+\.gitattributes
 \.gitignore
 \.lintstagedrc
 \.npmignore
