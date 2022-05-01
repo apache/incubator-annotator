@@ -1,6 +1,4 @@
 /**
- * SPDX-FileCopyrightText: 2016-2022 The Apache Software Foundation
- * SPDX-License-Identifier: Apache-2.0
  * @license
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,9 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
+ *
+ * SPDX-FileCopyrightText: The Apache Software Foundation
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 import type {
