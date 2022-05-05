@@ -2,7 +2,7 @@
 .gitignore export-ignore
 /.asf.yaml export-ignore
 /.lintstagedrc export-ignore
+/.ratignore export-ignore
 /.travis.yml export-ignore
 /husky export-ignore
 /repolinter.json export-ignore
-
