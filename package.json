@@ -22,7 +22,7 @@
     "clean": "tsc --build --clean && lerna exec -- shx rm -rf DISCLAIMER-WIP LICENSE NOTICE README.md coverage docs lib web/dist",
     "docs": "tsc --build && typedoc",
     "lint": "eslint .",
-    "prepare": "is-ci || shx test -d .git || exit 0 && husky install husky",
+    "prepare": "is-ci || shx test -d .git || exit 0 && husky install",
     "prepublishOnly": "yarn run build",
     "publish": "lerna publish",
     "publish:ci": "yarn run publish --canary --exact --force-publish '*' --no-verify-access --yes minor",
