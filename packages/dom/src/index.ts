@@ -25,4 +25,4 @@ export * from './css.js';
 export * from './range/index.js';
 export * from './text-quote/index.js';
 export * from './text-position/index.js';
-export * from './highlight-text.js';
+export * from './text-highlight.js';
