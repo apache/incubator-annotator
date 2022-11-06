@@ -91,10 +91,10 @@ export interface TextPositionSelector extends Selector {
  *
  * @public
  */
-export interface RangeSelector extends Selector {
+export interface RangeSelector<T extends Selector = Selector> extends Selector {
   type: 'RangeSelector';
-  startSelector: Selector;
-  endSelector: Selector;
+  startSelector: T;
+  endSelector: T;
 }
 
 /**

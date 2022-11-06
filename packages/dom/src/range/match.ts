@@ -95,11 +95,11 @@ import { cartesian } from './cartesian.js';
  *
  * @public
  */
-export function makeCreateRangeSelectorMatcher(
-  createMatcher: <T extends Selector, TMatch extends Node | Range>(
+export function makeCreateRangeSelectorMatcher<T extends Selector>(
+  createMatcher: <TMatch extends Node | Range>(
     selector: T,
   ) => Matcher<Node | Range, TMatch>,
-): (selector: RangeSelector) => Matcher<Node | Range, Range> {
+): (selector: RangeSelector<T>) => Matcher<Node | Range, Range> {
   return function createRangeSelectorMatcher(selector) {
     const startMatcher = createMatcher(selector.startSelector);
     const endMatcher = createMatcher(selector.endSelector);

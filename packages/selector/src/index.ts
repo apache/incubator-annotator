@@ -33,6 +33,28 @@ export type {
 export * from './text/index.js';
 
 /**
+ * A Refinable selector can have the `refinedBy` attribute, whose value must be
+ * of the same type (possibly again refined, recursively).
+ *
+ * See {@link https://www.w3.org/TR/2017/REC-annotation-model-20170223/#refinement-of-selection
+ * | §4.2.9 Refinement of Selection} in the Web Annotation Data Model.
+ *
+ * @example
+ * Example value of type `Refinable<CssSelector, TextQuoteSelector>`:
+ *
+ *     {
+ *       type: "CssSelector",
+ *       …,
+ *       refinedBy: {
+ *         type: "TextQuoteSelector",
+ *         …,
+ *         refinedBy: { … }, // again either a CssSelector or TextQuoteSelector
+ *       }
+ *     }
+ */
+export type Refinable<T extends Selector> = T & { refinedBy?: Refinable<T> };
+
+/**
  * Wrap a matcher creation function so that it supports refinement of selection.
  *
  * See {@link https://www.w3.org/TR/2017/REC-annotation-model-20170223/#refinement-of-selection
@@ -45,18 +67,16 @@ export * from './text/index.js';
  * @public
  */
 export function makeRefinable<
-  // Any subtype of Selector can be made refinable; but note we limit the value
-  // of refinedBy because it must also be accepted by matcherCreator.
-  TSelector extends Selector & { refinedBy?: TSelector },
+  TSelector extends Selector,
   TScope,
   // To enable refinement, the implementation’s Match object must be usable as a
   // Scope object itself.
   TMatch extends TScope
 >(
-  matcherCreator: (selector: TSelector) => Matcher<TScope, TMatch>,
-): (selector: TSelector) => Matcher<TScope, TMatch> {
+  matcherCreator: (selector: Refinable<TSelector>) => Matcher<TScope, TMatch>,
+): (selector: Refinable<TSelector>) => Matcher<TScope, TMatch> {
   return function createMatcherWithRefinement(
-    sourceSelector: TSelector,
+    sourceSelector: Refinable<TSelector>,
   ): Matcher<TScope, TMatch> {
     const matcher = matcherCreator(sourceSelector);
 
