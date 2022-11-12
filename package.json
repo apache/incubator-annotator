@@ -17,7 +17,7 @@
   "scripts": {
     "build": "concurrently yarn:build:*",
     "build:js": "lerna exec --parallel -- babel -d lib -s -x .ts --env-name production --root-mode upward src",
-    "build:misc": "lerna exec --parallel -- cp ../../DISCLAIMER-WIP ../../LICENSE ../../NOTICE ../../README.md .",
+    "build:misc": "lerna exec --parallel -- shx cp ../../DISCLAIMER-WIP ../../LICENSE ../../NOTICE ../../README.md .",
     "build:types": "tsc --build",
     "clean": "tsc --build --clean && lerna exec -- shx rm -rf DISCLAIMER-WIP LICENSE NOTICE README.md coverage docs lib web/dist",
     "docs": "tsc --build && typedoc",
