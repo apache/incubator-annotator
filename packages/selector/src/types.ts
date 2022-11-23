@@ -21,25 +21,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-/**
- * A {@link https://www.w3.org/TR/2017/REC-annotation-model-20170223/#selectors
- * | Selector} object of the Web Annotation Data Model.
- *
- * Corresponds to RDF class {@link http://www.w3.org/ns/oa#Selector}
- *
- * @public
- */
-export interface Selector {
-  /**
-   * A Selector can be refined by another Selector.
-   *
-   * See {@link https://www.w3.org/TR/2017/REC-annotation-model-20170223/#refinement-of-selection
-   * | §4.2.9 Refinement of Selection} in the Web Annotation Data Model.
-   *
-   * Corresponds to RDF property {@link http://www.w3.org/ns/oa#refinedBy}
-   */
-  refinedBy?: Selector;
-}
+import type { Selector } from '@apache-annotator/annotation';
+export type { Selector };
 
 /**
  * The {@link https://www.w3.org/TR/2017/REC-annotation-model-20170223/#css-selector
