@@ -21,6 +21,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+export * from './match.js';
 export * from './css.js';
 export * from './range/index.js';
 export * from './text-quote/index.js';

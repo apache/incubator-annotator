@@ -24,14 +24,11 @@
 /* global info, module, source, target, form */
 
 import {
-  makeCreateRangeSelectorMatcher,
-  createTextQuoteSelectorMatcher,
+  matchSelector,
   describeTextQuote,
-  createTextPositionSelectorMatcher,
   describeTextPosition,
   highlightText,
 } from '@apache-annotator/dom';
-import { makeRefinable } from '@apache-annotator/selector';
 
 const EXAMPLE_SELECTORS = [
   {
@@ -99,29 +96,8 @@ function cleanup() {
   info.innerText = '';
 }
 
-const createMatcher = makeRefinable((selector) => {
-  const innerCreateMatcher = {
-    TextQuoteSelector: createTextQuoteSelectorMatcher,
-    TextPositionSelector: createTextPositionSelectorMatcher,
-    RangeSelector: makeCreateRangeSelectorMatcher(createMatcher),
-  }[selector.type];
-
-  if (!innerCreateMatcher) {
-    throw new Error(`Unsupported selector type: ${selector.type}`);
-  }
-
-  return innerCreateMatcher(selector);
-});
-
 async function anchor(selector) {
-  const matchAll = createMatcher(selector);
-  const ranges = [];
-
-  // First collect all matches, and only then highlight them; to avoid
-  // modifying the DOM while the matcher is running.
-  for await (const range of matchAll(target)) {
-    ranges.push(range);
-  }
+  const ranges = matchSelector(selector, target);
 
   for (const range of ranges) {
     const removeHighlight = highlightText(range);
