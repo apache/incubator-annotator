@@ -2578,10 +2578,10 @@ babel-plugin-preserve-comment-header@^1.0.1:
   resolved "https://registry.yarnpkg.com/babel-plugin-preserve-comment-header/-/babel-plugin-preserve-comment-header-1.0.1.tgz#7181cba65c507914d45eaefc372eb659b3f16996"
   integrity sha512-4fFtrowlONMxd7+k4n0ZkXnPB7PsdXwhn/LuBbwC90MwLUlKsCk0ePk5Pxw1Wuw6J3bYMyZrLf705q0asSVFzg==
 
-babel-register-esm@^1.2.1:
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/babel-register-esm/-/babel-register-esm-1.2.1.tgz#2c1c925cfbc4d3ebf1cb98c29f12d14f53c3cafc"
-  integrity sha512-NCGOf8F7CxkHXW0I18SM4KT/BUaJ3HmtL4U79ynERkzUDIevGs1f/vCJmCKjsJyq7Bg0UpAZ70Lf1sjWxZIBZA==
+babel-register-esm@^1.2.4:
+  version "1.2.4"
+  resolved "https://registry.yarnpkg.com/babel-register-esm/-/babel-register-esm-1.2.4.tgz#f58da8551ee6f9bd53c856ce7139f332675b9a13"
+  integrity sha512-Dj5u5TnThHkeSNoqFV3dCg+Nr0z2MdDrkt7PxGvwgwhTwQiYoXY+aA5j9Unk3Pdz/Q7odgeH5y65fvfMnvWqYg==
   dependencies:
     package-resolver "^1.1.0"
 
