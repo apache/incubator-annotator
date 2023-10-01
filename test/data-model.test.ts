@@ -68,7 +68,7 @@ const MUSTS = requireJSON(
 
 const META_SCHEMA = requireJSON('ajv/lib/refs/json-schema-draft-04.json');
 
-const ajv = new Ajv({ schemaId: 'auto', meta: false });
+const ajv = new Ajv({ meta: false });
 ajv.addMetaSchema(META_SCHEMA);
 DEFINITIONS.forEach((schema) => ajv.addSchema(schema));
 
