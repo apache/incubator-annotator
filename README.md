@@ -1,4 +1,4 @@
-# [Apache Annotator](http://annotator.apache.org/) (incubating) [![Build Status](https://travis-ci.com/apache/incubator-annotator.svg?branch=main)](https://travis-ci.com/apache/incubator-annotator)
+# [Apache Annotator](http://annotator.apache.org/) (incubating) [![Build Status](https://github.com/apache/incubator-annotator/actions/workflows/node.js.yml/badge.svg)](https://github.com/apache/incubator-annotator/actions/workflows/node.js.yml)
 
 Apache Annotator (incubating) provides libraries to enable annotation related
 software, with an initial focus on identification of textual fragments in
