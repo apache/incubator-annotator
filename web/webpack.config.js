@@ -50,7 +50,4 @@ module.exports = {
     // Note this directory is imported by the annotator website
     path: path.resolve(__dirname, 'dist'),
   },
-  devServer: {
-    contentBase: false,
-  },
 };
