@@ -10,8 +10,8 @@ See documentation on the website: <https://annotator.apache.org/docs/>
 
 ## How to build
 
-Build requirements are [Node.JS](https://nodejs.org/) (>= 16) and [yarn](https://yarnpkg.com) (1.x). All
-other dependencies are automatically installed as part of the build.
+Build requirements are [Node.JS](https://nodejs.org/) (>= 16) and [yarn](https://yarnpkg.com) (>= 1.5.0).
+All other dependencies are automatically installed as part of the build.
 
 * `npm run build` -- builds the project
 * `npm test` -- runs the tests
