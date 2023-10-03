@@ -8,6 +8,15 @@ browser environments.
 
 See documentation on the website: <https://annotator.apache.org/docs/>
 
+## How to build
+
+Build requirements are [Node.JS](https://nodejs.org/) (>= 16) and [yarn](https://yarnpkg.com) (>= 1.5.0).
+All other dependencies are automatically installed as part of the build.
+
+* `npm run build` -- builds the project
+* `npm test` -- runs the tests
+* `npm run start` -- starts the demo application
+
 ## Getting Involved
 
 * Join the [mailing list](http://mail-archives.apache.org/mod_mbox/incubator-annotator-dev/). Send an email to
