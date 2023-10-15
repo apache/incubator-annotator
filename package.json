@@ -9,13 +9,11 @@
   },
   "license": "Apache-2.0",
   "author": "Apache Software Foundation",
-  "workspaces": {
-    "packages": [
-      "packages/*"
-    ]
-  },
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
-    "build": "concurrently yarn:build:*",
+    "build": "concurrently npm:build:*",
     "build:js": "lerna exec --parallel -- babel -d lib -s -x .ts --env-name production --root-mode upward src",
     "build:misc": "lerna exec --parallel -- shx cp ../../DISCLAIMER-WIP ../../LICENSE ../../NOTICE ../../README.md .",
     "build:types": "tsc --build",
@@ -23,10 +21,10 @@
     "docs": "tsc --build && typedoc",
     "lint": "eslint .",
     "prepare": "is-ci || shx test -d .git || exit 0 && husky install",
-    "prepublishOnly": "yarn run build",
+    "prepublishOnly": "npm run build",
     "publish": "lerna publish",
-    "publish:ci": "yarn run publish --canary --exact --force-publish '*' --no-verify-access --yes minor",
-    "start": "yarn run web:server",
+    "publish:ci": "npm run publish --canary --exact --force-publish '*' --no-verify-access --yes minor",
+    "start": "npm run web:server",
     "test": "cross-env BABEL_ENV=test c8 -a -r html -r text mocha packages/**/*.test.ts",
     "test:watch": "cross-env BABEL_ENV=test mocha -p -w packages/**/*.test.ts",
     "validate": "cross-env BABEL_ENV=test mocha test/**/*.test.ts",
@@ -80,7 +78,6 @@
     "webpack-dev-server": "^4.15.1"
   },
   "engines": {
-    "node": ">=18",
-    "yarn": "^1.5.0"
+    "node": ">=18"
   }
 }

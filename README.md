@@ -10,7 +10,7 @@ See documentation on the website: <https://annotator.apache.org/docs/>
 
 ## How to build
 
-Build requirements are [Node.JS](https://nodejs.org/) (>= 16) and [yarn](https://yarnpkg.com) (>= 1.5.0).
+Building Annatator libraries requires [Node.JS](https://nodejs.org/) (>= 18).
 All other dependencies are automatically installed as part of the build.
 
 * `npm run build` -- builds the project
@@ -26,7 +26,7 @@ All other dependencies are automatically installed as part of the build.
 
 # License
 
-This project is available as open source under the terms of the Apache 2.0 License. 
+This project is available as open source under the terms of the Apache 2.0 License.
 For accurate information, please check individual files.
 
 # Disclaimer

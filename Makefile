@@ -37,22 +37,22 @@ all: build
 
 .PHONY: build
 build:
-	@yarn
+	@npm install
 
 .PHONY: clean
 clean:
-	@yarn run clean
+	@npm run clean
 
 .PHONY: check
 check: lint test
 
 .PHONY: lint
 lint: build
-	@yarn lint
+	@npm run lint
 
 .PHONY: test
 test: build
-	@yarn test
+	@npm run test
 
 ifeq ($(vsn_tag),)
 
