@@ -4,9 +4,9 @@
 lerna\.json
 node_modules
 package\.json
+package-lock\.json
 tsconfig(\.\w+)?\.json
 typedoc\.json
-yarn\.lock
 CODE_OF_CONDUCT\.md
 DISCLAIMER-WIP
 LICENSES
