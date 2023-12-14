@@ -38,15 +38,6 @@ export class EmptyScopeError extends TypeError {
   }
 }
 
-export class OutOfScopeError extends TypeError {
-  constructor(message?: string) {
-    super(
-      message ||
-        'Cannot convert node to chunk, as it falls outside of chunker’s scope.',
-    );
-  }
-}
-
 export class TextNodeChunker implements Chunker<PartialTextNode> {
   private scope: Range;
   private iter: NodeIterator;
@@ -61,8 +52,6 @@ export class TextNodeChunker implements Chunker<PartialTextNode> {
   }
 
   nodeToChunk(node: Text): PartialTextNode {
-    if (!this.scope.intersectsNode(node)) throw new OutOfScopeError();
-
     const startOffset =
       node === this.scope.startContainer ? this.scope.startOffset : 0;
     const endOffset =
