@@ -1,23 +1,19 @@
 {
-  "name": "apache-annotator",
+  "name": "@apache-annotator/annotation",
   "version": "0.3.0",
-  "description": "Apache Annotator provides annotation enabling code for browsers, servers, and humans.",
+  "description": "Web Annotation types and utilities.",
   "homepage": "https://annotator.apache.org",
   "repository": {
     "type": "git",
     "url": "https://github.com/apache/incubator-annotator.git",
-    "directory": "packages/apache-annotator"
+    "directory": "packages/annotation"
   },
   "license": "Apache-2.0",
   "author": "Apache Software Foundation",
   "type": "module",
-  "exports": {
-    "./*": "./lib/*.js"
-  },
+  "exports": "./lib/index.js",
+  "main": "./lib/index.js",
   "dependencies": {
-    "@apache-annotator/annotation": "^0.3.0",
-    "@apache-annotator/dom": "^0.3.0",
-    "@apache-annotator/selector": "^0.3.0",
     "@babel/runtime-corejs3": "^7.13.10"
   },
   "engines": {
