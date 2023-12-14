@@ -21,9 +21,17 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-export * from './match.js';
-export * from './css.js';
-export * from './range/index.js';
-export * from './text-quote/index.js';
-export * from './text-position/index.js';
-export * from './highlight-text.js';
+/**
+ * This module provides types and utilities for the {@link https://www.w3.org/TR/2017/REC-annotation-model-20170223/
+ * | Web Annotation Data Model}.
+ *
+ * Besides a type definition, it provides convenience functions for dealing with
+ * Web Annotations, such as getting the URL(s) of pages an annotation targets,
+ * or the plain text content the annotation body. It aims to provide some basic
+ * tools to get started writing interoperable annotation tools without having to
+ * deal with the intricacies of the data model.
+ *
+ * @module
+ */
+
+export * from '@apache-annotator/annotation';

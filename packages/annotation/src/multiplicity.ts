@@ -21,9 +21,28 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-export * from './match.js';
-export * from './css.js';
-export * from './range/index.js';
-export * from './text-quote/index.js';
-export * from './text-position/index.js';
-export * from './highlight-text.js';
+export type OneOrMore<T> = T | T[];
+export type ZeroOrMore<T> = undefined | null | T | T[];
+
+export type OneOrMoreIncluding<Other extends any, RequiredValue extends any> =
+  | RequiredValue
+  | [RequiredValue, ...Other[]]
+  | [...Other[], RequiredValue];
+// | [Other, ...OneOrMoreIncluding<Other, RequiredValue>]; // FIXME TypeScript complains about the circular reference..
+
+/**
+ * OnlyOne<T> extracts the T from a One/ZeroOrMore<T> type
+ */
+export type OnlyOne<T> = T extends (infer X)[] ? X : T;
+
+export function asArray<T>(value: ZeroOrMore<T>): T[] {
+  if (Array.isArray(value)) return value;
+  if (value === undefined || value === null) return [];
+  return [value];
+}
+
+export function asSingleValue<T>(value: ZeroOrMore<T>): T | undefined {
+  if (value instanceof Array) return value[0];
+  if (value === undefined || value === null) return undefined;
+  return value;
+}

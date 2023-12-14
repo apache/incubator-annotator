@@ -21,9 +21,19 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-export * from './match.js';
-export * from './css.js';
-export * from './range/index.js';
-export * from './text-quote/index.js';
-export * from './text-position/index.js';
-export * from './highlight-text.js';
+import { strict as assert } from 'assert';
+import { asArray, asSingleValue } from '../../src/multiplicity';
+import type { OneOrMore, OnlyOne, ZeroOrMore } from '../../src/multiplicity';
+
+describe('asArray', () => {
+  it('wraps a single value', () => {
+    const input: OneOrMore<string> = 'blub';
+    const output = asArray(input);
+    assert.strictEqual(output, ['blub']);
+  });
+  it('leaves an array untouched', () => {
+    const input: OneOrMore<string> = ['blub'];
+    const output = asArray(input);
+    assert.strictEqual(output, input);
+  });
+});
