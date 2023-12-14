@@ -29,7 +29,7 @@ import {
   describeTextQuote,
   createTextPositionSelectorMatcher,
   describeTextPosition,
-  highlightText,
+  TextHighlight,
 } from '@apache-annotator/dom';
 import { makeRefinable } from '@apache-annotator/selector';
 
@@ -87,13 +87,13 @@ const EXAMPLE_SELECTORS = [
 ];
 
 let moduleState = {
-  cleanupFunctions: [],
+  highlights: [],
 };
 
 function cleanup() {
-  let removeHighlight;
-  while ((removeHighlight = moduleState.cleanupFunctions.shift())) {
-    removeHighlight();
+  let highlight;
+  while ((highlight = moduleState.highlights.shift())) {
+    highlight.remove();
   }
   target.normalize();
   info.innerText = '';
@@ -124,8 +124,8 @@ async function anchor(selector) {
   }
 
   for (const range of ranges) {
-    const removeHighlight = highlightText(range);
-    moduleState.cleanupFunctions.push(removeHighlight);
+    const highlight = new TextHighlight(range);
+    moduleState.highlights.push(highlight);
   }
 
   info.innerText += JSON.stringify(selector, null, 2) + '\n\n';
