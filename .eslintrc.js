@@ -24,7 +24,7 @@
 module.exports = {
   root: true,
   extends: ['eslint:recommended', 'plugin:import/recommended', 'prettier'],
-  plugins: ['import', 'prettier'],
+  plugins: ['import'],
   rules: {
     'import/extensions': ['error', 'ignorePackages'],
     'import/first': 'error',
@@ -50,13 +50,6 @@ module.exports = {
     ],
     'import/unambiguous': 'error',
     'no-constant-condition': 'off',
-    'prettier/prettier': [
-      'error',
-      {
-        singleQuote: true,
-        trailingComma: 'all',
-      },
-    ],
   },
   settings: {
     'import/internal-regex': '^@apache-annotator/',
@@ -73,6 +66,7 @@ module.exports = {
       files: [
         '.eslintrc.js',
         '.mocharc.js',
+        '.prettierrc.js',
         'babel-register.js',
         'babel.config.js',
         'nyc.config.js',
@@ -102,7 +96,6 @@ module.exports = {
         'plugin:@typescript-eslint/recommended',
         'plugin:@typescript-eslint/recommended-requiring-type-checking',
         'plugin:import/typescript',
-        'prettier/@typescript-eslint',
       ],
       parserOptions: {
         ecmaVersion: 2020,
