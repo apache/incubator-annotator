@@ -1,6 +1,7 @@
 .gitattributes export-ignore
 .gitignore export-ignore
 /.asf.yaml export-ignore
+/.github export-ignore
 /.husky export-ignore
 /.lintstagedrc export-ignore
 /.ratignore export-ignore
