@@ -4,5 +4,4 @@
 /.husky export-ignore
 /.lintstagedrc export-ignore
 /.ratignore export-ignore
-/.travis.yml export-ignore
 /repolinter.json export-ignore
